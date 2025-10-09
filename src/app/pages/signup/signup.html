@@ -1,1 +1,25 @@
-<p>signup works!</p>
+<div class="background">
+  <div class="container">
+    <h1>Bienvenido a Agora</h1>
+    <p>¿Cómo deseas registrarte?</p>
+    <div class="options">
+      <!-- Asesor -->
+      <div 
+        class="option" 
+        (click)="selectOption('asesor')" 
+        [class.selected]="selectedOption === 'asesor'">
+        <img src="/assets/asesor.png" alt="Asesor" />
+        <span>Asesor</span>
+      </div>
+      <!-- Alumno -->
+      <div 
+        class="option" 
+        (click)="selectOption('alumno')" 
+        [class.selected]="selectedOption === 'alumno'">
+        <img src="assets/alumno.png" alt="Alumno" />
+        <span>Alumno</span>
+      </div>
+    </div>
+    <button class="continue-btn" [disabled]="!selectedOption" (click)="goToNextStep()">Continuar</button>
+  </div>
+</div>

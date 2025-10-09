@@ -10,8 +10,11 @@
   </ul>
 
   <div class="navbar__actions">
-    <a class="btn btn--login" routerLink="/singup">Login</a>
-    <a class="btn btn--signup" routerLink="/sigup">Sign up</a>
+    <a class="btn btn--login" routerLink="/signup" >Login</a>
+    <a class="btn btn--signup" (click)="navigateToSignup()">Sign up</a>
+
+
+
   </div>
 </nav>
 
@@ -50,7 +53,12 @@
   </div>
 
   <div class="text">
+    <div class="deco-crayons">
+  <img src="/assets/crayons.png" alt="Crayones">
+</div>
     <p>¿Qué nos diferencía?</p>
   </div>
   <p class="lead">Estas son algunas razones por las que te conviene ser parte de la comunidad de Agora.</p>
+
+  
 </main>

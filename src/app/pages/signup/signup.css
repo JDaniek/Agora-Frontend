@@ -1,0 +1,103 @@
+:host {
+  position: fixed;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  z-index: 9999; /* Asegura que esté por encima de otros elementos */
+}
+
+.background {
+  background-color: #224e91;
+  background-image: url('/assets/crayons.png'), url('/assets/ruler.png');
+  background-position: top left, bottom right;
+  background-repeat: no-repeat;
+  background-size: 180px, 150px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.container {
+  background-color: white;
+  padding: 60px; /* Aumentado para más espacio interno */
+  border-radius: 12px;
+  text-align: center;
+  max-width: 600px; /* Aumentado el max-width */
+}
+
+.container h1 {
+  color: #1e3a8a;
+  font-size: 32px; /* Aumentado el tamaño */
+  margin-bottom: 18px; /* Ajustado el margen */
+}
+
+.container p {
+  color: #3c3c3c;
+  font-size: 18px; /* Aumentado el tamaño */
+  margin-bottom: 25px; /* Ajustado el margen */
+}
+
+.options {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 30px;
+}
+.option.option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 15px;
+  border-radius: 10px;
+  transition: background-color 0.3s, border 0.3s;
+  cursor: pointer;
+}
+
+/* Estilo cuando la opción está seleccionada */
+.option.selected {
+  border: 2px solid #FFD700; /* Borde dorado */
+  background-color: #ffd87795; /* Color similar al hover */
+}
+
+.option:hover {
+  background-color: #ffd87795;
+}
+
+.option img {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 10px;
+}
+
+.option span {
+  font-size: 16px;
+  color: #333333;
+}
+
+.continue-btn {
+  background-color: #ffd877;
+  color: #ffffff;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.continue-btn:hover {
+  background-color: #ffbb00;
+}
+
+.continue-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

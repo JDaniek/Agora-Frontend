@@ -4,17 +4,14 @@
   </div>
 
   <ul class="navbar__links">
-    <li><a  (click)="scrollToDiferencia()">Producto</a></li>
-    <li><a routerLink="/preguntas">Preguntas</a></li>
+    <li><a (click)="scrollToDiferencia()">Producto</a></li>
+    <li><a (click)="scrollToPreguntas()">Preguntas</a></li>
     <li><a routerLink="/sobre">Sobre nosotros</a></li>
   </ul>
 
   <div class="navbar__actions">
-    <a class="btn btn--login" (click)="navigateToLogin()" >Login</a>
+    <a class="btn btn--login" (click)="navigateToLogin()">Login</a>
     <a class="btn btn--signup" (click)="navigateToSignup()">Sign up</a>
-
-
-
   </div>
 </nav>
 
@@ -38,7 +35,6 @@
     </div>
 
     <figure class="hero__media">
-      
       <img
         src="/assets/Maestra_AGORA 1.png"
         alt="Estudiante con carpeta"
@@ -48,39 +44,87 @@
     </figure>
   </div>
 
-  <div class="frame">
+  <div id="diferencia" class="frame">
     <div class="frame-one">Empieza ahora</div>
   </div>
 
-  <div class="text"  id="diferencia">
+  <div class="text">
     <div class="deco-crayons">
-  <img src="/assets/crayons.png" alt="Crayones">
-</div>
+      <img src="/assets/crayons.png" alt="Crayones" />
+    </div>
     <p>¿Qué nos diferencía?</p>
   </div>
-  <p class="lead">Estas son algunas razones por las que te conviene ser parte de la comunidad de Agora.</p>
+  <p class="lead">
+    Estas son algunas razones por las que te conviene ser parte de la comunidad de Agora.
+  </p>
 
-<!-- Tu contenido existente (header, título, etc.) -->
+  <!-- Tu contenido existente (header, título, etc.) -->
 
-<div class="focus-carousel">
-  <div class="carousel-wrapper">
-@for (img of visibleSlides; track img) {
-  <div 
-    class="carousel-item" 
-    [class.active]="isActive($index)"
-    [class.left]="isLeft($index)"
-    [class.right]="isRight($index)"
-  >
-    <img [src]="img" [alt]="'Imagen ' + $index" />
+  <div class="focus-carousel">
+    <div class="carousel-wrapper">
+      @for (img of visibleSlides; track img) {
+      <div
+        class="carousel-item"
+        [class.active]="isActive($index)"
+        [class.left]="isLeft($index)"
+        [class.right]="isRight($index)"
+      >
+        <img [src]="img" [alt]="'Imagen ' + $index" />
+      </div>
+      }
+    </div>
+
+    <div class="carousel-nav">
+      <button class="nav-btn" (click)="prev()" [disabled]="currentIndex <= 0">❮</button>
+      <button
+        class="nav-btn"
+        (click)="next()"
+        [disabled]="currentIndex >= carouselImages.length - 1"
+      >
+        ❯
+      </button>
+    </div>
   </div>
-}
+
+  <div class="deco-ruler">
+    <img src="/assets/rulerfrs.png" alt="Crayones" />
+  </div>
+  <div class="text">
+    <p>¿Necesitas respuestas?</p>
   </div>
 
-  <div class="carousel-nav">
-    <button class="nav-btn" (click)="prev()" [disabled]="currentIndex <= 0">❮</button>
-    <button class="nav-btn" (click)="next()" [disabled]="currentIndex >= carouselImages.length - 1">❯</button>
+  <p id="preguntas" class="lead">
+    Estas son algunas de las preguntas más frecuentes que recibimos.
+  </p>
+
+
+<div class="faq-container">
+  <div class="faq-item">
+    <h3>¿Puedo usar Ágora solo  para practicar un idioma?</h3>
+    <p>El pago se acuerda y da directamente entre alumno y  asesor, sin intermediarios.</p>
+  </div>
+  <div class="faq-item">
+    <h3>¿Necesito un título o certificación <br> para ser asesor?</h3>
+    <p>No, cualquier persona con conocimiento o experiencia  puede ofrecer asesorías.</p>
+  </div>
+  <div class="faq-item">
+    <h3>¿Es seguro usar Ágora?</h3>
+    <p>Sí, puedes revisar perfiles, etiquetas y reseñas
+    antes de  contactar a alguien.</p>
+  </div>
+  <div class="faq-item">
+    <h3>¿Cómo elijo a un asesor?</h3>
+    <p>Exploras perfiles con etiquetas de materia, nivel, idioma, ubicación y precio disponible.</p>
+  </div>
+  <div class="faq-item">
+    <h3>¿Cómo se paga a los asesores?</h3>
+    <p>El pago se acuerda y da directamente entre alumno y asesor, sin intermediarios.</p>
+  </div>
+  <div class="faq-item">
+    <h3>¿Qué tipo de asesorías puedo encontrar?</h3>
+    <p>Hay apoyo escolar, idiomas, regularización, tareas, tesis y niveles desde primaria hasta posgrado.</p>
   </div>
 </div>
 
-  
+
 </main>

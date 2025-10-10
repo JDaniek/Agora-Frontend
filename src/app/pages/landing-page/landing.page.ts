@@ -52,6 +52,12 @@ scrollToDiferencia(): void {
     target.scrollIntoView();
   }
 }
+scrollToPreguntas(): void {
+  const target = document.getElementById('preguntas');
+  if (target) {
+    target.scrollIntoView();
+  }
+}
   next(): void {
     if (this.currentIndex < this.carouselImages.length - 1) {
       this.currentIndex++;

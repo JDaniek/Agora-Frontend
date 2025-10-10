@@ -1,21 +1,25 @@
 <div class="background">
   <div class="container">
-    <h1>Inicio de sesión</h1>
-    <div class="options">
-      <!-- Asesor -->
-      <div 
-        class="option">
-        <img src="/assets/asesor.png" alt="Asesor" />
-        <span>Asesor</span>
+    <h1>Iniciar sesión</h1>
+    <p>Ingresa tu usuario y contraseña para acceder</p>
+    <form>
+      <div class="input-group">
+        <label for="username">Correo Electronico: </label>
+        <input type="text" id="username" name="username" placeholder="Ingresa tu Correo" required />
       </div>
-      <!-- Alumno -->
-      <div 
-        class="option">
-        <img src="assets/alumno.png" alt="Alumno" />
-        <span>Alumno</span>
+      <div class="input-group">
+        <label for="password">Contraseña: </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Ingresa tu contraseña"
+          required
+        />
       </div>
-    </div>
-    <button class="continue-btn">Continuar</button>
+      <button type="submit" class="btn-login">Iniciar sesión</button>
+      <button type="submit" class="btn-register">Regístrate aquí</button>
+    </form>
   </div>
 </div>
- 
+m

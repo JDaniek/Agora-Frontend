@@ -25,7 +25,7 @@
 }
 
 .container {
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   padding: 60px; /* Aumentado para más espacio interno */
   border-radius: 12px;
   text-align: center;

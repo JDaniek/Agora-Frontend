@@ -9,6 +9,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
     Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
@@ -43,7 +44,8 @@
 
 .navbar__links {
   list-style: none;
-  display: none; /* oculto en móvil (sin hamburguesa) */
+  display: none; 
+  font-size: medium;
   gap: 1rem;
   margin: 0;
   padding: 0;
@@ -114,6 +116,7 @@
 .text p {
   font-size: clamp(28px, 8vw, 40px);
   font-weight: 800;
+  padding: 20px;
   line-height: 1.15;
   background: linear-gradient(to right, #073478 0%, #2c68c4 47%, #224e91 100%);
   -webkit-background-clip: text;
@@ -174,7 +177,6 @@
   align-items: center;
   overflow: visible;
 }
-
 .carousel-wrapper {
   display: flex;
   gap: 24px;
@@ -184,31 +186,37 @@
   padding: 0 20px;
   position: relative;
 }
-
 .carousel-item {
-  width: 220px;
-  height: 196px; /* 220 / 1.124 ≈ 196 */
+  width: 240px;
+  height: 210px;
   transition: all 0.5s ease-in-out;
   opacity: 0.75;
-  transform: scale(0.92);
+  transform: scale(0.95);
+  transform-origin: center center;
   border-radius: 10px;
   overflow: hidden;
   position: relative;
   z-index: 1;
 }
 .carousel-item.active {
-  width: 320px;
-  height: 285px; /* 320 / 1.124 ≈ 285 */
+  width: 280px;
+  height: 245px;
   opacity: 1;
   transform: scale(1);
   z-index: 3;
 }
+.carousel-item.left,
+.carousel-item.right {
+  opacity: 0.85;
+  transform: scale(0.95);
+  z-index: 2;
+}
 .carousel-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
-  background-color: #0000;
+  background-color: transparent;
 }
 
 .carousel-nav {
@@ -219,6 +227,7 @@
 .nav-btn {
   width: 48px;
   height: 48px;
+  color: aliceblue;
   border-radius: 50%;
   background: #e0e0e0;
   border: none;
@@ -229,8 +238,61 @@
   justify-content: center;
   transition: background 0.2s;
 }
-.nav-btn:hover:not(:disabled) { background: #d0d0d0; }
-.nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.nav-btn:hover:not(:disabled) {
+  background: #d0d0d0;
+}
+.nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.deco-ruler {
+  position: absolute;
+  top: 1090px;
+  right: 0;
+  z-index: -1;
+  width: 50vw; /* Ocupa todo el ancho de la ventana */
+}
+
+.deco-ruler img {
+  width: 50%; /* Ajusta el tamaño de la imagen */
+  height: auto; /* Mantiene la proporción de la imagen */
+  position: absolute;
+  right: 0; /* Alinea la imagen al borde derecho del contenedor */
+  top: 0; /* Opcional: ajusta si necesitas que la imagen se alinee verticalmente */
+}
+
+.faq-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 30px;
+}
+
+.faq-item {
+  background-color: #ffffff00;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.faq-item h3 {
+  color: #000000;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.faq-item p {
+  color: #000000ad;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+
 
 /* =========================================
    BREAKPOINTS

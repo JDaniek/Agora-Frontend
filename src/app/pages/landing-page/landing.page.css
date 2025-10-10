@@ -1,149 +1,6 @@
-* {
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-    Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-.navbar {
-  background-color: #224e91;
-  color: white;
-  width: 100%;
-  height: 70px;
-  display: flex;
-  font-size: larger;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  box-sizing: border-box;
-}
-
-/* LOGO */
-.navbar__logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.navbar__logo .logo {
-  width: 50px;
-  height: 50px;
-}
-
-.navbar__links {
-  list-style: none;
-  display: flex;
-  gap: 1.5rem;
-  margin: 0;
-  padding: 0;
-}
-
-.navbar__links a {
-  text-decoration: none;
-  color: white;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-
-.navbar__links a:hover {
-  color: #ffd877;
-}
-
-/* BOTONES */
-
-.navbar__actions {
-  display: flex;
-  gap: 0.8rem;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid transparent;
-  font-size: medium;
-  padding: 0 1.3rem;
-  height: 30px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn--login {
-  background-color: transparent;
-  color: white;
-}
-
-.btn--login:hover {
-  background-color: white;
-  color: #224e91;
-}
-
-.btn--signup {
-  background-color: #ffd877;
-  color: #224e91;
-}
-
-.btn--signup:hover {
-  background-color: white;
-  border-color: white;
-}
-.hero {
-  margin-top: 70px; /* deja libre el navbar fijo */
-  min-height: calc(100dvh - 70px);
-  display: grid;
-  justify-content: center;
-}
-.hero__inner {
-  width: 100%;
-  max-width: 1200px;
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* texto | imagen */
-  column-gap: 5rem; /* espacio entre ellos */
-}
-
-.text p {
-  font-size: 50px;
-  font-weight: bold;
-  background: linear-gradient(to right, #073478 0%, #2c68c4 47%, #224e91 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  padding-bottom: 25px;
-  padding-top: 5px;
-}
-.lead p {
-  color: #000000; /* fuerza el color negro */
-  -webkit-text-fill-color: initial !important;
-}
-.hero__media img {
-  width: 65%;
-}
-
-.frame-one {
-  background-color: #ffd877;
-  border-radius: 13px;
-  padding: 8px 50px;
-  font-size: 24px;
-  margin-bottom: 25%;
-}
-.deco-crayons {
-  position: absolute;
-  top: -150px;
-  left: -86%;
-  z-index: -1;
-
-  img {
-    width: 80%;
-    height: auto;
-  }
-}
-
-/* ========== Base (mobile-first) ========== */
+/* =========================================
+   RESET + BASE (mobile-first)
+========================================= */
 *,
 *::before,
 *::after {
@@ -156,12 +13,14 @@
     Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* NAVBAR */
+/* =========================================
+   NAVBAR
+========================================= */
 .navbar {
   background-color: #224e91;
   color: white;
   width: 100%;
-  height: 64px; /* un poco más compacto en móvil */
+  height: 64px; /* compacto en móvil */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -184,7 +43,7 @@
 
 .navbar__links {
   list-style: none;
-  display: none; /* oculto en móvil (sin menú hamburguesa aún) */
+  display: none; /* oculto en móvil (sin hamburguesa) */
   gap: 1rem;
   margin: 0;
   padding: 0;
@@ -192,12 +51,14 @@
 .navbar__links a {
   text-decoration: none;
   color: white;
+  cursor: pointer;
   transition: color 0.3s;
 }
 .navbar__links a:hover {
   color: #ffd877;
 }
 
+/* BOTONES NAV */
 .navbar__actions {
   display: flex;
   gap: 0.6rem;
@@ -215,42 +76,43 @@
   transition: all 0.3s ease;
 }
 .btn--login {
-  background: transparent;
+  background-color: transparent;
   color: white;
 }
 .btn--login:hover {
-  background: white;
+  background-color: white;
   color: #224e91;
 }
 .btn--signup {
-  background: #ffd877;
+  background-color: #ffd877;
   color: #224e91;
 }
 .btn--signup:hover {
-  background: white;
+  background-color: white;
   border-color: white;
 }
 
-/* HERO */
+/* =========================================
+   HERO
+========================================= */
 .hero {
-  margin-top: 64px; /* ajusta al alto del navbar móvil */
+  margin-top: 64px; /* alto del navbar móvil */
   min-height: calc(100dvh - 64px);
   display: grid;
   place-items: center;
-  padding-inline: 16px; /* aire lateral en móvil */
+  padding-inline: 16px;
 }
 
 .hero__inner {
   width: 100%;
   max-width: 1200px;
   display: grid;
-  grid-template-columns: 1fr; /* móvil: apilado */
+  grid-template-columns: 1fr; /* apilado en móvil */
   row-gap: 20px;
 }
 
-/* Título grande con degradado */
 .text p {
-  font-size: clamp(28px, 8vw, 40px); /* fluido en móvil */
+  font-size: clamp(28px, 8vw, 40px);
   font-weight: 800;
   line-height: 1.15;
   background: linear-gradient(to right, #073478 0%, #2c68c4 47%, #224e91 100%);
@@ -261,28 +123,132 @@
   margin: 0;
 }
 
-/* Párrafo “lead”. Acepta <p class="lead"> o <div class="lead"><p> */
+/* Acepta .lead o .lead p sin cambiar acomodos */
 .lead,
 .lead p {
   font-size: 16px;
   line-height: 1.45;
   font-weight: lighter;
-  color: #000;
+  color: #000000;
+  -webkit-text-fill-color: initial !important;
   margin-top: 10px;
 }
 
-/* Imagen */
 .hero__media {
   justify-self: center;
   width: 90%;
 }
 .hero__media img {
-  width: min(100%, 420px); /* límite cómodo en móvil */
+  width: min(100%, 420px);
   height: auto;
   display: block;
 }
 
-/* ========== Tablet ≥ 768px ========== */
+/* Marco y deco (se mantienen posiciones) */
+.frame-one {
+  background-color: #ffd877;
+  border-radius: 13px;
+  padding: 8px 50px;
+  font-size: 24px;
+  margin-bottom: 25%;
+}
+.deco-crayons {
+  position: absolute;
+  top: -150px;
+  left: -86%;
+  z-index: -1;
+}
+.deco-crayons img { /* corregido: sin anidado SCSS */
+  width: 80%;
+  height: auto;
+}
+
+/* =========================================
+   CARRUSEL (mantiene tus tamaños/efectos)
+========================================= */
+.focus-carousel {
+  width: 100%;
+  padding: 40px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: visible;
+}
+
+.carousel-wrapper {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  width: 100%;
+  max-width: 1400px;
+  padding: 0 20px;
+  position: relative;
+}
+
+.carousel-item {
+  width: 220px;
+  height: 196px; /* 220 / 1.124 ≈ 196 */
+  transition: all 0.5s ease-in-out;
+  opacity: 0.75;
+  transform: scale(0.92);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+.carousel-item.active {
+  width: 320px;
+  height: 285px; /* 320 / 1.124 ≈ 285 */
+  opacity: 1;
+  transform: scale(1);
+  z-index: 3;
+}
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background-color: #0000;
+}
+
+.carousel-nav {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+.nav-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.nav-btn:hover:not(:disabled) { background: #d0d0d0; }
+.nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* =========================================
+   BREAKPOINTS
+========================================= */
+
+/* XS ≤ 480px: ajusta carrusel */
+@media (max-width: 480px) {
+  .carousel-item {
+    width: 130px;
+    height: 116px;
+  }
+  .carousel-item.active {
+    width: 180px;
+    height: 160px;
+  }
+}
+
+/* Tablet ≥ 768px */
 @media (min-width: 768px) {
   .navbar {
     height: 70px;
@@ -293,22 +259,20 @@
     height: 46px;
   }
   .navbar__links {
-    display: flex;
+    display: flex;     /* visibles desde tablet, sin cambiar acomodo */
     gap: 1.25rem;
   }
 
   .hero {
-    margin-top: 70px; /* navbar más alto */
+    margin-top: 70px;  /* navbar más alto */
     min-height: calc(100dvh - 70px);
     padding-inline: 24px;
   }
-
   .hero__inner {
     grid-template-columns: 1.1fr 0.9fr; /* texto | imagen */
     column-gap: 2rem;
     align-items: center;
   }
-
   .text p {
     font-size: clamp(36px, 6vw, 48px);
   }
@@ -317,58 +281,48 @@
     font-size: 18px;
     max-width: 60ch;
   }
+  .hero__media { justify-self: end; }
+  .hero__media img { width: min(90%, 520px); }
 
-  .hero__media {
-    justify-self: end;
+  /* Carrusel en tablet (equivalente a tu versión) */
+  .carousel-wrapper {
+    gap: 16px;
+    padding: 0 12px;
   }
-  .hero__media img {
-    width: min(90%, 520px);
+  .carousel-item {
+    width: 160px;
+    height: 142px;
+    transform: scale(0.9);
+  }
+  .carousel-item.active {
+    width: 220px;
+    height: 196px;
   }
 }
 
-/* ========== Desktop ≥ 1024px ========== */
+/* Desktop ≥ 1024px */
 @media (min-width: 1024px) {
-  .text {
-    transform: translateY(-8px);
-  }
-  .navbar {
-    padding: 0 2rem;
-  }
-  .navbar__links {
-    gap: 1.5rem;
-  }
+  .text { transform: translateY(-8px); }
+  .navbar { padding: 0 2rem; }
+  .navbar__links { gap: 1.5rem; }
 
-  .hero {
-    padding-inline: 32px;
-  }
+  .hero { padding-inline: 32px; }
   .hero__inner {
     grid-template-columns: 1fr 1fr; /* 50/50 limpio */
     column-gap: 3rem;
   }
-
-  .text p {
-    font-size: clamp(44px, 4.5vw, 56px);
-  }
+  .text p { font-size: clamp(44px, 4.5vw, 56px); }
   .lead,
-  .lead p {
-    font-size: 20px;
-  }
-
-  .hero__media img {
-    width: min(85%, 560px);
-  }
+  .lead p { font-size: 20px; }
+  .hero__media img { width: min(85%, 560px); }
 }
 
-/* ========== XL ≥ 1440px (pegar más a los bordes) ========== */
+/* XL ≥ 1440px */
 @media (min-width: 1440px) {
-  .hero {
-    padding-inline: 24px;
-  }
+  .hero { padding-inline: 24px; }
   .hero__inner {
-    max-width: none; /* usa todo el ancho */
+    max-width: none;   /* usa todo el ancho */
     column-gap: 2rem;
   }
-  .hero__media img {
-    width: min(80%, 600px);
-  }
+  .hero__media img { width: min(80%, 600px); }
 }

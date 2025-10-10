@@ -4,13 +4,13 @@
   </div>
 
   <ul class="navbar__links">
-    <li><a routerLink="/">Producto</a></li>
+    <li><a  (click)="scrollToDiferencia()">Producto</a></li>
     <li><a routerLink="/preguntas">Preguntas</a></li>
     <li><a routerLink="/sobre">Sobre nosotros</a></li>
   </ul>
 
   <div class="navbar__actions">
-    <a class="btn btn--login" routerLink="/signup" >Login</a>
+    <a class="btn btn--login" (click)="navigateToLogin()" >Login</a>
     <a class="btn btn--signup" (click)="navigateToSignup()">Sign up</a>
 
 
@@ -52,13 +52,35 @@
     <div class="frame-one">Empieza ahora</div>
   </div>
 
-  <div class="text">
+  <div class="text"  id="diferencia">
     <div class="deco-crayons">
   <img src="/assets/crayons.png" alt="Crayones">
 </div>
     <p>¿Qué nos diferencía?</p>
   </div>
   <p class="lead">Estas son algunas razones por las que te conviene ser parte de la comunidad de Agora.</p>
+
+<!-- Tu contenido existente (header, título, etc.) -->
+
+<div class="focus-carousel">
+  <div class="carousel-wrapper">
+@for (img of visibleSlides; track img) {
+  <div 
+    class="carousel-item" 
+    [class.active]="isActive($index)"
+    [class.left]="isLeft($index)"
+    [class.right]="isRight($index)"
+  >
+    <img [src]="img" [alt]="'Imagen ' + $index" />
+  </div>
+}
+  </div>
+
+  <div class="carousel-nav">
+    <button class="nav-btn" (click)="prev()" [disabled]="currentIndex <= 0">❮</button>
+    <button class="nav-btn" (click)="next()" [disabled]="currentIndex >= carouselImages.length - 1">❯</button>
+  </div>
+</div>
 
   
 </main>

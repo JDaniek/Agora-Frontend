@@ -9,8 +9,6 @@ import { Router } from '@angular/router';
 })
 export class Login {
   constructor(private router: Router) {}
-navigateToSignup() {
-  this.router.navigate(['/signup']);
-}
+navigateToSignup() {this.router.navigate(['/signup']);}
 
 }

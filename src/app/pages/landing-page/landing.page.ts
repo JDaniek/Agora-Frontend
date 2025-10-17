@@ -46,6 +46,14 @@ export class LandingPage {
       this.currentIndex--;
     }
   }
+
+scrollToInicio(): void {
+  const target = document.getElementById('Inicio');
+  if (target) {
+    target.scrollIntoView();
+  }
+}
+
 scrollToDiferencia(): void {
   const target = document.getElementById('diferencia');
   if (target) {

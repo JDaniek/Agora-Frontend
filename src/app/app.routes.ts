@@ -4,6 +4,8 @@ export const routes: Routes = [
   { path: '', loadComponent: () => import('./pages/landing-page/landing.page').then(m => m.LandingPage) },
   { path: 'signup', loadComponent: () => import('./pages/signup/signup').then(m => m.Signup) },
     { path: 'login', loadComponent: () => import('./pages/login/login').then(m => m.Login) },
-    { path: 'register', loadComponent: () => import('./pages/register/register').then(m => m.Register) }
+    { path: 'register', loadComponent: () => import('./pages/register/register').then(m => m.Register) },
+    { path: 'dashboard-asesor', loadComponent:()=> import ('./pages/dashboard-asesor/dashboard-asesor').then(m=> m.DashboardAsesor)}
+
 ];
  

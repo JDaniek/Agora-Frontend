@@ -1,0 +1,14 @@
+.navbar {
+  background-color: #e70909;
+  color: white;
+  width: 100%;
+  height: 64px; /* compacto en móvil */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem; /* menos padding en móvil */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}

@@ -1,1 +1,70 @@
-<p>complete-profile works!</p>
+<section class="card">
+  <h1 class="title">Termina tu cuenta</h1>
+
+  <!-- Avatar -->
+  <div class="avatar-block">
+    <div class="avatar" [class.has-img]="avatarPreview()">
+      <img *ngIf="avatarPreview()" [src]="avatarPreview()" alt="Avatar" />
+      <span *ngIf="!avatarPreview()" aria-hidden="true">👤</span>
+    </div>
+
+    <label class="avatar-btn">
+      Cambiar foto
+      <input type="file" accept="image/*" (change)="onAvatarChange($event)" hidden />
+    </label>
+  </div>
+
+  <!-- Selects -->
+  <div class="filters">
+    <div class="select">
+      <label for="lugar">Lugar</label>
+      <select id="lugar" [formControl]="form.controls.lugar">
+        <option value="" disabled selected>Selecciona tu estado</option>
+        <option *ngFor="let e of estadosMx" [value]="e.value">{{ e.label }}</option>
+      </select>
+      <small class="error" *ngIf="form.controls.lugar.touched && form.controls.lugar.invalid">
+        El lugar es obligatorio
+      </small>
+    </div>
+
+    <div class="select">
+      <label for="nivel">Nivel</label>
+      <select id="nivel" [formControl]="form.controls.nivel">
+        <option value="" disabled selected>Selecciona tu nivel</option>
+        <option *ngFor="let n of niveles" [value]="n.value">{{ n.label }}</option>
+      </select>
+      <small class="error" *ngIf="form.controls.nivel.touched && form.controls.nivel.invalid">
+        El nivel es obligatorio
+      </small>
+    </div>
+  </div>
+
+  <!-- Chips -->
+  <div class="chips">
+    <button
+      type="button"
+      class="chip"
+      [class.active]="isSelected(tag)"
+      *ngFor="let tag of tagsDisponibles; trackBy: trackByTag"
+      (click)="toggleTag(tag)"
+    >
+      {{ tag }}
+    </button>
+  </div>
+
+  <!-- Intereses -->
+  <div class="interests">
+    <textarea
+      rows="4"
+      placeholder="Describe tus intereses específicos de manera sencilla..."
+      [formControl]="form.controls.intereses"
+    ></textarea>
+  </div>
+
+  <!-- Guardar -->
+  <div class="actions">
+    <button class="btn" [disabled]="isSaving() || form.invalid" (click)="submit()">
+      {{ isSaving() ? 'Guardando...' : 'Guardar' }}
+    </button>
+  </div>
+</section>

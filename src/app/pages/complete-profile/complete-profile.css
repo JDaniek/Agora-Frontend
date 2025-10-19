@@ -1,46 +1,157 @@
-.card {
-  max-width: 720px;
-  margin: 32px auto;
-  padding: 24px;
+/* === Card === */
+.card{
+  max-width: 780px;
+  margin: 40px auto;
+  padding: 28px 28px 22px;
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-}
-.title { text-align: center; margin: 0 0 16px; font-size: 1.6rem; }
-
-/* Avatar */
-.avatar-block { display: grid; justify-items: center; gap: 8px; margin-bottom: 16px; }
-.avatar {
-  width: 90px; height: 90px; border-radius: 9999px; border: 2px dashed #cbd5e1;
-  display: grid; place-items: center; overflow: hidden; background: #f8fafc;
-  color: #64748b; font-size: 32px;
-}
-.avatar.has-img { border-style: solid; }
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
-.avatar-btn { display: inline-block; font-size: .9rem; background: #e5e7eb; color: #111827;
-  padding: 6px 10px; border-radius: 10px; cursor: pointer; }
-.avatar-btn:hover { opacity: .9; }
-
-/* Selects */
-.filters { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0 8px; }
-.select label { display: block; font-size: .85rem; color: #374151; margin-bottom: 6px; }
-.select select {
-  width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #d1d5db;
-  background: #fef3c7;
-}
-.error { display: block; margin-top: 4px; color: #b91c1c; font-size: .8rem; }
-
-/* Chips */
-.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
-.chip { border: 0; background: #e0ecff; color: #1d4ed8; padding: 8px 12px; border-radius: 9999px; cursor: pointer; font-size: .95rem; }
-.chip.active { background: #1d4ed8; color: #fff; }
-
-/* Intereses */
-.interests textarea {
-  width: 100%; resize: vertical; padding: 12px; border-radius: 12px; border: 1px solid #d1d5db; background: #f3f4f6;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(16,24,40,.08);
 }
 
-/* Acciones */
-.actions { display: grid; justify-items: end; margin-top: 14px; }
-.btn { background: #1f2937; color: #fff; border: none; padding: 10px 14px; border-radius: 10px; cursor: pointer; }
-.btn:disabled { opacity: .5; cursor: not-allowed; }
+/* === Title === */
+.title{
+  text-align:center;
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 8px 0 18px;
+  letter-spacing:.2px;
+}
+
+/* === Avatar === */
+.avatar-block{
+  display:grid;
+  justify-items:center;
+  gap:10px;
+  margin-bottom: 18px;
+}
+.avatar{
+  width: 96px; height: 96px;
+  border-radius:9999px;
+  border:2px dashed #c7cdd4;
+  display:grid; place-items:center;
+  overflow:hidden;
+  background:#f7f9fc;
+  color:#6b7280; font-size:34px;
+}
+.avatar.has-img{ border-style:solid; }
+.avatar img{ width:100%; height:100%; object-fit:cover; }
+.avatar-btn{
+  background:#e7eaee; color:#1f2937;
+  font-size:.9rem; padding:6px 12px;
+  border-radius:9999px; cursor:pointer;
+  user-select:none;
+}
+.avatar-btn:hover{ filter:brightness(.96); }
+
+/* === Filters (Lugar / Nivel) === */
+.filters{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:14px;
+  margin: 8px 0 6px;
+}
+.select label{
+  display:block;
+  font-size:.92rem;
+  color:#475569;
+  margin-bottom:6px;
+}
+
+/* píldora amarilla + caret custom */
+.select select{
+  width:100%;
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  background:#ffe89a;
+  border:1px solid #e9d27a;
+  color:#111827;
+  padding:12px 42px 12px 16px;
+  border-radius:9999px;
+  font-size:.98rem;
+  line-height:1;
+  outline:none;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,.03);
+  cursor:pointer;
+  transition: box-shadow .15s ease, transform .03s ease;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #374151 50%),
+    linear-gradient(135deg, #374151 50%, transparent 50%);
+  background-position:
+    calc(100% - 26px) calc(50% - 3px),
+    calc(100% - 18px) calc(50% - 3px);
+  background-size: 8px 8px, 8px 8px;
+  background-repeat:no-repeat;
+}
+.select select:focus{
+  box-shadow:0 0 0 3px rgba(234,179,8,.35);
+}
+.select select:active{ transform: translateY(1px); }
+
+.error{
+  display:block;
+  margin-top:6px;
+  color:#b91c1c;
+  font-size:.82rem;
+}
+
+/* === Chips (azules rellenos) === */
+.chips{
+  display:flex; flex-wrap:wrap; gap:10px;
+  margin: 16px 0 10px;
+}
+.chip{
+  border:0;
+  background:#3b82f6;       /* azul base */
+  color:#fff;
+  padding:8px 14px;
+  border-radius:9999px;
+  cursor:pointer;
+  font-size:.95rem;
+  box-shadow:0 2px 0 rgba(0,0,0,.05);
+  transition:filter .15s ease, transform .03s ease;
+}
+.chip:hover{ filter:brightness(.96); }
+.chip:active{ transform: translateY(1px); }
+.chip.active{
+  background:#1d4ed8;       /* azul más intenso al seleccionar */
+}
+
+/* === Textarea === */
+.interests textarea{
+  width:100%;
+  min-height:120px;
+  resize:vertical;
+  padding:14px 16px;
+  border-radius:14px;
+  border:1px solid #d1d5db;
+  background:#f2f4f7;
+  color:#111827;
+  font-size:.98rem;
+}
+.interests textarea::placeholder{
+  color:#94a3b8;
+}
+
+/* === Actions / Save button === */
+.actions{
+  display:grid; justify-items:end;
+  margin-top:16px;
+}
+.btn{
+  background:#2563eb;       /* azul botón */
+  color:#fff; border:none;
+  padding:10px 18px;
+  border-radius:12px;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:0 6px 16px rgba(37,99,235,.25);
+  transition:filter .15s ease, transform .03s ease, box-shadow .15s ease;
+}
+.btn:hover{ filter:brightness(.97); }
+.btn:active{ transform: translateY(1px); }
+.btn:disabled{
+  background:#9ca3af;
+  box-shadow:none;
+  cursor:not-allowed;
+}

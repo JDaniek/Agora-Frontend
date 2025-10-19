@@ -1,4 +1,4 @@
-<section class="card">
+<section class="page">
   <h1 class="title">Termina tu cuenta</h1>
 
   <!-- Avatar -->
@@ -39,7 +39,7 @@
     </div>
   </div>
 
-  <!-- Chips -->
+  <!-- Chips con icono -->
   <div class="chips">
     <button
       type="button"
@@ -47,8 +47,10 @@
       [class.active]="isSelected(tag)"
       *ngFor="let tag of tagsDisponibles; trackBy: trackByTag"
       (click)="toggleTag(tag)"
+      aria-pressed="{{ isSelected(tag) }}"
     >
-      {{ tag }}
+      <span class="chip-ico" aria-hidden="true">{{ iconFor(tag) }}</span>
+      <span class="chip-label">{{ tag }}</span>
     </button>
   </div>
 

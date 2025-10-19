@@ -1,17 +1,15 @@
-/* === Card === */
-.card{
-  max-width: 780px;
-  margin: 40px auto;
-  padding: 28px 28px 22px;
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 20px 40px rgba(16,24,40,.08);
+/* === Página sin “carta”: fondo blanco, sensación de pieza completa === */
+.page{
+  max-width: 920px;
+  margin: 32px auto 40px;
+  padding: 0 24px 18px;
+  background: #fff;         /* fondo blanco total */
 }
 
-/* === Title === */
+/* === Título === */
 .title{
   text-align:center;
-  font-size: 1.7rem;
+  font-size: 1.8rem;
   font-weight: 700;
   margin: 8px 0 18px;
   letter-spacing:.2px;
@@ -43,7 +41,7 @@
 }
 .avatar-btn:hover{ filter:brightness(.96); }
 
-/* === Filters (Lugar / Nivel) === */
+/* === Selects (Lugar / Nivel) === */
 .filters{
   display:grid;
   grid-template-columns: 1fr 1fr;
@@ -57,7 +55,6 @@
   margin-bottom:6px;
 }
 
-/* píldora amarilla + caret custom */
 .select select{
   width:100%;
   appearance:none;
@@ -95,14 +92,14 @@
   font-size:.82rem;
 }
 
-/* === Chips (azules rellenos) === */
+/* === Chips (con icono) === */
 .chips{
   display:flex; flex-wrap:wrap; gap:10px;
   margin: 16px 0 10px;
 }
 .chip{
   border:0;
-  background:#3b82f6;       /* azul base */
+  background:#3b82f6;
   color:#fff;
   padding:8px 14px;
   border-radius:9999px;
@@ -110,11 +107,17 @@
   font-size:.95rem;
   box-shadow:0 2px 0 rgba(0,0,0,.05);
   transition:filter .15s ease, transform .03s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
 }
 .chip:hover{ filter:brightness(.96); }
 .chip:active{ transform: translateY(1px); }
-.chip.active{
-  background:#1d4ed8;       /* azul más intenso al seleccionar */
+.chip.active{ background:#1d4ed8; }
+
+.chip-ico{
+  font-size: 1.05rem;
+  line-height: 1;
 }
 
 /* === Textarea === */
@@ -139,7 +142,7 @@
   margin-top:16px;
 }
 .btn{
-  background:#2563eb;       /* azul botón */
+  background:#2563eb;
   color:#fff; border:none;
   padding:10px 18px;
   border-radius:12px;

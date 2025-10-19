@@ -23,7 +23,7 @@ type PerfilForm = FormGroup<{
   styleUrls: ['./complete-profile.css'],
 })
 export class CompleteProfile {
-  // Catálogos (luego se mueven a un servicio)
+  // Catálogos (mover a CatalogService cuando expongan API)
   estadosMx: Opcion[] = [
     { value: 'ags', label: 'Aguascalientes' }, { value: 'bc', label: 'Baja California' },
     { value: 'bcs', label: 'Baja California Sur' }, { value: 'camp', label: 'Campeche' },
@@ -59,12 +59,34 @@ export class CompleteProfile {
     'Soft Skills', 'Salud', 'Bienestar'
   ];
 
-  // UI state (signals sencillos)
+  /** Íconos por materia (pueden reemplazar por sus SVGs) */
+  private tagIcons: Record<string, string> = {
+    'Ciencias exactas': '🧮',
+    'Ciencias Naturales': '🌿',
+    'Ciencias Sociales': '🧑‍🤝‍🧑',
+    'Idiomas': '🗣️',
+    'Artes': '🎨',
+    'Humanidades': '📚',
+    'Comunicación': '📢',
+    'Arte y Creatividad': '🎭',
+    'Negocio': '💼',
+    'Economía': '📈',
+    'Soft Skills': '🤝',
+    'Salud': '🏥',
+    'Bienestar': '🌱',
+  };
+
+  iconFor(tag: string) {
+    return this.tagIcons[tag] ?? '•';
+  }
+
+  // UI state (signals)
   selectedTags = signal<Set<string>>(new Set<string>());
   avatarPreview = signal<string | null>(null);
+  avatarUrl = signal<string | null>(null); // URL final después de subir a Cloudinary
   isSaving = signal(false);
 
-  // Form con controles NO nuleables (nonNullable en cada control)
+  // Form con controles no nuleables
   form: PerfilForm = new FormGroup<PerfilForm['controls']>({
     lugar: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     nivel: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -76,13 +98,13 @@ export class CompleteProfile {
 
   // Payload listo para API
   payload = computed(() => {
-    const { lugar, nivel, intereses } = this.form.getRawValue(); // ya son string, no null
+    const { lugar, nivel, intereses } = this.form.getRawValue();
     return {
       lugar,
       nivel,
       intereses: intereses.trim(),
       tags: Array.from(this.selectedTags()),
-      // avatar: subir archivo/URL cuando definan backend
+      avatarUrl: this.avatarUrl(), // ← URL pública de Cloudinary (cuando se suba)
     };
   });
 
@@ -100,9 +122,25 @@ export class CompleteProfile {
     const input = ev.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
+
+    // Vista previa local (no bloquea UI)
     const reader = new FileReader();
     reader.onload = () => this.avatarPreview.set(reader.result as string);
     reader.readAsDataURL(file);
+
+    /**
+     * 🔌 TODO (equipo backend): subir a Cloudinary/"CloudBinary" aquí.
+     *  1) Hacer POST al endpoint de upload con el archivo `file`.
+     *  2) Recibir la URL pública (secure_url) y asignarla:
+     *        this.avatarUrl.set(secureUrl);
+     *  3) Manejar errores y mostrar feedback si falla la subida.
+     *
+     *  Ejemplo de integración (pseudocódigo):
+     *    this.cloudService.upload(file).subscribe({
+     *      next: url => this.avatarUrl.set(url),
+     *      error: err => console.error('Upload failed', err)
+     *    });
+     */
   }
 
   submit() {
@@ -111,6 +149,13 @@ export class CompleteProfile {
       return;
     }
     this.isSaving.set(true);
+
+    /**
+     * 🔌 TODO (equipo backend): guardar perfil aquí.
+     *   - Endpoint sugerido: POST /api/profile  (o el que definan)
+     *   - Body: this.payload()
+     *   - Si usan servicio: this.profileService.save(this.payload()).subscribe(...)
+     */
     setTimeout(() => {
       console.log('Payload listo para API:', this.payload());
       this.isSaving.set(false);

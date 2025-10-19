@@ -5,5 +5,7 @@ export const routes: Routes = [
   { path: 'signup', loadComponent: () => import('./pages/signup/signup').then(m => m.Signup) },
     { path: 'login', loadComponent: () => import('./pages/login/login').then(m => m.Login) },
     { path: 'register', loadComponent: () => import('./pages/register/register').then(m => m.Register) }
+    { path: 'complete-profile', loadComponent: () => import('./pages/complete-profile/complete-profile').then(m => m.CompleteProfile) }
+
 ];
  

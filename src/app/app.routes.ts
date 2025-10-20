@@ -8,4 +8,3 @@ export const routes: Routes = [
     { path: 'dashboard-asesor', loadComponent:()=> import ('./pages/dashboard-asesor/dashboard-asesor').then(m=> m.DashboardAsesor)}
 
 ];
- 

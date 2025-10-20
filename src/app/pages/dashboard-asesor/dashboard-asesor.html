@@ -1,0 +1,82 @@
+<!-- Barra superior -->
+<header class="top-bar">
+  <button class="menu-toggle" (click)="toggleSidebar()">
+   <img src="/icon/Hamburger_MD.png" alt="">
+  </button>
+  <div class="right-actions">
+    <img src="/icon/Bell.png" alt="">
+        <div class="avatar"></div>
+  </div>
+</header>
+
+<!-- Sidebar lateral -->
+<aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
+  <div class="sidebar-header">
+    <img class="agora-icon" src="/agora_icon.png" alt="">
+    <!-- Botón para cerrar el menú desde dentro -->
+    <button class="close-menu-btn" (click)="closeSidebar()">
+      <span class="material-icons"><</span>
+    </button>
+  </div>
+
+  <nav class="sidebar-menu">
+    <a href="#" (click)="closeSidebar()" class="menu-item active">
+      <img src="/icon/home.png" alt="">
+      Inicio
+    </a>
+    <a href="#" (click)="closeSidebar()" class="menu-item">
+      <img src="/icon/fav.png" alt="">
+      Favoritos
+    </a>
+    <a href="#" (click)="closeSidebar()" class="menu-item">
+      <img src="/icon/chat.png" alt="">
+      Chats
+    </a>
+    <a href="#" (click)="closeSidebar()" class="menu-item">
+      <img src="/icon/solicitud.png" alt="">
+      Solicitudes
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="logout-btn" (click)="closeSidebar()">
+      <img src="/icon/logout.png" alt="">
+      Cerrar sesión
+    </button>
+  </div>
+</aside>
+
+<!-- Overlay para cerrar al hacer clic fuera -->
+<div class="overlay" *ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
+
+<!-- Contenido principal -->
+<main class="main-content" [class.main-content-shifted]="isSidebarOpen">
+  <div class="content-header">
+    <h1>Bienvenido, Asesor</h1>
+    <p class="subtitle">Gestiona las solicitudes pendientes</p>
+  </div>
+
+  <!-- Tarjetas de solicitudes -->
+  <div class="cards-container">
+    <div class="card" *ngFor="let solicitud of solicitudes; let i = index">
+      <div class="card-header">
+        <h3>{{ solicitud.nombre }}</h3>
+        <span class="date">{{ solicitud.fecha }}</span>
+      </div>
+      <div class="card-body">
+        <div class="status-badge" [class]="solicitud.estado.toLowerCase()">
+          {{ solicitud.estado }}
+        </div>
+        <div class="priority">
+          <strong>Prioridad:</strong> {{ solicitud.prioridad }}
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-detail">Ver detalle</button>
+        <button class="btn btn-action" [class]="solicitud.estado.toLowerCase()">
+          {{ solicitud.estado === 'Pendiente' ? 'Aprobar' : 'Ver' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</main>

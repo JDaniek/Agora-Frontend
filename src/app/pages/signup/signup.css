@@ -21,15 +21,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
 }
 
 .container {
   background-color: rgb(255, 255, 255);
-  padding: 60px; /* Aumentado para más espacio interno */
+  padding: 2% 3%;
   border-radius: 12px;
   text-align: center;
-  max-width: 600px; /* Aumentado el max-width */
+  width: 30%;
+  max-width: 600px;
+  height: 90%; /* Aumentado el max-width */
 }
 
 .container h1 {
@@ -72,19 +73,20 @@
 }
 
 .option img {
-  width: 90px;
-  height: 90px;
-  margin-bottom: 10px;
+  width: 150px;
+  height: 150px;
+  margin-bottom: 8%;
 }
 
 .option span {
-  font-size: 16px;
-  color: #333333;
+  font-size: 24px;
+  font-weight: 400;
+  color: #1e3a8a;
 }
 
 .continue-btn {
   background-color: #ffd877;
-  color: #ffffff;
+  color: #383838;
   border: none;
   padding: 14px 30px;
   border-radius: 10px;

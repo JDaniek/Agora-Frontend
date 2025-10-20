@@ -1,0 +1,90 @@
+<section class="home-wrap" [class.sidebar-open]="sidebarOpen()">
+
+  <!-- Sidebar (una sola vista, se muestra/oculta con toggle) -->
+  <aside class="sidebar">
+    <div class="sb-header">
+      <button class="sb-toggle" (click)="toggleSidebar()" aria-label="Cerrar menú">☰</button>
+      <div class="logo">🏛️</div>
+    </div>
+
+    <nav class="sb-nav">
+      <a class="sb-item active"><span>🏠</span> Home</a>
+      <a class="sb-item"><span>⭐</span> Favoritos</a>
+      <a class="sb-item"><span>💬</span> Chats</a>
+    </nav>
+
+    <div class="sb-footer">
+      <button class="logout">🚪 Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="content">
+    <!-- Topbar -->
+    <div class="topbar">
+      <button class="sb-toggle only-mobile" (click)="toggleSidebar()" aria-label="Abrir menú">☰</button>
+
+      <div class="search">
+        <span class="ico">🔍</span>
+        <input type="text" placeholder="Busca un asesor" [formControl]="filtros.controls.search">
+        <button class="clear" *ngIf="filtros.controls.search.value" (click)="filtros.controls.search.setValue('')">✕</button>
+      </div>
+
+      <div class="filters">
+        <div class="select">
+          <select [formControl]="filtros.controls.lugar">
+            <option value="">Lugar</option>
+            <option *ngFor="let l of lugares; trackBy: trackByStr" [value]="l">{{ l }}</option>
+          </select>
+        </div>
+        <div class="select">
+          <select [formControl]="filtros.controls.nivel">
+            <option value="">Nivel</option>
+            <option *ngFor="let n of niveles; trackBy: trackByStr" [value]="n">{{ n }}</option>
+          </select>
+        </div>
+        <div class="select">
+          <select [formControl]="filtros.controls.materia">
+            <option value="">Materias</option>
+            <option *ngFor="let m of materias; trackBy: trackByStr" [value]="m">{{ m }}</option>
+          </select>
+        </div>
+        <button class="refresh" (click)="clearFilters()" title="Limpiar filtros">↻</button>
+        <button class="bell" title="Notificaciones">🔔</button>
+        <button class="me" title="Perfil">👤</button>
+      </div>
+    </div>
+
+    <h2 class="section-title">Recomendaciones</h2>
+
+    <!-- Grid de cards -->
+    <div class="grid">
+      <article class="card" *ngFor="let t of filtered(); trackBy: trackById">
+        <button class="fav" [class.on]="t.bookmarked" (click)="toggleBookmark(t)" title="Guardar">
+          ★
+        </button>
+
+        <div class="avatar" [class.has-img]="t.avatarUrl">
+          <img *ngIf="t.avatarUrl" [src]="t.avatarUrl" alt="{{t.name}}">
+          <span *ngIf="!t.avatarUrl" aria-hidden="true">👤</span>
+        </div>
+
+        <div class="name">{{ t.name }}</div>
+        <div class="sub"><span class="level-chip">{{ t.nivel }}</span></div>
+
+        <div class="tags">
+          <span class="tag" *ngFor="let tag of t.tags; trackBy: trackByStr">
+            <span class="ico" aria-hidden="true">{{ iconFor(tag) }}</span>
+            {{ tag }}
+          </span>
+        </div>
+
+        <p class="desc">{{ t.description }}</p>
+
+        <div class="actions">
+          <button class="see-more">Ver más</button>
+        </div>
+      </article>
+    </div>
+  </main>
+</section>

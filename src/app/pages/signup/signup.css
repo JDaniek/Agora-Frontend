@@ -49,7 +49,9 @@
   display: flex;
   justify-content: space-around;
   margin-bottom: 30px;
+  gap: 10px;
 }
+
 .option.option {
   display: flex;
   flex-direction: column;
@@ -73,8 +75,10 @@
 }
 
 .option img {
-  width: 150px;
-  height: 150px;
+  width: 100%;      
+  max-width: 120px;   
+  height: auto;      
+  object-fit: contain; 
   margin-bottom: 8%;
 }
 
@@ -102,4 +106,39 @@
 .continue-btn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 60%;
+  }
+
+  .option img {
+    max-width: 120px;
+  }
+}
+
+/* Celular */
+@media (max-width: 480px) {
+  .container {
+    width: 85%;
+    padding: 5% 6%;
+  }
+
+  .options {
+    flex-direction: column;   /* Se apilan en vertical */
+    align-items: center;
+  }
+
+  .option {
+    max-width: 100%;
+  }
+
+  .option img {
+    max-width: 100px;
+  }
+
+  .option span {
+    font-size: 20px;
+  }
 }

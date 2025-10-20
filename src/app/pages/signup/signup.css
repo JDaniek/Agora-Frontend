@@ -21,16 +21,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 }
 
 .container {
   background-color: rgb(255, 255, 255);
-  padding: 2% 3%;
+  padding: 60px; /* Aumentado para más espacio interno */
   border-radius: 12px;
   text-align: center;
-  width: 30%;
-  max-width: 600px;
-  height: 90%; /* Aumentado el max-width */
+  max-width: 600px; /* Aumentado el max-width */
 }
 
 .container h1 {
@@ -73,20 +72,19 @@
 }
 
 .option img {
-  width: 150px;
-  height: 150px;
-  margin-bottom: 8%;
+  width: 90px;
+  height: 90px;
+  margin-bottom: 10px;
 }
 
 .option span {
-  font-size: 24px;
-  font-weight: 400;
-  color: #1e3a8a;
+  font-size: 16px;
+  color: #333333;
 }
 
 .continue-btn {
   background-color: #ffd877;
-  color: #383838;
+  color: #ffffff;
   border: none;
   padding: 14px 30px;
   border-radius: 10px;

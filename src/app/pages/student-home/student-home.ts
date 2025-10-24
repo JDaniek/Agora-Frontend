@@ -28,8 +28,16 @@ type FiltrosForm = FormGroup<{
   styleUrls: ['./student-home.css'],
 })
 export class StudentHome {
-  /** Sidebar abierto/cerrado */
-  sidebarOpen = signal<boolean>(false);
+
+    isSidebarOpen = false;
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  closeSidebar() {
+    this.isSidebarOpen = false;
+  }
 
   /** Catálogos (pueden venir de API) */
   lugares = ['Aguascalientes','Baja California','Chiapas','CDMX','Jalisco','Nuevo León','Puebla','Yucatán'];
@@ -92,7 +100,6 @@ export class StudentHome {
     });
   });
 
-  toggleSidebar(){ this.sidebarOpen.set(!this.sidebarOpen()); }
   clearFilters(){ this.filtros.reset({search:'',lugar:'',nivel:'',materia:''}); }
 
   toggleBookmark(t: TutorCard){

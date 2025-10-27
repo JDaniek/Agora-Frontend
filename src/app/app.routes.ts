@@ -1,14 +1,14 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  // Página principal
+  // Landing
   {
     path: '',
     loadComponent: () =>
       import('./pages/landing-page/landing.page').then((m) => m.LandingPage),
   },
 
-  // Registro / Login
+  // Auth
   {
     path: 'signup',
     loadComponent: () =>
@@ -25,7 +25,7 @@ export const routes: Routes = [
       import('./pages/register/register').then((m) => m.Register),
   },
 
-  // Completar perfil
+  // Perfil incompleto
   {
     path: 'complete-profile',
     loadComponent: () =>
@@ -34,7 +34,7 @@ export const routes: Routes = [
       ),
   },
 
-  // Home del alumno
+  // Home alumno
   {
     path: 'student-home',
     loadComponent: () =>
@@ -43,7 +43,7 @@ export const routes: Routes = [
       ),
   },
 
-  // Perfil del tutor
+  // ✅ PERFIL DE TUTOR (archivo: pages/tutor-profile/tutor-profile.ts, clase: TutorProfile)
   {
     path: 'tutor/:id',
     loadComponent: () =>
@@ -52,7 +52,7 @@ export const routes: Routes = [
       ),
   },
 
-  // Detalle de clase
+  // ✅ DETALLE DE CLASE (archivo: pages/class-detail/class-detail.ts, clase: ClassDetail)
   {
     path: 'class/:id',
     loadComponent: () =>

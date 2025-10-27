@@ -1,0 +1,20 @@
+<div class="profile">
+  <div class="header">
+    <div class="avatar">👤</div>
+    <div>
+      <h2>{{ tutor.nombre }}</h2>
+      <div class="sub">{{ tutor.nivel }} · {{ tutor.lugar }}</div>
+      <ul class="tags">
+        <li *ngFor="let t of tutor.tags">{{ t }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="bio">{{ tutor.descripcion }}</p>
+
+  <div class="cta">
+    <a class="btn primary" routerLink="/chat">Enviar mensaje</a>
+    <a class="btn ghost" [routerLink]="['/class', '1']">Ver clases</a>
+  </div>
+</div>
+

@@ -1,0 +1,12 @@
+.profile { max-width: 900px; margin: 0 auto; padding: 1rem; }
+.header { display: grid; grid-template-columns: 72px 1fr; gap: 1rem; align-items: center; }
+.avatar { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; background: #eef3ff; }
+.sub { color: #6b7280; margin: .2rem 0; }
+.tags { display: flex; gap: .4rem; list-style: none; padding: 0; margin: .3rem 0 0; }
+.tags li { background: #f5f8ff; border: 1px solid #e0e6f1; padding: .25rem .55rem; border-radius: 999px; font-size: .85rem; }
+.bio { margin: 1rem 0; color: #41506b; }
+.cta { display: flex; gap: .5rem; }
+.btn { border: none; border-radius: 10px; padding: .6rem .9rem; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn.primary { background: #3b82f6; color: #fff; }
+.btn.ghost { background: #eef3ff; color: #0f2f6b; }
+

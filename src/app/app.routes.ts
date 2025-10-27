@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  // Página principal (Landing Page)
+  // Página principal
   {
     path: '',
     loadComponent: () =>
@@ -25,7 +25,7 @@ export const routes: Routes = [
       import('./pages/register/register').then((m) => m.Register),
   },
 
-  // Completar perfil (vista de llenar perfil)
+  // Completar perfil
   {
     path: 'complete-profile',
     loadComponent: () =>
@@ -34,7 +34,7 @@ export const routes: Routes = [
       ),
   },
 
-  // 🆕 Nueva vista: Home del Alumno
+  // Home del alumno
   {
     path: 'student-home',
     loadComponent: () =>
@@ -43,10 +43,32 @@ export const routes: Routes = [
       ),
   },
 
-  // Ruta por defecto o fallback (opcional)
+  // Perfil del tutor
   {
-    path: '**',
-    redirectTo: '',
-    pathMatch: 'full',
+    path: 'tutor/:id',
+    loadComponent: () =>
+      import('./pages/tutor-profile/tutor-profile').then(
+        (m) => m.TutorProfile
+      ),
   },
+
+  // Detalle de clase
+  {
+    path: 'class/:id',
+    loadComponent: () =>
+      import('./pages/class-detail/class-detail').then(
+        (m) => m.ClassDetail
+      ),
+  },
+
+  // Chat
+  {
+    path: 'chat',
+    loadComponent: () =>
+      import('./pages/chat/chat').then((m) => m.Chat),
+  },
+
+  // Fallback
+  { path: '**', redirectTo: '' },
 ];
+

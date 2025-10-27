@@ -1,11 +1,6 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  ReactiveFormsModule,
-  Validators,
-  FormControl,
-  FormGroup
-} from '@angular/forms';
+import { ReactiveFormsModule, Validators, FormControl, FormGroup } from '@angular/forms';
 
 type Opcion = { value: string; label: string };
 
@@ -23,7 +18,6 @@ type PerfilForm = FormGroup<{
   styleUrls: ['./complete-profile.css'],
 })
 export class CompleteProfile {
-  // Catálogos (mover a CatalogService cuando expongan API)
   estadosMx: Opcion[] = [
     { value: 'ags', label: 'Aguascalientes' }, { value: 'bc', label: 'Baja California' },
     { value: 'bcs', label: 'Baja California Sur' }, { value: 'camp', label: 'Campeche' },
@@ -59,44 +53,30 @@ export class CompleteProfile {
     'Soft Skills', 'Salud', 'Bienestar'
   ];
 
-  /** Íconos por materia (pueden reemplazar por sus SVGs) */
   private tagIcons: Record<string, string> = {
-    'Ciencias exactas': '🧮',
-    'Ciencias Naturales': '🌿',
-    'Ciencias Sociales': '🧑‍🤝‍🧑',
-    'Idiomas': '🗣️',
-    'Artes': '🎨',
-    'Humanidades': '📚',
-    'Comunicación': '📢',
-    'Arte y Creatividad': '🎭',
-    'Negocio': '💼',
-    'Economía': '📈',
-    'Soft Skills': '🤝',
-    'Salud': '🏥',
-    'Bienestar': '🌱',
+    'Ciencias exactas': '🧮','Ciencias Naturales': '🌿','Ciencias Sociales': '🧑‍🤝‍🧑','Idiomas': '🗣️','Artes': '🎨',
+    'Humanidades': '📚','Comunicación': '📢','Arte y Creatividad': '🎭','Negocio': '💼','Economía': '📈',
+    'Soft Skills': '🤝','Salud': '🏥','Bienestar': '🌱',
   };
+  iconFor(tag: string) { return this.tagIcons[tag] ?? '•'; }
 
-  iconFor(tag: string) {
-    return this.tagIcons[tag] ?? '•';
-  }
-
-  // UI state (signals)
   selectedTags = signal<Set<string>>(new Set<string>());
   avatarPreview = signal<string | null>(null);
-  avatarUrl = signal<string | null>(null); // URL final después de subir a Cloudinary
+  avatarUrl = signal<string | null>(null);
   isSaving = signal(false);
 
-  // Form con controles no nuleables
   form: PerfilForm = new FormGroup<PerfilForm['controls']>({
     lugar: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     nivel: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    intereses: new FormControl<string>('', { nonNullable: true })
+    // ⬇️ ahora es obligatoria y de mínimo 20 caracteres
+    intereses: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(20)] }),
   });
 
-  // trackBy para *ngFor
+  // error por no elegir ninguna materia
+  tagsError = computed(() => this.selectedTags().size === 0);
+
   trackByTag = (_: number, item: string) => item;
 
-  // Payload listo para API
   payload = computed(() => {
     const { lugar, nivel, intereses } = this.form.getRawValue();
     return {
@@ -104,7 +84,7 @@ export class CompleteProfile {
       nivel,
       intereses: intereses.trim(),
       tags: Array.from(this.selectedTags()),
-      avatarUrl: this.avatarUrl(), // ← URL pública de Cloudinary (cuando se suba)
+      avatarUrl: this.avatarUrl(),
     };
   });
 
@@ -113,49 +93,30 @@ export class CompleteProfile {
     next.has(tag) ? next.delete(tag) : next.add(tag);
     this.selectedTags.set(next);
   }
-
-  isSelected(tag: string) {
-    return this.selectedTags().has(tag);
-  }
+  isSelected(tag: string) { return this.selectedTags().has(tag); }
 
   onAvatarChange(ev: Event) {
     const input = ev.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
 
-    // Vista previa local (no bloquea UI)
     const reader = new FileReader();
     reader.onload = () => this.avatarPreview.set(reader.result as string);
     reader.readAsDataURL(file);
 
-    /**
-     * 🔌 TODO (equipo backend): subir a Cloudinary/"CloudBinary" aquí.
-     *  1) Hacer POST al endpoint de upload con el archivo `file`.
-     *  2) Recibir la URL pública (secure_url) y asignarla:
-     *        this.avatarUrl.set(secureUrl);
-     *  3) Manejar errores y mostrar feedback si falla la subida.
-     *
-     *  Ejemplo de integración (pseudocódigo):
-     *    this.cloudService.upload(file).subscribe({
-     *      next: url => this.avatarUrl.set(url),
-     *      error: err => console.error('Upload failed', err)
-     *    });
-     */
+    // 🔌 TODO: subir a tu endpoint → this.avatarUrl.set(secureUrl);
   }
 
   submit() {
-    if (this.form.invalid) {
+    // marca errores si faltan campos
+    if (this.form.invalid || this.tagsError()) {
       this.form.markAllAsTouched();
       return;
     }
+
     this.isSaving.set(true);
 
-    /**
-     * 🔌 TODO (equipo backend): guardar perfil aquí.
-     *   - Endpoint sugerido: POST /api/profile  (o el que definan)
-     *   - Body: this.payload()
-     *   - Si usan servicio: this.profileService.save(this.payload()).subscribe(...)
-     */
+    // 🔌 TODO: POST /api/profile con this.payload()
     setTimeout(() => {
       console.log('Payload listo para API:', this.payload());
       this.isSaving.set(false);
@@ -163,3 +124,4 @@ export class CompleteProfile {
     }, 600);
   }
 }
+

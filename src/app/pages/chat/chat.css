@@ -1,0 +1,16 @@
+.chat { display: grid; grid-template-rows: auto 1fr auto; height: calc(100vh - 120px); max-width: 900px; margin: 0 auto; border: 1px solid #eef1f6; border-radius: 16px; overflow: hidden; background: #fff; }
+.chat__head { display: flex; gap: .8rem; align-items: center; padding: .8rem 1rem; background: #174a9a; color: #fff; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: #eef3ff; display: grid; place-items: center; color: #174a9a; }
+.name { font-weight: 700; }
+.sub { font-size: .85rem; opacity: .9; }
+
+.chat__msgs { padding: 1rem; display: flex; flex-direction: column; gap: .5rem; overflow: auto; background: #f7f9fc; }
+.msg { max-width: 70%; }
+.msg .bubble { background: #eef3ff; border-radius: 14px; padding: .5rem .7rem; color: #0f2f6b; }
+.msg.me { margin-left: auto; text-align: right; }
+.msg.me .bubble { background: #3b82f6; color: #fff; }
+.time { font-size: .75rem; color: #6b7280; margin-top: .15rem; }
+
+.chat__input { display: flex; gap: .5rem; padding: .6rem; border-top: 1px solid #eef1f6; background: #fff; }
+.chat__input input { flex: 1; border: 1px solid #e3e7ef; border-radius: 12px; padding: .6rem .8rem; outline: none; }
+.send { border: none; border-radius: 10px; padding: .6rem .9rem; background: #3b82f6; color: #fff; font-weight: 600; cursor: pointer; }

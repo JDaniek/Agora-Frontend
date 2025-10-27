@@ -1,0 +1,18 @@
+<div class="class">
+  <header class="head">
+    <h2>{{ data.titulo }}</h2>
+    <div class="meta">{{ data.nivel }} · {{ data.duracionMin }} min</div>
+  </header>
+
+  <p class="desc">{{ data.descripcion }}</p>
+
+  <ul class="pills">
+    <li *ngFor="let m of data.materias">{{ m }}</li>
+  </ul>
+
+  <div class="cta">
+    <a class="btn primary" routerLink="/chat">Consultar disponibilidad</a>
+    <a class="btn ghost" [routerLink]="['/tutor', data.tutorId]">Ver tutor</a>
+  </div>
+</div>
+

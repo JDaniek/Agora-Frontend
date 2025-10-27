@@ -156,4 +156,17 @@
 .actions{ display:grid; justify-items:center; margin-top:8px; }
 .see-more{
   border:0; background:var(--blue-2); color:#fff; padding:8px 12px; border-radius:10px; cursor:pointer;
+  
+/* Accesibilidad y micro-interacciones */
+.sb-item:focus-visible,
+.logout:focus-visible,
+.clear:focus-visible,
+.refresh:focus-visible,
+.bell:focus-visible,
+.me:focus-visible,
+.see-more:focus-visible,
+.fav:focus-visible {
+  outline: 3px solid rgba(59,130,246,.35);
+  outline-offset: 2px;
+}
 }

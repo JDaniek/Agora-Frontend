@@ -1,0 +1,22 @@
+<section class="chat">
+  <header class="chat__head">
+    <div class="avatar">👤</div>
+    <div>
+      <div class="name">Tutor</div>
+      <div class="sub">Conectado</div>
+    </div>
+  </header>
+
+  <div class="chat__msgs">
+    <div *ngFor="let m of messages" class="msg" [class.me]="m.from === 'me'">
+      <div class="bubble">{{ m.text }}</div>
+      <div class="time">{{ m.at | date: 'shortTime' }}</div>
+    </div>
+  </div>
+
+  <footer class="chat__input">
+    <input type="text" placeholder="Escribe un mensaje..." [(ngModel)]="draft" (keydown.enter)="send()" />
+    <button class="send" (click)="send()">Enviar</button>
+  </footer>
+</section>
+

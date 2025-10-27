@@ -39,7 +39,7 @@
     </div>
   </div>
 
-  <!-- Chips con icono -->
+  <!-- Chips -->
   <div class="chips">
     <button
       type="button"
@@ -47,12 +47,14 @@
       [class.active]="isSelected(tag)"
       *ngFor="let tag of tagsDisponibles; trackBy: trackByTag"
       (click)="toggleTag(tag)"
-      aria-pressed="{{ isSelected(tag) }}"
-    >
+      [attr.aria-pressed]="isSelected(tag)">
       <span class="chip-ico" aria-hidden="true">{{ iconFor(tag) }}</span>
       <span class="chip-label">{{ tag }}</span>
     </button>
   </div>
+  <small class="error" *ngIf="tagsError()">
+    Selecciona al menos una materia.
+  </small>
 
   <!-- Intereses -->
   <div class="interests">
@@ -60,13 +62,21 @@
       rows="4"
       placeholder="Describe tus intereses específicos de manera sencilla..."
       [formControl]="form.controls.intereses"
-    ></textarea>
+      [attr.aria-invalid]="form.controls.intereses.invalid && form.controls.intereses.touched">
+    </textarea>
+    <small class="error" *ngIf="form.controls.intereses.touched && form.controls.intereses.hasError('required')">
+      La descripción es obligatoria.
+    </small>
+    <small class="error" *ngIf="form.controls.intereses.touched && form.controls.intereses.hasError('minlength')">
+      Describe un poco más (mínimo {{ form.controls.intereses.getError('minlength')?.requiredLength }} caracteres).
+    </small>
   </div>
 
   <!-- Guardar -->
   <div class="actions">
-    <button class="btn" [disabled]="isSaving() || form.invalid" (click)="submit()">
+    <button class="btn" [disabled]="isSaving() || form.invalid || tagsError()" (click)="submit()">
       {{ isSaving() ? 'Guardando...' : 'Guardar' }}
     </button>
   </div>
 </section>
+

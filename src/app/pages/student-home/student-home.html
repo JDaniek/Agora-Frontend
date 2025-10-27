@@ -1,6 +1,5 @@
 <section class="home-wrap" [class.sidebar-open]="sidebarOpen()">
-
-  <!-- Sidebar (una sola vista, se muestra/oculta con toggle) -->
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sb-header">
       <button class="sb-toggle" (click)="toggleSidebar()" aria-label="Cerrar menú">☰</button>
@@ -20,7 +19,6 @@
 
   <!-- Contenido principal -->
   <main class="content">
-    <!-- Topbar -->
     <div class="topbar">
       <button class="sb-toggle only-mobile" (click)="toggleSidebar()" aria-label="Abrir menú">☰</button>
 
@@ -57,12 +55,9 @@
 
     <h2 class="section-title">Recomendaciones</h2>
 
-    <!-- Grid de cards -->
     <div class="grid">
       <article class="card" *ngFor="let t of filtered(); trackBy: trackById">
-        <button class="fav" [class.on]="t.bookmarked" (click)="toggleBookmark(t)" title="Guardar">
-          ★
-        </button>
+        <button class="fav" [class.on]="t.bookmarked" (click)="toggleBookmark(t)" title="Guardar">★</button>
 
         <div class="avatar" [class.has-img]="t.avatarUrl">
           <img *ngIf="t.avatarUrl" [src]="t.avatarUrl" alt="{{t.name}}">
@@ -74,7 +69,7 @@
 
         <div class="tags">
           <span class="tag" *ngFor="let tag of t.tags; trackBy: trackByStr">
-            <span class="ico" aria-hidden="true">{{ iconFor(tag) }}</span>
+            <span class="ico">{{ iconFor(tag) }}</span>
             {{ tag }}
           </span>
         </div>
@@ -82,7 +77,8 @@
         <p class="desc">{{ t.description }}</p>
 
         <div class="actions">
-          <button class="see-more">Ver más</button>
+          <!-- ✅ routerLink ya funciona -->
+          <a class="see-more" [routerLink]="['/tutor', t.id]">Ver más</a>
         </div>
       </article>
     </div>

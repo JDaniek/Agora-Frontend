@@ -2,19 +2,50 @@
   <div class="container">
     <h1>Únete a Agora!</h1>
     <p>Rellena los siguientes datos</p>
-    <form>
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+<!--      //Ingreso de datos para firstName-->
       <div class="input-group">
-        <label for="username">Nombre: </label>
-        <input type="text" id="username" name="username" placeholder="Ingresa tu nombre" required />
+        <label for="firstName">Nombre: </label>
+        <input
+          type="text"
+          id="firstName"
+          name="firstName"
+          placeholder="Ingresa tu nombre" required [(ngModel)]="formData.firstName"/>
       </div>
+<!--      //Ingreso de segundo nombre en caso de haber-->
       <div class="input-group">
-        <label for="username">Apellido: </label>
-        <input type="text" id="username" name="lastname" placeholder="Ingresa tus apellidos" required />
+        <label for="secondName">Segundo Nombre (opcional): </label>
+        <input
+          type="text"
+          id="secondName"
+          name="secondName"
+          placeholder="Ingresa tu segundo nombre"
+          [(ngModel)]="formData.secondName"/>
       </div>
+<!--      //Ingreso de apellidos-->
+      <div class="input-group">
+        <label for="lastName">Apellido:</label>
+        <input
+          type="text"
+          id="lastName"
+          name="lastName"
+          placeholder="Ingresa tus apellidos"
+          required
+          [(ngModel)]="formData.lastName">
+      </div>
+
+<!--      //Ingreso de correo electronico-->
       <div class="input-group">
         <label for="email">Correo electrónico: </label>
-        <input type="email" id="email" name="email" placeholder="Ingresa tu correo electrónico" required/>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Ingresa tu correo electrónico"
+          required
+          email [(ngModel)]="formData.email"/>
       </div>
+<!--      //Ingreso de contraseña-->
       <div class="input-group">
         <label for="password">Contraseña: </label>
         <input
@@ -23,10 +54,21 @@
           name="password"
           placeholder="Ingresa tu contraseña"
           required
+          minlength="6" [(ngModel)]="formData.password"
         />
       </div>
-      <button type="submit" class="btn-login">Crear cuenta</button>
-      <button type="submit" class="btn-register" (click)="navigateToLogin()">Iniciar sesión</button> 
+<!--      //Seccion de botones-->
+<!--      //Boton para crear cuenta-->
+      <button
+        type="submit"
+        class="btn-login"
+        [disabled]="!registerForm.form.valid">Crear cuenta
+      </button>
+<!--      //Boton para iniciar sesion-->
+      <button
+        type="submit"
+        class="btn-register" (click)="navigateToLogin()">Iniciar sesión
+      </button>
     </form>
   </div>
 </div>

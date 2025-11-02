@@ -10,7 +10,7 @@
 
 .page{
   max-width: 920px;
-  margin: 32px auto 40px;
+  margin: 20px auto 20px;
   padding: 0 24px 18px;
   background: #fff;         /* fondo blanco total */
 }
@@ -20,7 +20,7 @@
   text-align:center;
   font-size: 1.8rem;
   font-weight: 700;
-  margin: 8px 0 18px;
+  margin: 8px 0 8px;
   letter-spacing:.2px;
 }
 
@@ -72,7 +72,7 @@
   background:#ffe89a;
   border:1px solid #e9d27a;
   color:#111827;
-  padding:12px 42px 12px 16px;
+  padding:8px 42px 8px 16px;
   border-radius:9999px;
   font-size:.98rem;
   line-height:1;
@@ -113,19 +113,19 @@
   padding:8px 14px;
   border-radius:9999px;
   cursor:pointer;
-  font-size:.95rem;
+  font-size:1rem;
   box-shadow:0 2px 0 rgba(0,0,0,.05);
   transition:filter .15s ease, transform .03s ease;
   display:inline-flex;
   align-items:center;
   gap:8px;
 }
-.chip:hover{ filter:brightness(.96); }
+.chip:hover{ filter:brightness(1); }
 .chip:active{ transform: translateY(1px); }
 .chip.active{ background:#1d4ed8; }
 
 .chip-ico{
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: 1;
 }
 
@@ -135,14 +135,15 @@
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   top: 0;
   width:100%;
-  min-height:120px;
+  min-height:20px;
+  max-height: 50px;
   resize:vertical;
   padding:14px 16px;
   border-radius:14px;
   border:1px solid #d1d5db;
   background:#f2f4f7;
   color:#111827;
-  font-size:.98rem;
+  font-size:1rem;
 }
 .interests textarea::placeholder{
   color:#94a3b8;

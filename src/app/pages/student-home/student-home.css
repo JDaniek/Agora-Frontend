@@ -297,7 +297,7 @@ img {
    ========================= */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 1fr); /* 4 columnas fijas */
   gap: 20px;
   width: 100%;
   max-width: 1200px;
@@ -310,14 +310,14 @@ img {
 .card {
   position: relative;
   width: 100%;
-  max-width: 320px;
-  min-height: 360px;
-  margin: 0 auto;
+  /* ELIMINADO: max-width: 260px; */
+  /* ELIMINADO: margin: 0 auto; */
+  min-height: 200px;
   border: 1px solid var(--border);
   border-radius: 16px;
-  background: #fff;
+  background: #ffffff;
   padding: 16px;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.09);
   transition: transform 0.08s ease, box-shadow 0.12s ease;
   display: flex;
   flex-direction: column;
@@ -435,12 +435,6 @@ img {
 /* =========================
    RESPONSIVE
    ========================= */
-@media (min-width: 1280px) {
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 20px;
-  }
-}
 @media (max-width: 1080px) {
   .filters .select:nth-child(3) select {
     max-width: 160px;

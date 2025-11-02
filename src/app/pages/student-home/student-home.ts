@@ -82,6 +82,22 @@ export class StudentHome {
       tags:['Negocio','Economía'],
       description:'Análisis de casos y finanzas personales.',
       bookmarked:false },
+    { id:'5', name:'Nombre Usuario', nivel:'Universidad', lugar:'CDMX', avatarUrl:null,
+      tags:['Ciencias exactas','Economía','Soft Skills'],
+      description:'Esta es una pequeña descripción de la experiencia o práctica del asesorado.',
+      bookmarked:false },
+    { id:'6', name:'Nombre Usuario', nivel:'Preparatoria', lugar:'Chiapas', avatarUrl:null,
+      tags:['Comunicación','Artes','Humanidades'],
+      description:'Apoyo en regularización y proyectos. Enfoque práctico.',
+      bookmarked:false },
+    { id:'7', name:'Nombre Usuario', nivel:'Universidad', lugar:'Jalisco', avatarUrl:null,
+      tags:['Idiomas','Ciencias Sociales'],
+      description:'Conversación guiada y preparación de exámenes.',
+      bookmarked:true },
+    { id:'8', name:'Nombre Usuario', nivel:'Posgrado', lugar:'Nuevo León', avatarUrl:null,
+      tags:['Negocio','Economía'],
+      description:'Análisis de casos y finanzas personales.',
+      bookmarked:false },
   ];
 
   /** Lista reactiva que debería venir de la API */

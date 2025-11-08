@@ -9,6 +9,9 @@ import { Router } from '@angular/router';
 export class LandingPage {
   constructor(private router: Router) {}
 
+  year = new Date().getFullYear();
+
+
   // Tus imágenes
   carouselImages = [
     '/Card1.png',

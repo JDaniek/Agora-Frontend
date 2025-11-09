@@ -1,19 +1,43 @@
-import { Component, signal, computed } from '@angular/core';
+// Ruta sugerida: src/app/pages/complete-profile/complete-profile.ts
+import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
   Validators,
   FormControl,
-  FormGroup
+  FormGroup,
 } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { finalize, switchMap, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
 type Opcion = { value: string; label: string };
 
-type PerfilForm = FormGroup<{
-  lugar: FormControl<string>;
-  nivel: FormControl<string>;
-  intereses: FormControl<string>;
-}>;
+/** ====== TIPOS (alineados al backend) ====== */
+interface ProfileResponse {
+  userId: number;
+  description: string | null;
+  photoUrl: string | null;
+  city: string | null;
+  stateCode: string | null;
+  level: string | null;
+  specialties: { id: number; name: string }[];
+}
+
+interface UpdateProfileRequest {
+  description: string | null;     // ← nullables
+  photoUrl: string | null;        // ← nullables
+  city: string | null;            // ← nullables
+  stateCode: string;
+  level: string;
+  specialtyIds: number[];
+}
+
+interface ApiError {
+  code: string;
+  message: string;
+}
 
 @Component({
   selector: 'app-complete-profile',
@@ -22,144 +46,223 @@ type PerfilForm = FormGroup<{
   templateUrl: './complete-profile.html',
   styleUrls: ['./complete-profile.css'],
 })
-export class CompleteProfile {
-  // Catálogos (mover a CatalogService cuando expongan API)
+export class CompleteProfile implements OnInit {
+  /** ====== URLs ====== */
+  private profileApiUrl = 'http://localhost:8080/api/v1/profile';
+  private uploadApiUrl = 'http://localhost:8080/api/v1/media/upload';
+
+  /** ====== Catálogos ====== */
   estadosMx: Opcion[] = [
-    { value: 'ags', label: 'Aguascalientes' }, { value: 'bc', label: 'Baja California' },
-    { value: 'bcs', label: 'Baja California Sur' }, { value: 'camp', label: 'Campeche' },
-    { value: 'coah', label: 'Coahuila' }, { value: 'col', label: 'Colima' },
-    { value: 'chis', label: 'Chiapas' }, { value: 'chih', label: 'Chihuahua' },
-    { value: 'cdmx', label: 'Ciudad de México' }, { value: 'dgo', label: 'Durango' },
-    { value: 'gto', label: 'Guanajuato' }, { value: 'gro', label: 'Guerrero' },
-    { value: 'hgo', label: 'Hidalgo' }, { value: 'jal', label: 'Jalisco' },
-    { value: 'edomex', label: 'México' }, { value: 'mich', label: 'Michoacán' },
-    { value: 'mor', label: 'Morelos' }, { value: 'nay', label: 'Nayarit' },
-    { value: 'nl', label: 'Nuevo León' }, { value: 'oax', label: 'Oaxaca' },
-    { value: 'pue', label: 'Puebla' }, { value: 'qro', label: 'Querétaro' },
-    { value: 'qroo', label: 'Quintana Roo' }, { value: 'slp', label: 'San Luis Potosí' },
-    { value: 'sin', label: 'Sinaloa' }, { value: 'son', label: 'Sonora' },
-    { value: 'tab', label: 'Tabasco' }, { value: 'tamps', label: 'Tamaulipas' },
-    { value: 'tlax', label: 'Tlaxcala' }, { value: 'ver', label: 'Veracruz' },
-    { value: 'yuc', label: 'Yucatán' }, { value: 'zac', label: 'Zacatecas' },
+    { value: 'CHIS', label: 'Chiapas' },
+    { value: 'JAL', label: 'Jalisco' },
+    // ...
+  ];
+  niveles: Opcion[] = [{ value: 'Universidad', label: 'Universidad' } /* ... */];
+  tagsDisponibles: { id: number; name: string }[] = [
+    { id: 1, name: 'Ciencias Naturales' },
+    { id: 2, name: 'Idiomas' },
+    // ...
   ];
 
-  niveles: Opcion[] = [
-    { value: 'primaria', label: 'Primaria' },
-    { value: 'secundaria', label: 'Secundaria' },
-    { value: 'preparatoria', label: 'Preparatoria' },
-    { value: 'universidad', label: 'Universidad' },
-    { value: 'posgrado', label: 'Posgrado' },
-    { value: 'extracurricular', label: 'Extracurricular' },
-    { value: 'tecnico', label: 'Técnico' },
-  ];
-
-  tagsDisponibles: string[] = [
-    'Ciencias exactas', 'Ciencias Naturales', 'Ciencias Sociales', 'Idiomas', 'Artes',
-    'Humanidades', 'Comunicación', 'Arte y Creatividad', 'Negocio', 'Economía',
-    'Soft Skills', 'Salud', 'Bienestar'
-  ];
-
-  /** Íconos por materia (pueden reemplazar por sus SVGs) */
+  /** ====== Iconos de chips ====== */
   private tagIcons: Record<string, string> = {
-    'Ciencias exactas': '🧮',
     'Ciencias Naturales': '🌿',
-    'Ciencias Sociales': '🧑‍🤝‍🧑',
     'Idiomas': '🗣️',
     'Artes': '🎨',
-    'Humanidades': '📚',
-    'Comunicación': '📢',
-    'Arte y Creatividad': '🎭',
-    'Negocio': '💼',
-    'Economía': '📈',
-    'Soft Skills': '🤝',
-    'Salud': '🏥',
-    'Bienestar': '🌱',
   };
-
-  iconFor(tag: string) {
-    return this.tagIcons[tag] ?? '•';
+  iconFor(tag: { id: number; name: string }): string {
+    return this.tagIcons[tag.name] ?? '•';
   }
 
-  // UI state (signals)
-  selectedTags = signal<Set<string>>(new Set<string>());
+  /** ====== Estado (signals) ====== */
+  selectedTags = signal<Set<number>>(new Set<number>());
   avatarPreview = signal<string | null>(null);
-  avatarUrl = signal<string | null>(null); // URL final después de subir a Cloudinary
+  uploadedPhotoUrl = signal<string | null>(null);
+  avatarFile = signal<File | null>(null);
+  isUploadingAvatar = signal(false);
   isSaving = signal(false);
 
-  // Form con controles no nuleables
-  form: PerfilForm = new FormGroup<PerfilForm['controls']>({
-    lugar: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    nivel: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    intereses: new FormControl<string>('', { nonNullable: true })
+  // Banners (no bloqueantes)
+  infoBanner = signal<string | null>(null);
+  errorBanner = signal<string | null>(null);
+
+  /** ====== Formulario ====== */
+  form = new FormGroup({
+    stateCode: new FormControl<string | null>(null, Validators.required),
+    level: new FormControl<string | null>(null, Validators.required),
+    description: new FormControl<string | null>(null),
   });
 
-  // trackBy para *ngFor
-  trackByTag = (_: number, item: string) => item;
+  constructor(private http: HttpClient, private router: Router) {}
 
-  // Payload listo para API
-  payload = computed(() => {
-    const { lugar, nivel, intereses } = this.form.getRawValue();
-    return {
-      lugar,
-      nivel,
-      intereses: intereses.trim(),
-      tags: Array.from(this.selectedTags()),
-      avatarUrl: this.avatarUrl(), // ← URL pública de Cloudinary (cuando se suba)
-    };
-  });
+  /** ====== Helpers ====== */
+  private parseApiError(err: any): ApiError | null {
+    if (err?.error && typeof err.error === 'object' && 'code' in err.error && 'message' in err.error) {
+      return err.error as ApiError;
+    }
+    if (typeof err?.error === 'string') {
+      return { code: 'UNKNOWN', message: err.error };
+    }
+    return null;
+  }
 
-  toggleTag(tag: string) {
+  trackByTag = (_: number, item: { id: number; name: string }) => item.id;
+
+  toggleTag(tag: { id: number; name: string }) {
     const next = new Set(this.selectedTags());
-    next.has(tag) ? next.delete(tag) : next.add(tag);
+    next.has(tag.id) ? next.delete(tag.id) : next.add(tag.id);
     this.selectedTags.set(next);
   }
 
-  isSelected(tag: string) {
-    return this.selectedTags().has(tag);
+  isSelected(tag: { id: number; name: string }) {
+    return this.selectedTags().has(tag.id);
   }
 
+  /** ====== Ciclo de vida ====== */
+  ngOnInit() {
+    this.http
+      .get<ProfileResponse>(this.profileApiUrl)
+      .pipe(
+        catchError((error) => {
+          if (error.status === 404) {
+            const apiErr = this.parseApiError(error);
+            // Estado esperado: usuario aún no tiene perfil
+            this.infoBanner.set(
+              'Aún no has creado tu perfil. Completa los campos y guarda para iniciarlo.'
+            );
+            return of(null); // mantenemos el form vacío
+          }
+          const apiErr = this.parseApiError(error);
+          this.errorBanner.set(
+            apiErr?.message ?? 'No se pudo cargar tu perfil. Inténtalo más tarde.'
+          );
+          return of(null);
+        })
+      )
+      .subscribe((profile) => {
+        if (!profile) return;
+
+        // Rellenar formulario
+        this.form.patchValue({
+          stateCode: profile.stateCode ?? null,
+          level: profile.level ?? null,
+          description: profile.description ?? null,
+        });
+
+        // Avatar
+        if (profile.photoUrl) {
+          this.avatarPreview.set(profile.photoUrl);
+          this.uploadedPhotoUrl.set(profile.photoUrl);
+        }
+
+        // Tags
+        const tagIds = new Set(profile.specialties.map((s) => s.id));
+        this.selectedTags.set(tagIds);
+      });
+  }
+
+  /** ====== Avatar ====== */
   onAvatarChange(ev: Event) {
     const input = ev.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
 
-    // Vista previa local (no bloquea UI)
+    this.avatarFile.set(file);
+    this.isUploadingAvatar.set(true);
+
     const reader = new FileReader();
     reader.onload = () => this.avatarPreview.set(reader.result as string);
     reader.readAsDataURL(file);
 
-    /**
-     * 🔌 TODO (equipo backend): subir a Cloudinary/"CloudBinary" aquí.
-     *  1) Hacer POST al endpoint de upload con el archivo `file`.
-     *  2) Recibir la URL pública (secure_url) y asignarla:
-     *        this.avatarUrl.set(secureUrl);
-     *  3) Manejar errores y mostrar feedback si falla la subida.
-     *
-     *  Ejemplo de integración (pseudocódigo):
-     *    this.cloudService.upload(file).subscribe({
-     *      next: url => this.avatarUrl.set(url),
-     *      error: err => console.error('Upload failed', err)
-     *    });
-     */
+    const formData = new FormData();
+    formData.append('file', file);
+
+    this.http
+      .post<{ url: string }>(this.uploadApiUrl, formData)
+      .pipe(finalize(() => this.isUploadingAvatar.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.uploadedPhotoUrl.set(response.url);
+        },
+        error: (err: any) => {
+          console.error('Error al subir la foto', err);
+          const apiErr = this.parseApiError(err);
+          this.errorBanner.set(
+            apiErr?.message ?? 'No se pudo subir la foto. Inténtalo de nuevo.'
+          );
+        },
+      });
   }
 
+  private uploadAvatar(): Observable<string | null> {
+    const file = this.avatarFile();
+    if (!file) {
+      return of(this.uploadedPhotoUrl());
+    }
+    // Si quisieras subir aquí, lo harías y devolverías la URL.
+    // En este flujo ya se subió en onAvatarChange, así que devolvemos la URL actual.
+    return of(this.uploadedPhotoUrl());
+  }
+
+  /** ====== Guardar ====== */
   submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.errorBanner.set('Revisa los campos obligatorios.');
       return;
     }
     this.isSaving.set(true);
 
-    /**
-     * 🔌 TODO (equipo backend): guardar perfil aquí.
-     *   - Endpoint sugerido: POST /api/profile  (o el que definan)
-     *   - Body: this.payload()
-     *   - Si usan servicio: this.profileService.save(this.payload()).subscribe(...)
-     */
-    setTimeout(() => {
-      console.log('Payload listo para API:', this.payload());
-      this.isSaving.set(false);
-      alert('Perfil guardado (mock)');
-    }, 600);
+    const formValue = this.form.getRawValue();
+
+    this.uploadAvatar()
+      .pipe(
+        switchMap((uploadedPhotoUrl: string | null) => {
+          const payload: UpdateProfileRequest = {
+            description: formValue.description ?? null, // null, no ""
+            photoUrl: uploadedPhotoUrl ?? null,         // null si no hay
+            city: null,                                  // aún no lo capturamos
+            stateCode: formValue.stateCode ?? '',
+            level: formValue.level ?? '',
+            specialtyIds: Array.from(this.selectedTags()),
+          };
+          return this.http.put<ProfileResponse>(this.profileApiUrl, payload);
+        }),
+        finalize(() => this.isSaving.set(false))
+      )
+      .subscribe({
+        next: () => {
+          // Limpia banners y navega
+          this.errorBanner.set(null);
+          this.infoBanner.set(null);
+          alert('¡Perfil guardado con éxito!');
+          this.router.navigate(['/student-home']);
+        },
+        error: (err: any) => {
+          const apiErr = this.parseApiError(err);
+          if (err.status === 400) {
+            this.errorBanner.set(
+              apiErr?.message ?? 'Datos inválidos. Revisa el formulario.'
+            );
+          } else if (err.status === 401) {
+            this.errorBanner.set('Tu sesión expiró. Vuelve a iniciar sesión.');
+            this.router.navigate(['/login']);
+          } else if (err.status === 409 || err.status === 422) {
+            this.errorBanner.set(
+              apiErr?.message ?? 'Conflicto al guardar. Revisa la información.'
+            );
+          } else if (err.status === 404) {
+            // No debería suceder con PUT upsert, pero por si acaso:
+            this.errorBanner.set(
+              apiErr?.message ?? 'El perfil no existe y no pudo crearse.'
+            );
+          } else {
+            this.errorBanner.set(
+              apiErr?.message ?? 'Error al guardar el perfil. Inténtalo de nuevo.'
+            );
+          }
+          console.error('Error al guardar el perfil', err);
+        },
+      });
   }
 }

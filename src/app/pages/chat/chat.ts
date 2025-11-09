@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Para *ngFor, [ngClass]
 import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
+import { SidebarService } from 'src/app/core/services/sidebar';
 
 @Component({
   selector: 'app-chat',
@@ -18,6 +19,19 @@ import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
 
 })
 export class ChatComponent implements OnInit {
+
+  // 2. Inyecta el servicio en el constructor
+  constructor(private sidebarService: SidebarService) { }
+
+  ngOnInit(): void {
+    // 3. (Importante) Asegúrate de que el sidebar esté cerrado cuando entres al chat
+    this.sidebarService.close();
+  }
+
+  // 4. Modifica 'toggleSidebar' para que llame al servicio
+  toggleSidebar(): void {
+    this.sidebarService.toggle();
+  }
 
   // --- Datos de Ejemplo (Esto vendrá del backend/websocket) ---
   

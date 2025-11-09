@@ -49,7 +49,8 @@ interface ApiError {
 export class CompleteProfile implements OnInit {
   /** ====== URLs ====== */
   private profileApiUrl = 'http://localhost:8080/api/v1/profile';
-  private uploadApiUrl = 'http://localhost:8080/api/v1/media/upload';
+  // Endpoint para subir imagen y a la vez adjuntar
+  private uploadApiUrl = 'http://localhost:8080/api/v1/media/upload-and-attach';
 
   /** ====== Catálogos ====== */
   estadosMx: Opcion[] = [
@@ -162,6 +163,7 @@ export class CompleteProfile implements OnInit {
   }
 
   /** ====== Avatar ====== */
+
   onAvatarChange(ev: Event) {
     const input = ev.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -175,14 +177,14 @@ export class CompleteProfile implements OnInit {
     reader.readAsDataURL(file);
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', file); // ← nombre de campo correcto para el backend
 
     this.http
-      .post<{ url: string }>(this.uploadApiUrl, formData)
+      .post<{ photoUrl: string }>(this.uploadApiUrl, formData) // ← tipo
       .pipe(finalize(() => this.isUploadingAvatar.set(false)))
       .subscribe({
         next: (response) => {
-          this.uploadedPhotoUrl.set(response.url);
+          this.uploadedPhotoUrl.set(response.photoUrl); // ← usa photoUrl
         },
         error: (err: any) => {
           console.error('Error al subir la foto', err);

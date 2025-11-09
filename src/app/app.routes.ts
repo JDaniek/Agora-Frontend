@@ -25,4 +25,8 @@ export const routes: Routes = [
     path: 'complete-profile',
     loadComponent: () => import('./pages/complete-profile/complete-profile').then((m) => m. CompleteProfile),
   },
+  {
+    path: 'chat',
+    loadComponent: () => import('./pages/chat/chat').then((m) => m.ChatComponent)
+  }
 ];

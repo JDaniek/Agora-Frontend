@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './chat.html',
   styleUrls: ['./chat.css']
 })
-export class Chat implements OnInit {
+export class ChatComponent implements OnInit {
 
   // --- Datos de Ejemplo (Esto vendrá del backend/websocket) ---
   

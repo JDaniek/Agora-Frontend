@@ -62,16 +62,23 @@
     </div>
 
     <div class="right-actions">
-      <img src="/icon/Bell.png" alt="" />
+      <img src="/icon/Bell.png" alt="Notificaciones" />
+
       <a
         class="avatar"
-        routerLink="/complete-profile"
-        title="Completar mi perfil">
+        [class.has-img]="topAvatarUrl"
+        [routerLink]="['/complete-profile']"
+        title="Completar mi perfil"
+        [attr.aria-busy]="isLoadingProfile"
+      >
+        <img *ngIf="topAvatarUrl" [src]="topAvatarUrl" alt="Mi avatar" />
+        <span *ngIf="!topAvatarUrl" aria-hidden="true">👤</span>
       </a>
     </div>
   </header>
 
   <aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
+    <div class="sidebar-overlay" (click)="closeSidebar()"></div>
     <div class="sidebar-header">
       <img class="agora-icon" src="/agora_icon.png" alt="" />
       <button class="close-menu-btn" (click)="closeSidebar()">

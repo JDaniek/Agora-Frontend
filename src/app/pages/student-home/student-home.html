@@ -1,22 +1,21 @@
 <section class="home-wrap">
   <header class="top-bar">
     <button class="menu-toggle" (click)="toggleSidebar()">
-      <img src="/icon/Hamburger_MD.png" alt="">
+      <img src="/icon/Hamburger_MD.png" alt="" />
     </button>
 
-    <!-- Barra de búsqueda -->
-    <div class="search-bar">
+    <div class="search-bar" [formGroup]="filtros">
       <div class="search">
         <span class="ico">🔍</span>
         <input
           type="text"
           placeholder="Busca un asesor"
-          [formControl]="filtros.controls.search"
+          formControlName="search"
         />
         <button
           class="clear"
-          *ngIf="filtros.controls.search.value"
-          (click)="filtros.controls.search.setValue('')"
+          *ngIf="filtros.controls['search'].value"
+          (click)="filtros.controls['search'].setValue('')"
         >
           ✕
         </button>
@@ -24,7 +23,7 @@
 
       <div class="filters">
         <div class="select">
-          <select [formControl]="filtros.controls.lugar">
+          <select formControlName="lugar">
             <option value="">Lugar</option>
             <option
               *ngFor="let l of lugares; trackBy: trackByStr"
@@ -35,7 +34,7 @@
           </select>
         </div>
         <div class="select">
-          <select [formControl]="filtros.controls.nivel">
+          <select formControlName="nivel">
             <option value="">Nivel</option>
             <option
               *ngFor="let n of niveles; trackBy: trackByStr"
@@ -46,69 +45,66 @@
           </select>
         </div>
         <div class="select">
-          <select [formControl]="filtros.controls.materia">
+          <select formControlName="materia">
             <option value="">Materias</option>
             <option
-              *ngFor="let m of materias; trackBy: trackByStr"
-              [value]="m"
+              *ngFor="let m of materias"
+              [value]="m.id"
             >
-              {{ m }}
+              {{ m.name }}
             </option>
           </select>
         </div>
-        <button class="refresh" (click)="clearFilters()" title="Limpiar filtros">↻</button>
+        <button class="refresh" (click)="clearFilters()" title="Limpiar filtros">
+          ↻
+        </button>
       </div>
     </div>
 
     <div class="right-actions">
-      <img src="/icon/Bell.png" alt="">
+      <img src="/icon/Bell.png" alt="" />
       <div class="avatar"></div>
     </div>
   </header>
 
-  <!-- Sidebar lateral -->
   <aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
     <div class="sidebar-header">
-      <img class="agora-icon" src="/agora_icon.png" alt="">
+      <img class="agora-icon" src="/agora_icon.png" alt="" />
       <button class="close-menu-btn" (click)="closeSidebar()">
         <span class="material-icons"><</span>
       </button>
     </div>
-
     <nav class="sidebar-menu">
       <a href="#" (click)="closeSidebar()" class="menu-item active">
-        <img src="/icon/home.png" alt="">
+        <img src="/icon/home.png" alt="" />
         Inicio
       </a>
       <a href="#" (click)="closeSidebar()" class="menu-item">
-        <img src="/icon/fav.png" alt="">
+        <img src="/icon/fav.png" alt="" />
         Favoritos
       </a>
       <a href="#" (click)="closeSidebar()" class="menu-item">
-        <img src="/icon/chat.png" alt="">
+        <img src="/icon/chat.png" alt="" />
         Chats
       </a>
       <a href="#" (click)="closeSidebar()" class="menu-item">
-        <img src="/icon/solicitud.png" alt="">
+        <img src="/icon/solicitud.png" alt="" />
         Solicitudes
       </a>
     </nav>
-
     <div class="sidebar-footer">
-      <button class="logout-btn" (click)="closeSidebar()">
-        <img src="/icon/logout.png" alt="">
+      <button class="logout-btn" (click)="logout()">
+        <img src="/icon/logout.png" alt="" />
         Cerrar sesión
       </button>
     </div>
   </aside>
 
-  <!-- Contenido principal -->
   <main class="content">
     <h2 class="section-title">Recomendaciones</h2>
 
-    <!-- Grid de cards -->
     <div class="grid">
-      <article class="card" *ngFor="let t of filtered(); trackBy: trackById">
+      <article class="card" *ngFor="let t of advisers; trackBy: trackById">
         <button
           class="fav"
           [class.on]="t.bookmarked"
@@ -117,28 +113,27 @@
         >
           ★
         </button>
-
         <div class="avatar" [class.has-img]="t.avatarUrl">
-          <img *ngIf="t.avatarUrl" [src]="t.avatarUrl" alt="{{ t.name }}">
+          <img *ngIf="t.avatarUrl" [src]="t.avatarUrl" alt="{{ t.name }}" />
           <span *ngIf="!t.avatarUrl" aria-hidden="true">👤</span>
         </div>
-
         <div class="name">{{ t.name }}</div>
         <div class="sub"><span class="level-chip">{{ t.nivel }}</span></div>
-
         <div class="tags">
           <span class="tag" *ngFor="let tag of t.tags; trackBy: trackByStr">
             <span class="ico" aria-hidden="true">{{ iconFor(tag) }}</span>
             {{ tag }}
           </span>
         </div>
-
         <p class="desc">{{ t.description }}</p>
-
         <div class="actions">
           <button class="see-more">Ver más</button>
         </div>
       </article>
+    </div>
+
+    <div *ngIf="advisers.length === 0" class="no-results">
+      <p>No se encontraron asesores que coincidan con tus filtros.</p>
     </div>
   </main>
 </section>

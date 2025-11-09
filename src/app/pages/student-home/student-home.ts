@@ -1,123 +1,135 @@
-import { Component, signal, computed } from '@angular/core';
+// --- 1. IMPORTA ChangeDetectorRef ---
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, switchMap, map, startWith, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
-type TutorCard = {
-  id: string;
+// (Tus interfaces están perfectas aquí)
+interface AdviserCardResponse {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  photoUrl: string | null;
+  level: string | null;
+  description: string | null;
+  specialties: string[];
+}
+interface AdviserCardView {
+  id: number;
   name: string;
-  nivel: string;
-  lugar: string;
-  avatarUrl?: string | null;
+  avatarUrl: string | null;
+  nivel: string | null;
   tags: string[];
-  description: string;
+  description: string | null;
   bookmarked: boolean;
-};
-
-type FiltrosForm = FormGroup<{
-  search: FormControl<string>;
-  lugar: FormControl<string>;
-  nivel: FormControl<string>;
-  materia: FormControl<string>;
-}>;
+}
 
 @Component({
   selector: 'app-student-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './student-home.html',
-  styleUrls: ['./student-home.css'],
+  styleUrls: ['./student-home.css']
 })
-export class StudentHome {
+export class StudentHome implements OnInit {
 
-    isSidebarOpen = false;
-
-  toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
-  }
-
-  closeSidebar() {
-    this.isSidebarOpen = false;
-  }
-
-  /** Catálogos (pueden venir de API) */
-  lugares = ['Aguascalientes','Baja California','Chiapas','CDMX','Jalisco','Nuevo León','Puebla','Yucatán'];
-  niveles = ['Primaria','Secundaria','Preparatoria','Universidad','Posgrado','Técnico','Extracurricular'];
-  materias = [
-    'Ciencias exactas','Ciencias Naturales','Ciencias Sociales','Idiomas','Artes',
-    'Humanidades','Comunicación','Arte y Creatividad','Negocio','Economía','Soft Skills','Salud','Bienestar'
+  // ... (propiedades) ...
+  private apiUrl = 'http://localhost:8080/api/v1/advisers';
+  isSidebarOpen = false;
+  lugares: string[] = ["CHIS", "JAL", "CDMX", "NL"];
+  niveles: string[] = ["Bachillerato", "Universidad", "Maestría"];
+  materias: any[] = [
+    { id: 1, name: "Ciencias Naturales" },
+    { id: 2, name: "Idiomas" },
+    { id: 3, name: "Artes" }
   ];
+  filtros: FormGroup;
+  advisers: AdviserCardView[] = [];
 
-  /** Íconos para materias (cámbienlos por SVG si quieren) */
-  tagIcon: Record<string,string> = {
-    'Ciencias exactas':'🧮','Ciencias Naturales':'🌿','Ciencias Sociales':'🧑‍🤝‍🧑','Idiomas':'🗣️','Artes':'🎨',
-    'Humanidades':'📚','Comunicación':'📢','Arte y Creatividad':'🎭','Negocio':'💼','Economía':'📈','Soft Skills':'🤝','Salud':'🏥','Bienestar':'🌱'
-  };
-  iconFor(tag:string){ return this.tagIcon[tag] ?? '•'; }
-  trackById = (_:number, t: TutorCard) => t.id;
-  trackByStr = (_:number, s: string) => s;
-
-  /** Form de filtros (no–nuleable por instancia directa) */
-  filtros: FiltrosForm = new FormGroup<FiltrosForm['controls']>({
-    search: new FormControl<string>('', {nonNullable:true}),
-    lugar: new FormControl<string>('', {nonNullable:true}),
-    nivel: new FormControl<string>('', {nonNullable:true}),
-    materia: new FormControl<string>('', {nonNullable:true}),
-  });
-
-  /** Datos mock (reemplazar por fetch a API) */
-  private seed: TutorCard[] = [
-    { id:'1', name:'Nombre Usuario', nivel:'Universidad', lugar:'CDMX', avatarUrl:null,
-      tags:['Ciencias exactas','Economía','Soft Skills'],
-      description:'Esta es una pequeña descripción de la experiencia o práctica del asesorado.',
-      bookmarked:false },
-    { id:'2', name:'Nombre Usuario', nivel:'Preparatoria', lugar:'Chiapas', avatarUrl:null,
-      tags:['Comunicación','Artes','Humanidades'],
-      description:'Apoyo en regularización y proyectos. Enfoque práctico.',
-      bookmarked:false },
-    { id:'3', name:'Nombre Usuario', nivel:'Universidad', lugar:'Jalisco', avatarUrl:null,
-      tags:['Idiomas','Ciencias Sociales'],
-      description:'Conversación guiada y preparación de exámenes.',
-      bookmarked:true },
-    { id:'4', name:'Nombre Usuario', nivel:'Posgrado', lugar:'Nuevo León', avatarUrl:null,
-      tags:['Negocio','Economía'],
-      description:'Análisis de casos y finanzas personales.',
-      bookmarked:false },
-  ];
-
-  /** Lista reactiva que debería venir de la API */
-  tutors = signal<TutorCard[]>(this.seed);
-
-  /** Filtro en cliente (cuando haya API, filtren del backend) */
-  filtered = computed(() => {
-    const { search, lugar, nivel, materia } = this.filtros.getRawValue();
-    return this.tutors().filter(t => {
-      const s = search.trim().toLowerCase();
-      const okSearch = !s || t.name.toLowerCase().includes(s);
-      const okLugar  = !lugar || t.lugar === lugar;
-      const okNivel  = !nivel || t.nivel === nivel;
-      const okMate   = !materia || t.tags.includes(materia);
-      return okSearch && okLugar && okNivel && okMate;
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private router: Router,
+    // --- 2. INYECTA EL 'cdr' ---
+    private cdr: ChangeDetectorRef
+  ) {
+    this.filtros = this.fb.group({
+      search: [''],
+      lugar: [''],
+      nivel: [''],
+      materia: ['']
     });
-  });
-
-  clearFilters(){ this.filtros.reset({search:'',lugar:'',nivel:'',materia:''}); }
-
-  toggleBookmark(t: TutorCard){
-    this.tutors.update(list => list.map(x => x.id===t.id ? {...x, bookmarked: !x.bookmarked} : x));
-    // 🔌 TODO API: PATCH /api/tutors/:id/bookmark (body: { bookmarked: boolean })
   }
 
-  /** --------- INTEGRACIÓN API (comentarios) ----------
-   * 1) Cargar catálogos:
-   *    CatalogService.getLugares()/getNiveles()/getMaterias()
-   *    .subscribe(data => { this.lugares = data.lugares; ... })
-   *
-   * 2) Buscar tutores con filtros:
-   *    TutorService.search(this.filtros.getRawValue())
-   *    .subscribe(items => this.tutors.set(items));
-   *
-   * 3) Avatares en Cloudinary:
-   *    Viene ya como URL en cada card (p.ej. avatarUrl) → usar [src]="t.avatarUrl"
-   * -------------------------------------------------- */
-}
+  ngOnInit() {
+    this.filtros.valueChanges.pipe(
+      startWith(this.filtros.value),
+      debounceTime(300),
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+      switchMap(filterValues => this.fetchAdvisers(filterValues))
+    ).subscribe(mappedData => {
+      console.log("StudentHome: Datos RECIBIDOS en subscribe()", mappedData);
+      this.advisers = mappedData;
 
+      // --- 3. ¡¡AQUÍ ESTÁ EL ARREGLO!! ---
+      // Le decimos a Angular: "Oye, actualicé los datos, ¡repinta el HTML!"
+      this.cdr.detectChanges();
+    });
+  }
+
+  // ... (El resto de tus funciones: fetchAdvisers, mapApiToView, etc. están perfectas) ...
+  fetchAdvisers(filters: any = {}): Observable<AdviserCardView[]> {
+    let params = new HttpParams();
+
+    if (filters.search) {
+      params = params.set('q', filters.search);
+    }
+    if (filters.lugar) {
+      params = params.set('state', filters.lugar);
+    }
+    if (filters.nivel) {
+      params = params.set('level', filters.nivel);
+    }
+    if (filters.materia) {
+      params = params.set('specialty', filters.materia);
+    }
+
+    return this.http.get<AdviserCardResponse[]>(this.apiUrl, { params }).pipe(
+      tap(apiResponse => console.log("StudentHome: Datos CRUDOS recibidos de la API", apiResponse)),
+      map(apiResponse => apiResponse.map(adviser => this.mapApiToView(adviser)))
+    );
+  }
+
+  private mapApiToView(adviser: AdviserCardResponse): AdviserCardView {
+    return {
+      id: adviser.userId,
+      name: `${adviser.firstName} ${adviser.lastName}`,
+      avatarUrl: adviser.photoUrl,
+      nivel: adviser.level,
+      tags: adviser.specialties,
+      description: adviser.description,
+      bookmarked: false
+    };
+  }
+
+  toggleSidebar() { this.isSidebarOpen = !this.isSidebarOpen; }
+  closeSidebar() { this.isSidebarOpen = false; }
+  trackByStr(index: number, str: string): string { return str; }
+  trackById(index:number, item: AdviserCardView): number { return item.id; }
+  clearFilters() {
+    this.filtros.setValue({ search: '', lugar: '', nivel: '', materia: '' });
+  }
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.router.navigate(['/login']);
+  }
+  toggleBookmark(adviser: AdviserCardView) { adviser.bookmarked = !adviser.bookmarked; }
+  iconFor(tag: string): string { return '📚'; }
+}

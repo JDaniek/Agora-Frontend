@@ -2,6 +2,7 @@
   En CSS plano, las variables se definen dentro de :root 
   o, en este caso, en :host para que se apliquen al componente.
 */
+
 :host {
   --color-fondo: #f0f2f5;
   --color-blanco: #ffffff;
@@ -14,6 +15,8 @@
   --radio-borde-grande: 24px;
   --radio-borde-medio: 16px;
   --radio-borde-pequeno: 12px;
+    font-family: 'Montserrat', sans-serif;
+
 }
 
 /* --- 1. CONTENEDOR PRINCIPAL --- */

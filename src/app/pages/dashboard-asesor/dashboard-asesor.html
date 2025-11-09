@@ -47,12 +47,12 @@
 </aside>
 
 <!-- Overlay para cerrar al hacer clic fuera -->
-<div class="overlay" ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
+<div class="overlay" *ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
 
 <!-- Contenido principal -->
 <main class="main-content" [class.main-content-shifted]="isSidebarOpen">
   <div class="content-header">
-    <h1>Bienvenido, Asesor</h1>
+    <router-outlet></router-outlet>
     <p class="subtitle">Gestiona las solicitudes pendientes</p>
   </div>
 </main>

@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Para *ngFor, [ngClass]
 import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
-import { SidebarService } from 'src/app/core/services/sidebar';
+import { SidebarService } from '../../core/services/sidebar';
 
 @Component({
   selector: 'app-chat',
@@ -66,12 +66,6 @@ export class ChatComponent implements OnInit {
   ];
 
   public newMessage: string = ''; // Variable para el input de mensaje
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
   // --- Funciones ---
 
   selectChat(chatId: number): void {

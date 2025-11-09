@@ -3,10 +3,10 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common'; // 2. Añade CommonModule
 import { RouterOutlet } from '@angular/router'; // 3. AÑADE ROUTER-OUTLET
 import { Subscription } from 'rxjs'; // 4. Añade Subscription
-import { SidebarService } from 'src/app/core/services/sidebar';
+import { SidebarService } from '../../core/services/sidebar';
 @Component({
   selector: 'app-dashboard-asesor',
-  imports: [],
+  imports: [RouterOutlet],
   templateUrl: './dashboard-asesor.html',
   styleUrl: './dashboard-asesor.css'
 })

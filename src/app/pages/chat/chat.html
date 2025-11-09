@@ -14,27 +14,16 @@
 
     <div class="chat-list">
       
-      <div class="chat-list-item active">
-        <img class="avatar" src="ruta/a/avatar_alejandra.png" alt="Avatar">
-        <div class="chat-info">
-          <strong class="username">Alejandra Hernandez</strong>
-          <p class="message-snippet">Esta es una pequeña descripción de lo que enseño...</p>
-        </div>
-      </div>
+      <div 
+        *ngFor="let chat of chatList" 
+        class="chat-list-item" 
+        [class.active]="chat.active"
+        (click)="selectChat(chat.id)">
 
-      <div class="chat-list-item">
-        <img class="avatar" src="ruta/a/avatar_usuario.png" alt="Avatar">
+        <img class="avatar" [src]="chat.avatar" alt="Avatar">
         <div class="chat-info">
-          <strong class="username">Nombre Usuario</strong>
-          <p class="message-snippet">Sección de mensaje...</p>
-        </div>
-      </div>
-
-      <div class="chat-list-item">
-        <img class="avatar" src="ruta/a/avatar_usuario2.png" alt="Avatar">
-        <div class="chat-info">
-          <strong class="username">Otro Usuario</strong>
-          <p class="message-snippet">Sección de mensaje...</p>
+          <strong class="username">{{ chat.username }}</strong>
+          <p class="message-snippet">{{ chat.messageSnippet }}</p>
         </div>
       </div>
       
@@ -46,26 +35,26 @@
     <div class="chat-window-header">
       <img class="avatar" src="ruta/a/avatar_alejandra.png" alt="Avatar">
       <strong class="username">Alejandra Hernandez</strong>
-      </div>
+    </div>
 
     <div class="chat-messages">
       
-      <div class="message-bubble incoming">
-        <p>Esta es una pequeña descripción de lo que enseño y de algunos temas en especifico que domino a la perfección</p>
-      </div>
-
-      <div class="message-bubble outgoing">
-        <p>Esta es una pequeña descripción de lo que enseño y de algunos temas en especifico que domino a la perfección</p>
-      </div>
-       <div class="message-bubble outgoing">
-        <p>Esta es una pequeña descripción de lo que enseño y de algunos temas en especifico que domino a la perfección</p>
+      <div 
+        *ngFor="let msg of activeChatMessages" 
+        class="message-bubble"
+        [ngClass]="{ 'incoming': msg.type === 'incoming', 'outgoing': msg.type === 'outgoing' }">
+        
+        <p>{{ msg.text }}</p>
       </div>
 
     </div>
 
     <div class="chat-input-box">
-      <input type="text" placeholder="Escribe un mensaje">
-      <button class="send-btn">
+      <input 
+        type="text" 
+        placeholder="Escribe un mensaje"
+        [(ngModel)]="newMessage"
+        (keyup.enter)="sendMessage()"> <button class="send-btn" (click)="sendMessage()">
         <span class="material-icons">send</span>
       </button>
     </div>

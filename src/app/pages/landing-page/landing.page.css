@@ -329,11 +329,11 @@
 
 .deco-globe {
   position: absolute;
-  top: 1700px;
+  top: 1650px;
   left: -1%;
   z-index: -1;
 }
-.deco-globe img { /* corregido: sin anidado SCSS */
+.deco-globe img { 
   width: 80%;
   height: auto;
 }
@@ -498,16 +498,19 @@
   .hero__media img { width: min(80%, 600px); }
 }
 
-/* ===== Footer (solo estilos del footer; no toca nada más) ===== */
+/* ===== Footer  ===== */
+
 .site-footer {
-  background: #224e91;     /* azul, como pediste */
-  color: #ffffff;
+  background: #224e91;
+  color: #fff;
+  width: 100%;          /* ocupa todo el ancho */
   margin-top: 2rem;
 }
+
 .site-footer__inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 12px 16px;      /* discreto, sin “línea” muy alta */
+  width: 100%;          /* igual que tu main */
+  margin: 0;            /* elimina el auto-centro */
+  padding: 12px 16px;   /* mismo padding lateral que hero */
   font-size: 0.875rem;
   text-align: center;
   opacity: 0.95;

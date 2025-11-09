@@ -305,61 +305,69 @@ img {
 }
 
 /* =========================
-   CARD
+   CARD (Estilo corregido)
    ========================= */
 .card {
   position: relative;
   width: 100%;
   max-width: 320px;
-  min-height: 360px;
+  min-height: 360px; /* Mantenemos tu min-height */
   margin: 0 auto;
-  border: 1px solid var(--border);
+  border: 1px solid #e5e7eb; /* var(--border) */
   border-radius: 16px;
-  background: #fff;
-  padding: 16px;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+  background: #f9fafb; /* CAMBIO: Fondo gris claro como en la imagen */
+  padding: 24px 16px;  /* Ajuste de padding vertical */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); /* Sombra más sutil */
   transition: transform 0.08s ease, box-shadow 0.12s ease;
+
+  /* --- LA MAGIA ESTÁ AQUÍ --- */
   display: flex;
   flex-direction: column;
+  align-items: center; /* NUEVO: Centra todos los hijos horizontalmente */
   justify-content: space-between;
 }
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06); /* Sombra sutil en hover */
 }
 
+/* Botón de favorito (ya estaba bien) */
 .fav {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 12px;
+  right: 12px;
   border: 0;
-  background: #fff;
+  background: #fdfdfd;
   border-radius: 9999px;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   color: #64748b;
-  font-size: 18px;
+  font-size: 20px;
+  display: grid;
+  place-items: center;
 }
 .fav.on {
   color: #f59e0b;
 }
 
+/* Avatar */
 .card .avatar {
-  width: 66px;
-  height: 66px;
+  width: 80px;   /* CAMBIO: Ligeramente más grande */
+  height: 80px;  /* CAMBIO: Ligeramente más grande */
   border-radius: 9999px;
-  border: 2px dashed #cbd5e1;
+  border: none;  /* CAMBIO: Sin borde punteado */
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: #f1f5f9;
-  color: #64748b;
-  margin-bottom: 8px;
+  background: #e5e7eb; /* CAMBIO: Fondo gris para el placeholder */
+  color: #9ca3af;     /* CAMBIO: Icono de placeholder más claro */
+  margin-bottom: 12px; /* CAMBIO: Más espacio */
 }
 .card .avatar.has-img {
-  border-style: solid;
+  border: 2px solid #fff; /* Opcional: borde blanco si hay imagen */
+  box-shadow: 0 0 0 1px #e5e7eb;
 }
 .card .avatar img {
   width: 100%;
@@ -367,69 +375,93 @@ img {
   object-fit: cover;
 }
 
+/* Nombre */
 .name {
   font-weight: 700;
   color: var(--text);
   margin-bottom: 2px;
-  font-size: 1rem;
+  font-size: 1.1rem; /* CAMBIO: Ligeramente más grande */
+  text-align: center;
 }
+
+/* Subtítulo (Nivel) */
 .sub {
   color: var(--muted);
   font-size: 0.9rem;
-  margin-bottom: 8px;
+  margin-bottom: 16px; /* CAMBIO: Más espacio */
+  text-align: center;
+  height: 1.2em; /* Asegura espacio aunque esté vacío */
 }
+/* CAMBIO: Hacemos que el chip parezca texto plano */
 .level-chip {
-  background: #eef2ff;
-  color: #1e3a8a;
-  padding: 3px 8px;
-  border-radius: 9999px;
-  font-size: 0.78rem;
+  background: none;
+  color: var(--muted); /* Hereda color */
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.9rem; /* Hereda tamaño */
+  font-weight: 400; /* Normal */
 }
 
+/* Tags */
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin: 4px 0 8px;
+  gap: 8px;
+  margin: 4px 0 12px;
+  justify-content: center; /* NUEVO: Centra los tags como grupo */
 }
 .tag {
-  background: var(--chip-bg);
-  color: var(--blue);
-  padding: 6px 10px;
+  background: var(--blue-2); /* CAMBIO: Fondo azul sólido */
+  color: #fff;              /* CAMBIO: Texto blanco */
+  padding: 6px 14px;       /* CAMBIO: Un poco más de padding */
   border-radius: 9999px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   max-width: 100%;
 }
 .tag .ico {
-  font-size: 1rem;
+  display: none; /* Oculta el icono por si no quitas el HTML */
 }
 
+/* Descripción */
 .desc {
   color: #6b7280;
   font-size: 0.92rem;
-  line-height: 1.35;
+  line-height: 1.4;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2; /* CAMBIO: 2 líneas como en la imagen */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 3.6em;
+  min-height: 2.8em; /* 1.4 * 2 */
+  text-align: center;  /* NUEVO: Texto centrado */
+  width: 100%;
+  max-width: 240px; /* Evita que se extienda demasiado */
 }
 
+/* Acciones (Contenedor del botón) */
 .actions {
   display: grid;
   justify-items: center;
-  margin-top: 8px;
+  margin-top: 16px; /* CAMBIO: Más espacio */
 }
+
+/* Botón "Ver más" */
 .see-more {
   border: 0;
-  background: var(--blue-2);
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: 10px;
+  background: none;      /* CAMBIO: Sin fondo */
+  color: #374151;       /* CAMBIO: Color de texto oscuro */
+  padding: 8px 4px;      /* CAMBIO: Padding simple */
+  border-radius: 0;
   cursor: pointer;
+  font-weight: 600;      /* CAMBIO: Negrita */
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+.see-more:hover {
+  color: var(--blue-2); /* Opcional: hover azul */
 }
 
 /* =========================

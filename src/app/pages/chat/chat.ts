@@ -1,9 +1,21 @@
+// Importa lo necesario
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common'; // Para *ngFor, [ngClass]
+import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
 
 @Component({
-  selector: 'app-chat', // Este es el 'nombre' del componente para el HTML
+  selector: 'app-chat',
   templateUrl: './chat.html',
-  styleUrls: ['./chat.css']
+  styleUrls: ['./chat.css'],
+  
+  // --- AÑADE ESTAS IMPORTACIONES ---
+  standalone: true,
+  imports: [
+    CommonModule, 
+    FormsModule 
+  ]
+  // ---------------------------------
+
 })
 export class ChatComponent implements OnInit {
 
@@ -44,17 +56,13 @@ export class ChatComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    // En un futuro, aquí es donde te conectarías al servicio del Websocket
-    // para recibir la lista de chats y los mensajes.
   }
 
   // --- Funciones ---
 
-  /**
-   * Esta función se llamará cuando el usuario haga clic 
-   * en un chat diferente de la lista.
-   */
   selectChat(chatId: number): void {
+    console.log('Cambiando al chat:', chatId); // Para depurar
+
     // 1. Pone todos los chats como 'inactivos'
     this.chatList.forEach(chat => chat.active = false);
     
@@ -65,16 +73,15 @@ export class ChatComponent implements OnInit {
     }
 
     // 3. (FUTURO) Aquí cargarías los mensajes de ese chat
-    // this.loadMessagesForChat(chatId);
-    console.log('Chat seleccionado:', chatId);
+    // Por ahora, solo simula que el chat activo cambia
+    // this.activeChatMessages = this.loadMessagesForChat(chatId);
   }
 
-  /**
-   * Esta función se llamará al presionar el botón de enviar
-   */
   sendMessage(): void {
     const messageText = this.newMessage.trim();
-    if (!messageText) return; // No enviar mensajes vacíos
+    if (!messageText) return; 
+
+    console.log('Enviando mensaje:', messageText); // Para depurar
 
     // 1. (Simulación) Añade el mensaje a la lista local como 'outgoing'
     this.activeChatMessages.push({ type: 'outgoing', text: messageText });
@@ -84,7 +91,5 @@ export class ChatComponent implements OnInit {
 
     // 3. Limpia el input
     this.newMessage = '';
-    
-    // (Falta lógica para hacer scroll automático al final)
   }
 }

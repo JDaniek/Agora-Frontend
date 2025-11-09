@@ -1,0 +1,261 @@
+/* --- VARIABLES ---
+  En CSS plano, las variables se definen dentro de :root 
+  o, en este caso, en :host para que se apliquen al componente.
+*/
+:host {
+  --color-fondo: #f0f2f5;
+  --color-blanco: #ffffff;
+  --color-panel-izq: #f9f9f9;
+  --color-primario: #3483fa;
+  --color-texto-principal: #333;
+  --color-texto-secundario: #888;
+  --color-borde: #e0e0e0;
+  --color-burbuja-entrante: #ebebeb;
+  --radio-borde-grande: 24px;
+  --radio-borde-medio: 16px;
+  --radio-borde-pequeno: 12px;
+}
+
+/* --- 1. CONTENEDOR PRINCIPAL --- */
+.chat-container {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  height: 100vh;
+  background-color: var(--color-fondo);
+  box-sizing: border-box;
+}
+
+/* --- 2. PANEL IZQUIERDO (Lista de Chats) --- */
+.chat-list-panel {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 30%;
+  min-width: 300px;
+  background-color: var(--color-panel-izq);
+  border-radius: var(--radio-borde-grande);
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+/* 2.1. Encabezado del panel izquierdo (Menú y Búsqueda) */
+.chat-list-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.chat-list-header .menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-list-header .menu-btn:hover {
+  background-color: var(--color-borde);
+}
+
+.chat-list-header .search-bar {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  background-color: var(--color-burbuja-entrante);
+  border-radius: var(--radio-borde-pequeno);
+  padding: 0.75rem 1rem;
+  gap: 0.5rem;
+}
+
+.chat-list-header .search-bar .material-icons {
+  color: var(--color-texto-secundario);
+}
+
+.chat-list-header .search-bar input {
+  border: none;
+  background: none;
+  outline: none;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+/* 2.2. Lista de chats (con scroll) */
+.chat-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* --- Estilo para la barra de scroll (Opcional) --- */
+.chat-list::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-list::-webkit-scrollbar-thumb {
+  background-color: var(--color-borde);
+  border-radius: 3px;
+}
+.chat-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 2.3. Cada item de la lista de chat */
+.chat-list-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: var(--radio-borde-medio);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-bottom: 0.5rem;
+}
+
+.chat-list-item .avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--color-borde);
+  object-fit: cover;
+}
+
+.chat-list-item .chat-info {
+  overflow: hidden;
+}
+
+.chat-list-item .chat-info .username {
+  font-weight: 600;
+  color: var(--color-texto-principal);
+}
+
+.chat-list-item .chat-info .message-snippet {
+  font-size: 0.85rem;
+  color: var(--color-texto-secundario);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ESTADO ACTIVO (para el Websocket) */
+.chat-list-item.active {
+  background-color: var(--color-blanco);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.chat-list-item:not(.active):hover {
+  background-color: #f0f0f0;
+}
+
+
+/* --- 3. PANEL DERECHO (Ventana del Chat) --- */
+.chat-window-panel {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde-grande);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* 3.1. Encabezado del chat activo */
+.chat-window-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.chat-window-header .avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: var(--color-borde);
+}
+
+.chat-window-header .username {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-texto-principal);
+}
+
+/* 3.2. Área de mensajes (con scroll) */
+.chat-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* 3.3. Burbujas de mensaje */
+.message-bubble {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radio-borde-medio);
+  max-width: 70%;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* Mensaje Entrante (de la otra persona) */
+.message-bubble.incoming {
+  background-color: var(--color-burbuja-entrante);
+  color: var(--color-texto-principal);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+/* Mensaje Saliente (tuyo) */
+.message-bubble.outgoing {
+  background-color: var(--color-primario);
+  color: var(--color-blanco);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+/* 3.4. Caja para escribir el mensaje */
+.chat-input-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid var(--color-borde);
+  background-color: var(--color-panel-izq);
+}
+
+.chat-input-box input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde-pequeno);
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+}
+
+.chat-input-box .send-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-primario);
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.chat-input-box .send-btn .material-icons {
+  font-size: 28px;
+}
+
+.chat-input-box .send-btn:hover {
+  background-color: var(--color-borde);
+}

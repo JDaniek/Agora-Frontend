@@ -45,10 +45,9 @@
     </figure>
   </div>
 
-  <div id="diferencia" class="frame">
-    <div class="frame-one">Empieza ahora</div>
+  <div class="about__cta">
+    <button class="btn btn--primary" (click)="navigateToSignup()">Empieza ahora</button>
   </div>
-
   <div class="text">
     <div class="deco-crayons">
       <img src="/assets/crayons.png" alt="Crayones" />
@@ -127,9 +126,45 @@
   </div>
 </div>
 
-  <div class="text">
-    <p>Sobre nosotros: </p>
+    <div class="deco-globe">
+      <img src="/assets/globe.png" alt="Globo terraqueo" />
+    </div>
+
+   <div class="text">
+    <p>Sobre nosotros</p>
   </div>
 
 
+  <!-- grid principal: texto izquierda / imagen derecha -->
+  <div class="about__grid container">
+    <div class="about__text">
+      <p>
+        Somos estudiantes de Ingeniería en Desarrollo de Software y, al buscar y dar asesorías entre nosotros,
+        notamos que no había una plataforma gratuita, accesible y sin requisitos formales para conectar alumnos y asesores.
+      </p>
+
+      <p class="about__linklike">
+        Así nació Ágora: un espacio donde cualquiera puede enseñar o aprender
+        sin títulos, costos ni intermediarios</p>
+    </div>
+
+    <figure class="about__media">
+      <img
+        src="/assets/Team.png"
+        alt="Grupo de estudiantes sonriendo"
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+  </div>
+
+  <div class="about__cta">
+    <button class="btn btn--primary" (click)="navigateToSignup()">Pruébalo</button>
+  </div>
+
 </main>
+<footer class="site-footer" aria-label="Pie de página">
+  <div class="site-footer__inner">
+    <span>© {{ year }} Ágora — Hecho por alumnos de 4º cuatrimestre de ITIID. Todos los derechos reservados.</span>
+  </div>
+</footer>

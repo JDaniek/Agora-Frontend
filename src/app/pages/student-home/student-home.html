@@ -68,6 +68,7 @@
   </header>
 
   <aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
+  <div class="overlay" *ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
     <div class="sidebar-header">
       <img class="agora-icon" src="/agora_icon.png" alt="" />
       <button class="close-menu-btn" (click)="closeSidebar()">
@@ -100,7 +101,18 @@
     </div>
   </aside>
 
-    <main class="content">
-    <router-outlet></router-outlet>
+<main class="content">
+
+    <ng-container *ngIf="!isChatRoute">
+      <h2 class="section-title">Recomendaciones</h2>
+      <div class="grid">
+            </div>
+      <div *ngIf="advisers.length === 0" class="no-results">
+        <p>No se encontraron asesores que coincidan con tus filtros.</p>
+      </div>
+    </ng-container>
+
+    <router-outlet *ngIf="isChatRoute"></router-outlet>
+
   </main>
 </section>

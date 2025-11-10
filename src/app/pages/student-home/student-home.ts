@@ -1,10 +1,11 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router'; // AÑADE RouterOutlet
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router'; // AÑADE RouterOutlet
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap, map, startWith, tap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs'; // AÑADE Subscription
+import { filter } from 'rxjs/operators'; // Añade filter
 
 import { SidebarService } from '../../core/services/sidebar';
 
@@ -41,6 +42,8 @@ interface AdviserCardView {
   styleUrls: ['./student-home.css']
 })
 export class StudentHome implements OnInit, OnDestroy { // AÑADE OnDestroy
+  public isChatRoute: boolean = false;
+  private routerSubscription!: Subscription; // Para limpiar el listener del router
 
   // ... (Tus propiedades existentes)
   private apiUrl = 'http://localhost:8080/api/v1/advisers';
@@ -67,6 +70,13 @@ export class StudentHome implements OnInit, OnDestroy { // AÑADE OnDestroy
     // 3. INYECTA EL SERVICIO DEL SIDEBAR
     private sidebarService: SidebarService
   ) {
+    // Escucha los cambios de ruta para saber si mostrar el chat o el home
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      // Comprueba si la URL actual es una de las de chat
+      this.isChatRoute = event.url.startsWith('/chat-alumno') || event.url.startsWith('/chat-tutor');
+    });
     this.filtros = this.fb.group({
       search: [''],
       lugar: [''],

@@ -51,8 +51,9 @@
 
 <!-- Contenido principal -->
 <main class="main-content" [class.main-content-shifted]="isSidebarOpen">
-  <div class="content-header">
-    <router-outlet></router-outlet>
-    <p class="subtitle">Gestiona las solicitudes pendientes</p>
-  </div>
+    <div class="content-header" *ngIf="!isChatRoute">
+    <h1>Bienvenido, Asesor</h1>
+    <p class="subtitle">Gestiona las solicitudes pendientes</p>
+  </div>
+  <router-outlet *ngIf="isChatRoute"></router-outlet>
 </main>

@@ -22,10 +22,7 @@
 /* --- 1. CONTENEDOR PRINCIPAL --- */
 .chat-container {
   display: flex;
-  gap: 1.5rem;
-  padding: 1.5rem;
   height: 100vh;
-  background-color: var(--color-fondo);
   box-sizing: border-box;
 }
 
@@ -40,6 +37,7 @@
   padding: 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
+  border-right: 1px solid #e0e0e0;
 }
 
 /* 2.1. Encabezado del panel izquierdo (Menú y Búsqueda) */

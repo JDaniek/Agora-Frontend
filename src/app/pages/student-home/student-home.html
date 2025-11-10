@@ -1,5 +1,5 @@
 <section class="home-wrap">
-  <header class="top-bar">
+  <header class="top-bar" *ngIf="!isChatRoute">
     <button class="menu-toggle" (click)="toggleSidebar()">
       <img src="/icon/Hamburger_MD.png" alt="" />
     </button>
@@ -101,7 +101,7 @@
     </div>
   </aside>
 
-<main class="content">
+<main class="content" [class.chat-active]="isChatRoute">
 
     <ng-container *ngIf="!isChatRoute">
       <h2 class="section-title">Recomendaciones</h2>

@@ -27,6 +27,11 @@ img {
 /* =========================
    HEADER (top-bar)
    ========================= */
+.content.chat-active {
+  padding: 0;
+  max-width: none; /* Le permite ocupar toda la pantalla */
+}
+
 .top-bar {
   display: flex;
   align-items: center;

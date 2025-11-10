@@ -1,3 +1,8 @@
+.main-content.chat-active {
+  padding: 0;
+  margin-top: 0; /* Asumiendo que el header se oculta */
+}
+
 /* --- Barra superior --- */
 .top-bar {
   display: flex;

@@ -1,5 +1,5 @@
 <!-- Barra superior -->
-<header class="top-bar">
+<header class="top-bar" *ngIf="!isChatRoute">
   <button class="menu-toggle" (click)="toggleSidebar()">
    <img src="/icon/Hamburger_MD.png" alt="">
   </button>
@@ -50,7 +50,7 @@
 <div class="overlay" *ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
 
 <!-- Contenido principal -->
-<main class="main-content" [class.main-content-shifted]="isSidebarOpen">
+<main class="main-content" [class.main-content-shifted]="isSidebarOpen" [class.chat-active]="isChatRoute">
     <div class="content-header" *ngIf="!isChatRoute">
     <h1>Bienvenido, Asesor</h1>
     <p class="subtitle">Gestiona las solicitudes pendientes</p>

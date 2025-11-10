@@ -1,18 +1,19 @@
-/* === Página sin “carta”: fondo blanco, sensación de pieza completa === */
+/* === Fuente y base === */
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&display=swap');
 
 :host {
   font-family: 'Lexend', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   top: 0;
   left: 0;
 }
 
+/* === Página === */
 .page{
   max-width: 920px;
-  margin: 20px auto 20px;
+  margin: 32px auto 40px;
   padding: 0 24px 18px;
-  background: #fff;         /* fondo blanco total */
+  background: #fff; /* fondo blanco total */
 }
 
 /* === Título === */
@@ -20,8 +21,27 @@
   text-align:center;
   font-size: 1.8rem;
   font-weight: 700;
-  margin: 8px 0 8px;
+  margin: 8px 0 18px;
   letter-spacing:.2px;
+}
+
+/* === Banners (alerts no bloqueantes) === */
+.alert {
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  border: 1px solid transparent;
+}
+.alert-error {
+  background: #fde8e8;
+  color: #7f1d1d;
+  border-color: #fecaca;
+}
+.alert-info {
+  background: #eff6ff;
+  color: #1e3a8a;
+  border-color: #bfdbfe;
 }
 
 /* === Avatar === */
@@ -32,23 +52,34 @@
   margin-bottom: 18px;
 }
 .avatar{
-  width: 96px; height: 96px;
+  width: 96px;
+  height: 96px;
   border-radius:9999px;
   border:2px dashed #c7cdd4;
-  display:grid; place-items:center;
+  display:grid;
+  place-items:center;
   overflow:hidden;
   background:#f7f9fc;
-  color:#6b7280; font-size:34px;
+  color:#6b7280;
+  font-size:34px;
 }
 .avatar.has-img{ border-style:solid; }
 .avatar img{ width:100%; height:100%; object-fit:cover; }
+
 .avatar-btn{
-  background:#e7eaee; color:#1f2937;
-  font-size:.9rem; padding:6px 12px;
-  border-radius:9999px; cursor:pointer;
+  background:#e7eaee;
+  color:#1f2937;
+  font-size:.9rem;
+  padding:6px 12px;
+  border-radius:9999px;
+  cursor:pointer;
   user-select:none;
+  transition: filter .15s ease;
 }
 .avatar-btn:hover{ filter:brightness(.96); }
+
+/* feedback de carga al subir imagen */
+.upload-feedback { color: #1e3a8a; }
 
 /* === Selects (Lugar / Nivel) === */
 .filters{
@@ -72,7 +103,7 @@
   background:#ffe89a;
   border:1px solid #e9d27a;
   color:#111827;
-  padding:8px 42px 8px 16px;
+  padding:12px 42px 12px 16px;
   border-radius:9999px;
   font-size:.98rem;
   line-height:1;
@@ -103,7 +134,9 @@
 
 /* === Chips (con icono) === */
 .chips{
-  display:flex; flex-wrap:wrap; gap:10px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
   margin: 16px 0 10px;
 }
 .chip{
@@ -113,37 +146,40 @@
   padding:8px 14px;
   border-radius:9999px;
   cursor:pointer;
-  font-size:1rem;
+  font-size:.95rem;
   box-shadow:0 2px 0 rgba(0,0,0,.05);
   transition:filter .15s ease, transform .03s ease;
   display:inline-flex;
   align-items:center;
   gap:8px;
 }
-.chip:hover{ filter:brightness(1); }
+.chip:hover{ filter:brightness(.96); }
 .chip:active{ transform: translateY(1px); }
 .chip.active{ background:#1d4ed8; }
 
 .chip-ico{
-  font-size: 1rem;
+  font-size: 1.05rem;
   line-height: 1;
 }
 
 /* === Textarea === */
 .interests textarea{
   font-family: 'Lexend', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  top: 0;
+  Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   width:100%;
-  min-height:20px;
-  max-height: 50px;
+  min-height:120px;
   resize:vertical;
   padding:14px 16px;
   border-radius:14px;
   border:1px solid #d1d5db;
   background:#f2f4f7;
   color:#111827;
-  font-size:1rem;
+  font-size:.98rem;
+  outline: none;
+}
+.interests textarea:focus{
+  border-color: #224e91;
+  box-shadow: 0 0 0 3px rgba(34,78,145,.15);
 }
 .interests textarea::placeholder{
   color:#94a3b8;
@@ -151,12 +187,14 @@
 
 /* === Actions / Save button === */
 .actions{
-  display:grid; justify-items:end;
+  display:grid;
+  justify-items:end;
   margin-top:16px;
 }
 .btn{
   background:#2563eb;
-  color:#fff; border:none;
+  color:#fff;
+  border:none;
   padding:10px 18px;
   border-radius:12px;
   font-weight:600;
@@ -166,8 +204,17 @@
 }
 .btn:hover{ filter:brightness(.97); }
 .btn:active{ transform: translateY(1px); }
+.btn[disabled],
 .btn:disabled{
   background:#9ca3af;
   box-shadow:none;
   cursor:not-allowed;
+}
+
+/* === Accesibilidad ligera === */
+[aria-busy="true"] { cursor: progress; }
+
+/* === Responsive === */
+@media (max-width: 680px) {
+  .filters { grid-template-columns: 1fr; }
 }

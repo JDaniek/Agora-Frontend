@@ -1,17 +1,21 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router'; // Para navegación
+import {Component} from '@angular/core';
+import {Router, RouterModule} from '@angular/router'; // Para navegación
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-signup',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './signup.html',
   styleUrls: ['./signup.css']
 })
 export class Signup {
-  // Variable que almacena la opción seleccionada
-  selectedOption: string | null = null;
+  public selectedOption: string | null = null;
 
-  // Constructor con el Router para la navegación
-  constructor(private router: Router) {}
+
+//Inyectamos la dependencia router
+  constructor(private router: Router) {
+  }
 
   // Método para manejar la opción seleccionada
   selectOption(option: string) {
@@ -20,8 +24,17 @@ export class Signup {
 
   // Método para redirigir cuando se presiona el botón "Continuar"
   goToNextStep() {
+    if (!this.selectedOption) {
+      return;
+    }
+    //Mapeamos el string al ID que esta en la Base De Datos
+    const roleId = (this.selectedOption === 'alumno') ? 1 : 2;
+    //Linea de depuracion
     console.log('Opción seleccionada:', this.selectedOption);
     // Redirigir a la siguiente página
-    this.router.navigate(['/registro-correo']); // Cambiar ruta según tu necesidad
+    this.router.navigate(['/register'],
+      {
+        queryParams: {roleId: roleId}
+      });
   }
 }

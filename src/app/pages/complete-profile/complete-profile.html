@@ -1,5 +1,13 @@
-<section class="page">
+<section class="page" [formGroup]="form">
   <h1 class="title">Termina tu cuenta</h1>
+
+  <!-- Banners -->
+  <div *ngIf="errorBanner()" class="alert alert-error" role="alert" aria-live="assertive">
+    {{ errorBanner() }}
+  </div>
+  <div *ngIf="infoBanner()" class="alert alert-info" role="status" aria-live="polite">
+    {{ infoBanner() }}
+  </div>
 
   <!-- Avatar -->
   <div class="avatar-block">
@@ -10,63 +18,78 @@
 
     <label class="avatar-btn">
       Cambiar foto
-      <input type="file" accept="image/*" (change)="onAvatarChange($event)" hidden />
+      <input
+        type="file"
+        accept="image/*"
+        (change)="onAvatarChange($event)"
+        [attr.aria-busy]="isUploadingAvatar()"
+        hidden
+      />
     </label>
+
+    <small *ngIf="isUploadingAvatar()" class="upload-feedback">Subiendo foto...</small>
   </div>
 
-  <!-- Selects -->
+  <!-- Filtros -->
   <div class="filters">
     <div class="select">
-      <label for="lugar">Lugar</label>
-      <select id="lugar" [formControl]="form.controls.lugar">
-        <option value="" disabled selected>Selecciona tu estado</option>
+      <label for="lugar">Lugar (Estado)</label>
+      <select id="lugar" formControlName="stateCode">
+        <option value="" disabled>Selecciona tu estado</option>
         <option *ngFor="let e of estadosMx" [value]="e.value">{{ e.label }}</option>
       </select>
-      <small class="error" *ngIf="form.controls.lugar.touched && form.controls.lugar.invalid">
-        El lugar es obligatorio
+      <small class="error" *ngIf="form.controls['stateCode'].touched && form.controls['stateCode'].invalid">
+        El estado es obligatorio
       </small>
     </div>
 
     <div class="select">
       <label for="nivel">Nivel</label>
-      <select id="nivel" [formControl]="form.controls.nivel">
-        <option value="" disabled selected>Selecciona tu nivel</option>
+      <select id="nivel" formControlName="level">
+        <option value="" disabled>Selecciona tu nivel</option>
         <option *ngFor="let n of niveles" [value]="n.value">{{ n.label }}</option>
       </select>
-      <small class="error" *ngIf="form.controls.nivel.touched && form.controls.nivel.invalid">
+      <small class="error" *ngIf="form.controls['level'].touched && form.controls['level'].invalid">
         El nivel es obligatorio
       </small>
     </div>
   </div>
 
-  <!-- Chips con icono -->
-  <div class="chips">
+  <!-- Chips -->
+  <div class="chips" role="group" aria-label="Áreas de interés">
     <button
       type="button"
       class="chip"
       [class.active]="isSelected(tag)"
       *ngFor="let tag of tagsDisponibles; trackBy: trackByTag"
       (click)="toggleTag(tag)"
-      aria-pressed="{{ isSelected(tag) }}"
+      [attr.aria-pressed]="isSelected(tag)"
     >
       <span class="chip-ico" aria-hidden="true">{{ iconFor(tag) }}</span>
-      <span class="chip-label">{{ tag }}</span>
+      <span class="chip-label">{{ tag.name }}</span>
     </button>
   </div>
 
-  <!-- Intereses -->
+  <!-- Descripción -->
   <div class="interests">
     <textarea
       rows="4"
       placeholder="Describe tus intereses específicos de manera sencilla..."
-      [formControl]="form.controls.intereses"
+      formControlName="description"
+      spellcheck="true"
+      autocomplete="off"
     ></textarea>
   </div>
 
-  <!-- Guardar -->
+  <!-- Acciones -->
   <div class="actions">
-    <button class="btn" [disabled]="isSaving() || form.invalid" (click)="submit()">
-      {{ isSaving() ? 'Guardando...' : 'Guardar' }}
+    <button
+      class="btn"
+      [disabled]="isSaving() || isUploadingAvatar() || form.invalid"
+      (click)="submit()"
+      [attr.aria-busy]="isSaving() || isUploadingAvatar()"
+    >
+      {{ isSaving() ? 'Guardando...' : (isUploadingAvatar() ? 'Subiendo foto...' : 'Guardar') }}
     </button>
   </div>
 </section>

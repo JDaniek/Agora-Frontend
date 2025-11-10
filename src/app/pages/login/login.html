@@ -2,11 +2,20 @@
   <div class="container">
     <h1>Iniciar sesión</h1>
     <p>Ingresa tu usuario y contraseña para acceder</p>
-    <form>
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <!--      //Formulario de ingreso de correo electronico-->
       <div class="input-group">
-        <label for="username">Correo Electronico: </label>
-        <input type="text" id="username" name="username" placeholder="Ingresa tu Correo" required />
+        <label for="email">Correo Electronico: </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Ingresa tu Correo"
+          required
+          email
+          [(ngModel)]="formData.email"/>
       </div>
+      <!--      //Formulario de ingreso de contraseña-->
       <div class="input-group">
         <label for="password">Contraseña: </label>
         <input
@@ -15,11 +24,25 @@
           name="password"
           placeholder="Ingresa tu contraseña"
           required
+          [(ngModel)]="formData.password"
         />
       </div>
-      <button type="submit" class="btn-login">Iniciar sesión</button>
-      <button type="submit" class="btn-register" (click)="navigateToSignup()">Regístrate aquí</button> 
+      <!--      //Seccion de botones-->
+
+      <button
+        type="submit"
+        class="btn-login"
+        [disabled]="!loginForm.form.valid">
+        Iniciar sesión
+      </button>
+
+      <button
+        type="button"
+        class="btn-register"
+        (click)="navigateToSignup()">
+        Regístrate aquí
+      </button>
     </form>
   </div>
 </div>
-m
+

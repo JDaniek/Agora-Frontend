@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { Router, RouterOutlet, NavigationEnd } from '@angular/router'; // AÑADE RouterOutlet
+import { Router, RouterOutlet, NavigationEnd, RouterLink } from '@angular/router'; // AÑADE RouterOutlet
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
@@ -36,7 +36,8 @@ interface AdviserCardView {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterOutlet 
+    RouterOutlet,
+    RouterLink 
   ],
   templateUrl: './student-home.html',
   styleUrls: ['./student-home.css']

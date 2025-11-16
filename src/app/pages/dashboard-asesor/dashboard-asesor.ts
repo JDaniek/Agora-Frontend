@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'; // 1. Añade OnInit, OnDestroy
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common'; // 2. Añade CommonModule
 import { RouterOutlet } from '@angular/router'; // 3. AÑADE ROUTER-OUTLET
 import { Subscription } from 'rxjs'; // 4. Añade Subscription
@@ -7,7 +7,7 @@ import { filter } from 'rxjs/operators';
 import { SidebarService } from '../../core/services/sidebar';
 @Component({
   selector: 'app-dashboard-asesor',
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, RouterLink],
   templateUrl: './dashboard-asesor.html',
   styleUrl: './dashboard-asesor.css'
 })

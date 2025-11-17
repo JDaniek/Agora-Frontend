@@ -1,58 +1,300 @@
-<!-- Barra superior -->
-<header class="top-bar">
-  <button class="menu-toggle" (click)="toggleSidebar()">
-   <img src="/icon/Hamburger_MD.png" alt="">
-  </button>
-  <div class="right-actions">
-    <img src="/icon/Bell.png" alt="">
-        <div class="avatar"></div>
-  </div>
-</header>
-
-<!-- Sidebar lateral -->
-<aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
-  <div class="sidebar-header">
-    <img class="agora-icon" src="/agora_icon.png" alt="">
-    <!-- Botón para cerrar el menú desde dentro -->
-    <button class="close-menu-btn" (click)="closeSidebar()">
-      <span class="material-icons"><</span>
+<!-- dashboard-asesor.html -->
+<section class="dashboard-wrap">
+  <!-- Barra superior fija -->
+  <header class="top-bar">
+    <button class="menu-toggle" (click)="toggleSidebar()">
+      <img src="/icon/Hamburger_MD.png" alt="Menú" />
     </button>
-  </div>
 
-  <nav class="sidebar-menu">
-    <a href="#" (click)="closeSidebar()" class="menu-item active">
-      <img src="/icon/home.png" alt="">
-      Inicio
-    </a>
-    <a href="#" (click)="closeSidebar()" class="menu-item">
-      <img src="/icon/fav.png" alt="">
-      Favoritos
-    </a>
-    <a href="#" (click)="closeSidebar()" class="menu-item">
-      <img src="/icon/chat.png" alt="">
-      Chats
-    </a>
-    <a href="#" (click)="closeSidebar()" class="menu-item">
-      <img src="/icon/solicitud.png" alt="">
-      Solicitudes
-    </a>
-  </nav>
+    <div class="right-actions">
+      <img src="/icon/Bell.png" alt="Notificaciones" class="icon-bell" />
+      <div
+        class="avatar"
+        [class.has-img]="adviserAvatarUrl"
+        [title]="adviserName"
+      >
+        <img *ngIf="adviserAvatarUrl" [src]="adviserAvatarUrl" [alt]="adviserName" />
+        <span *ngIf="!adviserAvatarUrl" aria-hidden="true">👤</span>
+      </div>
+    </div>
+  </header>
 
-  <div class="sidebar-footer">
-    <button class="logout-btn" (click)="closeSidebar()">
-      <img src="/icon/logout.png" alt="">
-      Cerrar sesión
-    </button>
-  </div>
-</aside>
+  <!-- Sidebar lateral -->
+  <aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
+    <div class="sidebar-header">
+      <img class="agora-icon" src="/agora_icon.png" alt="Agora" />
+      <button class="close-menu-btn" (click)="closeSidebar()">
+        <span class="material-icons">&lt;</span>
+      </button>
+    </div>
 
-<!-- Overlay para cerrar al hacer clic fuera -->
-<div class="overlay" ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
+    <nav class="sidebar-menu">
+      <button
+        (click)="setView('inicio')"
+        class="menu-item"
+        [class.active]="currentView === 'inicio'"
+      >
+        <img src="/icon/home.png" alt="" />
+        Inicio
+      </button>
+      <button
+        (click)="setView('favoritos')"
+        class="menu-item"
+        [class.active]="currentView === 'favoritos'"
+      >
+        <img src="/icon/fav.png" alt="" />
+        Favoritos
+      </button>
+      <button
+        (click)="setView('chats')"
+        class="menu-item"
+        [class.active]="currentView === 'chats'"
+      >
+        <img src="/icon/chat.png" alt="" />
+        Chats
+      </button>
+      <button
+        (click)="setView('solicitudes')"
+        class="menu-item"
+        [class.active]="currentView === 'solicitudes'"
+      >
+        <img src="/icon/solicitud.png" alt="" />
+        Solicitudes
+      </button>
+    </nav>
 
-<!-- Contenido principal -->
-<main class="main-content" [class.main-content-shifted]="isSidebarOpen">
-  <div class="content-header">
-    <h1>Bienvenido, Asesor</h1>
-    <p class="subtitle">Gestiona las solicitudes pendientes</p>
-  </div>
-</main>
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <img src="/icon/logout.png" alt="" />
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- Overlay -->
+  <div class="overlay" *ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <!-- Vista: Inicio -->
+    <div class="view-inicio" *ngIf="currentView === 'inicio'">
+      <div class="content-header">
+        <h1>Bienvenido, {{ adviserName }}</h1>
+        <p class="subtitle">Gestiona tus sesiones y solicitudes</p>
+      </div>
+
+      <!-- Resumen de estadísticas -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">📋</div>
+          <div class="stat-value">{{ stats.pendingRequests }}</div>
+          <div class="stat-label">Solicitudes pendientes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💬</div>
+          <div class="stat-value">{{ stats.activeChats }}</div>
+          <div class="stat-label">Chats activos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value">{{ stats.finishedChats }}</div>
+          <div class="stat-label">Chats finalizados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-value">{{ stats.nextSession }}</div>
+          <div class="stat-label">Próxima sesión</div>
+        </div>
+      </div>
+
+      <!-- Solicitudes recientes -->
+      <div class="section-recent">
+        <h2 class="section-title">Solicitudes recientes</h2>
+
+        <div class="cards-container" *ngIf="pendingRequests.length > 0">
+          <article
+            class="request-card"
+            *ngFor="let req of pendingRequests; trackBy: trackById"
+          >
+            <div class="card-header">
+              <div class="student-info">
+                <div class="avatar-small" [class.has-img]="req.avatarUrl">
+                  <img *ngIf="req.avatarUrl" [src]="req.avatarUrl" [alt]="req.studentName" />
+                  <span *ngIf="!req.avatarUrl" aria-hidden="true">👤</span>
+                </div>
+                <div class="student-details">
+                  <div class="student-name">{{ req.studentName }}</div>
+                  <div class="student-meta">
+                    {{ req.subject }} · {{ req.level }}
+                  </div>
+                </div>
+              </div>
+              <div class="request-date">{{ req.formattedDate }}</div>
+            </div>
+
+            <div class="card-body">
+              <span class="status-badge pending">Pendiente</span>
+            </div>
+
+            <div class="card-actions">
+              <button class="btn-secondary" (click)="viewRequestDetail(req)">
+                Ver detalle
+              </button>
+              <button class="btn-primary" (click)="acceptRequest(req)">
+                Aceptar
+              </button>
+            </div>
+          </article>
+        </div>
+
+        <div class="no-results" *ngIf="pendingRequests.length === 0">
+          <p>No tienes solicitudes pendientes</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista: Chats -->
+    <div class="view-chats" *ngIf="currentView === 'chats'">
+      <div class="chats-layout">
+        <!-- Columna izquierda: Lista de chats -->
+        <div class="chats-list">
+          <div class="chats-list-header">
+            <h2>Chats</h2>
+            <div class="search-box" [formGroup]="chatFilterForm">
+              <input
+                type="text"
+                placeholder="Buscar alumno"
+                formControlName="search"
+              />
+            </div>
+            <div class="chat-filters">
+              <button
+                class="filter-chip"
+                [class.active]="chatFilterForm.value.filter === 'all'"
+                (click)="chatFilterForm.patchValue({ filter: 'all' })"
+              >
+                Todos
+              </button>
+              <button
+                class="filter-chip"
+                [class.active]="chatFilterForm.value.filter === 'active'"
+                (click)="chatFilterForm.patchValue({ filter: 'active' })"
+              >
+                Activos
+              </button>
+              <button
+                class="filter-chip"
+                [class.active]="chatFilterForm.value.filter === 'finished'"
+                (click)="chatFilterForm.patchValue({ filter: 'finished' })"
+              >
+                Finalizados
+              </button>
+            </div>
+          </div>
+
+          <div class="chats-list-body">
+            <div
+              class="chat-item"
+              *ngFor="let chat of filteredChatThreads; trackBy: trackById"
+              [class.active]="selectedChatId === chat.id"
+              (click)="selectChat(chat)"
+            >
+              <div class="chat-avatar" [class.has-img]="chat.avatarUrl">
+                <img *ngIf="chat.avatarUrl" [src]="chat.avatarUrl" [alt]="chat.studentName" />
+                <span *ngIf="!chat.avatarUrl">{{ chat.initials }}</span>
+              </div>
+              <div class="chat-info">
+                <div class="chat-top">
+                  <div class="chat-name">{{ chat.studentName }}</div>
+                  <div class="chat-time">{{ chat.lastMessageTime }}</div>
+                </div>
+                <div class="chat-meta">{{ chat.subject }} · {{ chat.level }}</div>
+                <div class="chat-last-message">{{ chat.lastMessage }}</div>
+              </div>
+              <div class="chat-badge" *ngIf="chat.unreadCount > 0">
+                {{ chat.unreadCount }}
+              </div>
+            </div>
+
+            <div class="no-results" *ngIf="filteredChatThreads.length === 0">
+              <p>No se encontraron chats</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna derecha: Conversación -->
+        <div class="chat-conversation">
+          <div class="chat-empty" *ngIf="!selectedChat">
+            <p>Selecciona un chat para ver la conversación</p>
+          </div>
+
+          <div class="chat-active" *ngIf="selectedChat">
+            <!-- Header del chat -->
+            <div class="conversation-header">
+              <div class="conversation-student">
+                <div class="avatar-medium" [class.has-img]="selectedChat.avatarUrl">
+                  <img
+                    *ngIf="selectedChat.avatarUrl"
+                    [src]="selectedChat.avatarUrl"
+                    [alt]="selectedChat.studentName"
+                  />
+                  <span *ngIf="!selectedChat.avatarUrl">{{
+                    selectedChat.initials
+                  }}</span>
+                </div>
+                <div class="conversation-student-info">
+                  <div class="conversation-student-name">
+                    {{ selectedChat.studentName }}
+                  </div>
+                  <div class="conversation-student-meta">
+                    {{ selectedChat.subject }} · {{ selectedChat.level }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mensajes -->
+            <div class="conversation-messages">
+              <div
+                class="message"
+                *ngFor="let msg of chatMessages; trackBy: trackById"
+                [class.message-adviser]="msg.isFromAdviser"
+                [class.message-student]="!msg.isFromAdviser"
+              >
+                <div class="message-bubble">
+                  <div class="message-content">{{ msg.content }}</div>
+                  <div class="message-time">{{ msg.time }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Input de mensaje -->
+            <div class="conversation-input">
+              <input
+                type="text"
+                placeholder="Escribe un mensaje..."
+                [(ngModel)]="newMessageText"
+                (keyup.enter)="sendMessage()"
+              />
+              <button class="btn-send" (click)="sendMessage()">
+                ➤
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista: Favoritos (placeholder) -->
+    <div class="view-placeholder" *ngIf="currentView === 'favoritos'">
+      <h2>Favoritos</h2>
+      <p>Próximamente</p>
+    </div>
+
+    <!-- Vista: Solicitudes (placeholder) -->
+    <div class="view-placeholder" *ngIf="currentView === 'solicitudes'">
+      <h2>Solicitudes</h2>
+      <p>Próximamente</p>
+    </div>
+  </main>
+</section>

@@ -1,20 +1,23 @@
 <div class="background">
+    <div class="back-arrow" (click)="navigateToHome()">
+    ←
+  </div>
   <div class="container">
     <h1>Bienvenido a Agora</h1>
     <p>¿Cómo deseas registrarte?</p>
     <div class="options">
       <!-- Asesor -->
-      <div 
-        class="option" 
-        (click)="selectOption('asesor')" 
+      <div
+        class="option"
+        (click)="selectOption('asesor')"
         [class.selected]="selectedOption === 'asesor'">
         <img src="/assets/asesor.png" alt="Asesor" />
         <span>Asesor</span>
       </div>
       <!-- Alumno -->
-      <div 
-        class="option" 
-        (click)="selectOption('alumno')" 
+      <div
+        class="option"
+        (click)="selectOption('alumno')"
         [class.selected]="selectedOption === 'alumno'">
         <img src="assets/alumno.png" alt="Alumno" />
         <span>Alumno</span>

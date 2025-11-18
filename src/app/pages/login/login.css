@@ -25,6 +25,23 @@
   justify-content: center;
   align-items: center;
 }
+.back-arrow {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 28px;
+  cursor: pointer;
+  color: #ffffff;
+  background: rgba(0,0,0,0.2);
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: 0.2s ease;
+}
+
+.back-arrow:hover {
+  background: rgba(0,0,0,0.35);
+}
+
 
 .container {
   background-color: white;
@@ -65,7 +82,7 @@
   width: 100%;
   padding: 12px;
   font-size: 16px;
-  border: 2px solid #f3ac12; 
+  border: 2px solid #f3ac12;
   border-radius: 8px;
   margin-top: 8px;
   box-sizing: border-box;
@@ -101,10 +118,10 @@ button {
 
 .btn-register {
   color: #3c7fe3;
-  background-color: #ffffff; 
+  background-color: #ffffff;
 }
 
 .btn-register:hover {
-  background-color: #EAB308; 
+  background-color: #EAB308;
   color: #ffffff;
 }

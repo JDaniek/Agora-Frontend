@@ -35,6 +35,9 @@ export class Login {
     this.router.navigate(['/signup']);
   }
 
+  navigateToHome() {
+  this.router.navigate(['/']); // tu ruta de inicio
+}
   //Esta funcion llama al formulario
   onSubmit() {
     console.log('Enviando datos del login', this.formData);

@@ -37,4 +37,8 @@ export class Signup {
         queryParams: {roleId: roleId}
       });
   }
+
+  navigateToHome() {
+  this.router.navigate(['/']); // tu ruta de inicio
+}
 }

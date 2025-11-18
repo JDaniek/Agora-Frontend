@@ -97,4 +97,7 @@ export class Register implements OnInit {
   navigateToLogin() {
     this.router.navigate(['/login']);
   }
+  navigateToHome() {
+  this.router.navigate(['/signup']);
+}
 }

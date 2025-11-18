@@ -23,6 +23,24 @@
   align-items: center;
 }
 
+.back-arrow {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 28px;
+  cursor: pointer;
+  color: #ffffff;
+  background: rgba(0,0,0,0.2);
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: 0.2s ease;
+}
+
+.back-arrow:hover {
+  background: rgba(0,0,0,0.35);
+}
+
+
 .container {
   background-color: rgb(255, 255, 255);
   padding: 2% 3%;
@@ -75,10 +93,10 @@
 }
 
 .option img {
-  width: 100%;      
-  max-width: 120px;   
-  height: auto;      
-  object-fit: contain; 
+  width: 100%;
+  max-width: 120px;
+  height: auto;
+  object-fit: contain;
   margin-bottom: 8%;
 }
 

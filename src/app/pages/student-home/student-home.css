@@ -188,48 +188,96 @@ button { font: inherit; }
 /* --- Sidebar --- */
 .sidebar {
   position: fixed;
-  top: 0; left: -280px;
-  width: 280px; height: 100vh;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100vh;
   background-color: #224e91;
   transition: left 0.3s ease;
   z-index: 1001;
-  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
 }
-.sidebar.sidebar-open { left: 0; }
+.sidebar.sidebar-open {
+  left: 0;
+}
 .sidebar-header {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-.agora-icon { width: 25%; height: auto; }
-.sidebar-header h3 { margin: 0; font-size: 1.1rem; }
+.agora-icon {
+  height: 32px;
+}
 .close-menu-btn {
-  background: none; border: none; color: white;
-  font-size: 1.5rem; cursor: pointer;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.close-menu-btn:hover { opacity: 0.8; }
-.sidebar-menu { padding: 1rem 0; }
+.sidebar-menu {
+  flex: 1;
+  padding: 1rem 0;
+}
 .menu-item {
-  display: flex; align-items: center; gap: .8rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   padding: 1rem 1.5rem;
-  text-decoration: none; color: white;
-  transition: background-color .2s;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
   font-size: 1rem;
+  font-family: inherit;
 }
-.menu-item:hover, .menu-item.active { background-color: rgba(255,255,255,.1); }
-.menu-item .material-icons { font-size: 1.2rem; }
+.menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+.menu-item.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  border-left: 3px solid white;
+}
+.menu-item img {
+  width: 20px;
+  height: 20px;
+}
 .sidebar-footer {
-  position: absolute; bottom: 3%; width: 100%;
+  position: absolute;
+  bottom: 3%;
+  width: 100%;
 }
 .logout-btn {
   width: 100%;
-  display: flex; align-items: center; gap: .5rem;
-  padding: .75rem 1.5rem;
-  background: none; border: none; color: white;
-  text-align: left; cursor: pointer; font-size: 1rem;
-  transition: background-color .2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
 }
-.logout-btn:hover { background-color: rgba(255,255,255,.1); }
+.logout-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
 
 /* Overlay (opcional: añade <div class="sidebar-overlay" (click)="closeSidebar()"></div> tras el <aside>) */
 .sidebar-overlay {
@@ -365,6 +413,7 @@ button { font: inherit; }
   font-size: .92rem; line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  line-clamp: 2;
   overflow: hidden;
   min-height: 2.8em;
   text-align: center;

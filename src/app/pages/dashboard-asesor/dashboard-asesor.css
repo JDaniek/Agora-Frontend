@@ -67,6 +67,16 @@
   object-fit: cover;
 }
 
+/* Added hover effect for clickable avatar */
+.avatar.clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.avatar.clickable:hover {
+  transform: scale(1.05);
+}
+
 /* ========== Sidebar ========== */
 .sidebar {
   position: fixed;

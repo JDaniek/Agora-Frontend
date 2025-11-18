@@ -531,6 +531,11 @@ export class DashboardAsesor implements OnInit {
     this.router.navigate(['/login']);
   }
 
+  // Navegación a completar perfil
+  navigateToCompleteProfile() {
+    this.router.navigate(['/complete-profile']);
+  }
+
   // TrackBy
   trackById(_i: number, item: any): number {
     return item.id;

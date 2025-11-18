@@ -9,9 +9,10 @@
     <div class="right-actions">
       <img src="/icon/Bell.png" alt="Notificaciones" class="icon-bell" />
       <div
-        class="avatar"
+        class="avatar clickable"
         [class.has-img]="adviserAvatarUrl"
         [title]="adviserName"
+        (click)="navigateToCompleteProfile()"
       >
         <img *ngIf="adviserAvatarUrl" [src]="adviserAvatarUrl" [alt]="adviserName" />
         <span *ngIf="!adviserAvatarUrl" aria-hidden="true">👤</span>
@@ -85,12 +86,12 @@
 
       <!-- Resumen de estadísticas -->
       <div class="stats-row">
-        <div class="stat-card">
+        <div class="stat-card" (click)="setView('solicitudes')">
           <div class="stat-icon">📋</div>
           <div class="stat-value">{{ stats.pendingRequests }}</div>
           <div class="stat-label">Solicitudes pendientes</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" (click)="setView('chats')">
           <div class="stat-icon">💬</div>
           <div class="stat-value">{{ stats.activeChats }}</div>
           <div class="stat-label">Chats activos</div>
@@ -257,7 +258,7 @@
             <div class="conversation-messages">
               <div
                 class="message"
-                *ngFor="let msg of chatMessages; trackBy: trackById"
+                *ngFor="let msg of chatMessages, trackBy: trackById"
                 [class.message-adviser]="msg.isFromAdviser"
                 [class.message-student]="!msg.isFromAdviser"
               >

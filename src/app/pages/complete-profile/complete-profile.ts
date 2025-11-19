@@ -102,6 +102,7 @@ export class CompleteProfile implements OnInit {
   tagsDisponibles: { id: number; name: string }[] = [
     { id: 1, name: 'Ciencias Naturales' },
     { id: 2, name: 'Idiomas' },
+    {id:3,name:'Artes'}
   ];
 
   /** ====== Iconos de chips ====== */

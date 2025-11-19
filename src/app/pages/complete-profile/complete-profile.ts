@@ -88,11 +88,20 @@ export class CompleteProfile implements OnInit {
   { value: 'YUC', label: 'Yucatán' },
   { value: 'ZAC', label: 'Zacatecas' }
   ];
-  niveles: Opcion[] = [{ value: 'Universidad', label: 'Universidad' } /* ... */];
+  //Niveles
+  niveles: Opcion[] = [  { value: 'Universidad', label: 'Universidad' },
+  { value: 'Primaria', label: 'Primaria' },
+  { value: 'Secundaria', label: 'Secundaria' },
+  { value: 'Preparatoria', label: 'Preparatoria' },
+  { value: 'Licenciatura', label: 'Licenciatura' },
+  { value: 'Posgrado', label: 'Posgrado' },
+  { value: 'Tesis', label: 'Tesis' },
+  { value: 'Extracurricular', label: 'Extracurricular' },
+  { value: 'Tecnico', label: 'Técnico' }];
+
   tagsDisponibles: { id: number; name: string }[] = [
     { id: 1, name: 'Ciencias Naturales' },
     { id: 2, name: 'Idiomas' },
-    // ...
   ];
 
   /** ====== Iconos de chips ====== */

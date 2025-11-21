@@ -5,7 +5,7 @@
     <button class="menu-toggle" (click)="toggleSidebar()">
       <img src="/icon/Hamburger_MD.png" alt="Menú" />
     </button>
-  </div>
+  </header>
 
   <nav class="sidebar-menu">
     <a href="#" (click)="closeSidebar()" class="menu-item active">
@@ -32,7 +32,7 @@
       Cerrar sesión
     </button>
   </div>
-</aside>
+</section>
 
 <!-- Overlay para cerrar al hacer clic fuera -->
 <div class="overlay" ngIf="isSidebarOpen" (click)="closeSidebar()"></div>

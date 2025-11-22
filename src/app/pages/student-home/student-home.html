@@ -1,28 +1,45 @@
 <section class="home-wrap" [class.sidebar-open]="isSidebarOpen">
-  <!-- Barra superior fija: menú, título y acciones -->
+  <!-- TOP BAR -->
   <header class="top-bar">
-    <button
-      class="menu-toggle"
-      type="button"
-      (click)="toggleSidebar()"
-      aria-label="Abrir menú lateral"
-    >
-      ☰
-    </button>
+    <div class="top-left">
+      <button class="menu-toggle" type="button"
+              (click)="toggleSidebar()"
+              aria-label="Abrir menú de navegación">
+        <span class="menu-lines"></span>
+      </button>
 
-    <div class="top-brand">
-      <span class="top-title">Ágora · Alumno</span>
+      <div class="brand">
+        <img src="/agora_icon.png" alt="Logo de Agora" class="brand-logo" />
+        <div class="brand-text">
+          <span class="brand-title">Agora</span>
+          <span class="brand-subtitle">Alumno</span>
+        </div>
+      </div>
     </div>
 
-    <div class="top-spacer"></div>
+    <!-- Buscador -->
+    <div class="search-bar" [formGroup]="filtros">
+      <div class="search">
+        <input
+          type="text"
+          placeholder="Buscar asesor por nombre o materia"
+          formControlName="search"
+        />
+        <button
+          class="clear"
+          type="button"
+          *ngIf="filtros.controls['search'].value"
+          (click)="filtros.controls['search'].setValue('')"
+          aria-label="Limpiar búsqueda"
+        >
+          ×
+        </button>
+      </div>
+    </div>
 
+    <!-- Acciones derechas -->
     <div class="right-actions">
-      <button
-        class="icon-btn"
-        type="button"
-        aria-label="Ver notificaciones"
-        (click)="toggleNotifications()"
-      >
+      <button class="icon-btn" type="button" aria-label="Ver notificaciones">
         <img src="/icon/Bell.png" alt="Notificaciones" />
       </button>
 
@@ -34,39 +51,86 @@
         [attr.aria-busy]="isLoadingProfile"
       >
         <img *ngIf="topAvatarUrl" [src]="topAvatarUrl" alt="Mi avatar" />
-        <span *ngIf="!topAvatarUrl" aria-hidden="true">A</span>
+        <span *ngIf="!topAvatarUrl" class="avatar-placeholder"></span>
       </a>
     </div>
   </header>
 
-  <!-- Sidebar lateral -->
+  <!-- BARRA DE FILTROS -->
+  <section class="filters-bar" [formGroup]="filtros">
+    <div class="filters-group">
+      <div class="filter-item">
+        <label for="filterLugar">Lugar</label>
+        <select id="filterLugar" formControlName="lugar">
+          <option value="">Todos</option>
+          <option *ngFor="let l of lugares; trackBy: trackByStr" [value]="l">
+            {{ l }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-item">
+        <label for="filterNivel">Nivel</label>
+        <select id="filterNivel" formControlName="nivel">
+          <option value="">Todos</option>
+          <option *ngFor="let n of niveles; trackBy: trackByStr" [value]="n">
+            {{ n }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-item">
+        <label for="filterMateria">Materia</label>
+        <select id="filterMateria" formControlName="materia">
+          <option value="">Todas</option>
+          <option *ngFor="let m of materias" [value]="m.id">
+            {{ m.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <button
+      class="filters-reset"
+      type="button"
+      (click)="clearFilters()"
+      aria-label="Limpiar filtros"
+    >
+      Restablecer filtros
+    </button>
+  </section>
+
+  <!-- SIDEBAR -->
   <aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
     <div class="sidebar-header">
-      <img class="agora-icon" src="/agora_icon.png" alt="Logo de Ágora" />
+      <div class="sidebar-brand">
+        <img class="sidebar-logo" src="/agora_icon.png" alt="Logo de Agora" />
+        <span class="sidebar-title">Menú</span>
+      </div>
       <button
         class="close-menu-btn"
         type="button"
         (click)="closeSidebar()"
-        aria-label="Cerrar menú lateral"
+        aria-label="Cerrar menú"
       >
-        ✕
+        ×
       </button>
     </div>
 
-    <nav class="sidebar-menu" aria-label="Navegación del alumno">
-      <button type="button" class="menu-item active" (click)="closeSidebar()">
+    <nav class="sidebar-menu" aria-label="Navegación principal">
+      <button class="menu-item active" type="button" (click)="closeSidebar()">
         Inicio
       </button>
-      <button type="button" class="menu-item" (click)="closeSidebar()">
+      <button class="menu-item" type="button" (click)="closeSidebar()">
         Favoritos
       </button>
-      <button type="button" class="menu-item" (click)="closeSidebar()">
+      <button class="menu-item" type="button" (click)="closeSidebar()">
         Chats
       </button>
-      <button type="button" class="menu-item" (click)="closeSidebar()">
+      <button class="menu-item" type="button" (click)="closeSidebar()">
         Sesiones
       </button>
-      <button type="button" class="menu-item" (click)="closeSidebar()">
+      <button class="menu-item" type="button" (click)="closeSidebar()">
         Solicitudes
       </button>
     </nav>
@@ -78,93 +142,25 @@
     </div>
   </aside>
 
-  <!-- Overlay con ligero blur cuando el menú está abierto -->
+  <!-- OVERLAY -->
   <div
     class="sidebar-overlay"
     *ngIf="isSidebarOpen"
     (click)="closeSidebar()"
   ></div>
 
-  <!-- Contenido principal -->
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="content">
-    <!-- Panel de búsqueda y filtros -->
-    <section class="search-panel" [formGroup]="filtros">
-      <div class="search-row">
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Buscar asesor por nombre o materia"
-          formControlName="search"
-        />
-        <button
-          class="clear-btn"
-          type="button"
-          *ngIf="filtros.controls['search'].value"
-          (click)="filtros.controls['search'].setValue('')"
-        >
-          Limpiar
-        </button>
-      </div>
-
-      <div class="filter-row">
-        <div class="filter-group">
-          <span class="filter-label">Lugar</span>
-          <select formControlName="lugar">
-            <option value="">Todos</option>
-            <option *ngFor="let l of lugares; trackBy: trackByStr" [value]="l">
-              {{ l }}
-            </option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <span class="filter-label">Nivel</span>
-          <select formControlName="nivel">
-            <option value="">Todos</option>
-            <option *ngFor="let n of niveles; trackBy: trackByStr" [value]="n">
-              {{ n }}
-            </option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <span class="filter-label">Materia</span>
-          <select formControlName="materia">
-            <option value="">Todas</option>
-            <option *ngFor="let m of materias" [value]="m.id">
-              {{ m.name }}
-            </option>
-          </select>
-        </div>
-
-        <button
-          class="filters-reset"
-          type="button"
-          (click)="clearFilters()"
-          aria-label="Restablecer filtros"
-        >
-          ↻
-        </button>
-      </div>
-    </section>
-
-    <!-- Panel de notificaciones (solo texto por ahora) -->
-    <section class="notifications-panel" *ngIf="showNotifications">
-      <h3>Notificaciones</h3>
-      <p>No tienes notificaciones nuevas.</p>
-    </section>
-
-    <!-- Encabezado de sección -->
-    <section class="section-header">
+    <header class="section-header">
       <h2 class="section-title">Recomendaciones</h2>
       <p class="section-subtitle">
         Explora asesores según tu nivel, lugar y materias de interés.
       </p>
-    </section>
+    </header>
 
     <!-- Estado de carga -->
     <div *ngIf="isLoadingAdvisers" class="loading-state">
-      <span class="loading-dot"></span>
+      <span class="loading-spinner"></span>
       <span>Cargando asesores…</span>
     </div>
 
@@ -176,30 +172,26 @@
           type="button"
           [class.on]="t.bookmarked"
           (click)="toggleBookmark(t)"
-          aria-label="Guardar asesor"
+          title="Guardar asesor"
         >
           ★
         </button>
 
-        <div class="avatar" [class.has-img]="t.avatarUrl">
+        <div class="avatar-card" [class.has-img]="t.avatarUrl">
           <img *ngIf="t.avatarUrl" [src]="t.avatarUrl" [alt]="t.name" />
-          <span *ngIf="!t.avatarUrl" aria-hidden="true">A</span>
+          <span *ngIf="!t.avatarUrl" class="avatar-placeholder"></span>
         </div>
 
-        <div class="name">{{ t.name }}</div>
+        <h3 class="name">{{ t.name }}</h3>
 
-        <div class="sub">
-          <span class="level-chip" *ngIf="t.nivel; else sinNivel">
-            {{ t.nivel }}
-          </span>
-          <ng-template #sinNivel>
-            <span class="level-chip level-chip--muted">
-              Nivel no especificado
-            </span>
-          </ng-template>
-        </div>
+        <p class="level" *ngIf="t.nivel; else sinNivel">
+          {{ t.nivel }}
+        </p>
+        <ng-template #sinNivel>
+          <p class="level level-muted">Nivel no especificado</p>
+        </ng-template>
 
-        <div class="tags" *ngIf="t.tags && t.tags.length > 0">
+        <div class="tags" *ngIf="t.tags && t.tags.length">
           <span class="tag" *ngFor="let tag of t.tags; trackBy: trackByStr">
             {{ tag }}
           </span>
@@ -211,8 +203,8 @@
 
         <div class="actions">
           <button
-            class="see-more"
             type="button"
+            class="see-more"
             (click)="onSeeMore(t)"
           >
             Ver más
@@ -226,9 +218,11 @@
       *ngIf="!isLoadingAdvisers && advisers.length === 0"
       class="no-results"
     >
-      <p>No se encontraron asesores según tus filtros.</p>
-      <p class="no-results-hint">
-        Prueba cambiar el lugar, el nivel o la materia para ver más opciones.
+      <p class="no-results-title">
+        No se encontraron asesores según tus filtros.
+      </p>
+      <p class="no-results-text">
+        Cambia el lugar, el nivel o la materia para ver más opciones disponibles.
       </p>
     </section>
   </main>

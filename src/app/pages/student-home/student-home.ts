@@ -1,8 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectorRef
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -18,7 +14,6 @@ import {
 } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
-/** ====== API models ====== */
 interface AdviserCardResponse {
   userId: number;
   firstName: string;
@@ -39,7 +34,6 @@ interface AdviserCardView {
   bookmarked: boolean;
 }
 
-/** Perfil para traer la foto del usuario logueado */
 interface ProfileResponse {
   userId: number;
   description: string | null;
@@ -58,18 +52,16 @@ interface ProfileResponse {
   styleUrls: ['./student-home.css']
 })
 export class StudentHome implements OnInit {
-  /** Endpoints AGORA-API */
   private advisersApiUrl = 'http://localhost:8080/api/v1/advisers';
   private profileApiUrl = 'http://localhost:8080/api/v1/profile';
 
-  /** Estado UI */
   isSidebarOpen = false;
   showNotifications = false;
+
   topAvatarUrl: string | null = null;
   isLoadingProfile = false;
   isLoadingAdvisers = false;
 
-  /** Catálogos (placeholder hasta conectar catálogo real) */
   lugares: string[] = ['CHIS', 'JAL', 'CDMX', 'NL'];
   niveles: string[] = ['Bachillerato', 'Universidad', 'Maestría'];
   materias: { id: number; name: string }[] = [
@@ -87,7 +79,6 @@ export class StudentHome implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
-    // Form de filtros
     this.filtros = this.fb.group({
       search: [''],
       lugar: [''],
@@ -97,26 +88,21 @@ export class StudentHome implements OnInit {
   }
 
   ngOnInit(): void {
-    // Cargar avatar del usuario
     this.loadMyProfile().subscribe();
 
-    // Suscripción a filtros
     this.filtros.valueChanges
       .pipe(
         startWith(this.filtros.value),
         debounceTime(300),
-        distinctUntilChanged(
-          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
-        ),
+        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
         switchMap(values => this.fetchAdvisers(values))
       )
-      .subscribe(cards => {
-        this.advisers = cards;
+      .subscribe(data => {
+        this.advisers = data;
         this.cdr.detectChanges();
       });
   }
 
-  /** Carga de perfil del usuario autenticado */
   private loadMyProfile(): Observable<void> {
     this.isLoadingProfile = true;
 
@@ -143,8 +129,7 @@ export class StudentHome implements OnInit {
     );
   }
 
-  /** Petición de asesores con filtros */
-  private fetchAdvisers(filters: any = {}): Observable<AdviserCardView[]> {
+  fetchAdvisers(filters: any = {}): Observable<AdviserCardView[]> {
     let params = new HttpParams();
 
     if (filters.search) params = params.set('q', filters.search);
@@ -157,10 +142,10 @@ export class StudentHome implements OnInit {
     return this.http
       .get<AdviserCardResponse[]>(this.advisersApiUrl, { params })
       .pipe(
-        tap(apiResponse =>
-          console.log('StudentHome: /advisers respuesta cruda', apiResponse)
+        tap(resp =>
+          console.log('StudentHome: datos recibidos de /advisers', resp)
         ),
-        map(res => res.map(item => this.mapApiToView(item))),
+        map(resp => resp.map(a => this.mapApiToView(a))),
         catchError(err => {
           console.error('StudentHome: error al obtener asesores', err);
           return of<AdviserCardView[]>([]);
@@ -171,30 +156,34 @@ export class StudentHome implements OnInit {
       );
   }
 
-  /** Mapea modelo de API a card de la UI */
-  private mapApiToView(adviser: AdviserCardResponse): AdviserCardView {
+  private mapApiToView(a: AdviserCardResponse): AdviserCardView {
     return {
-      id: adviser.userId,
-      name: `${adviser.firstName} ${adviser.lastName}`,
-      avatarUrl: adviser.photoUrl,
-      nivel: adviser.level,
-      tags: adviser.specialties,
-      description: adviser.description,
+      id: a.userId,
+      name: `${a.firstName} ${a.lastName}`,
+      avatarUrl: a.photoUrl,
+      nivel: a.level,
+      tags: a.specialties,
+      description: a.description,
       bookmarked: false
     };
   }
 
-  /** Helpers UI */
+  /* UI helpers */
+
   toggleSidebar(): void {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
-  closeSidebar(): void {
-    this.isSidebarOpen = false;
-  }
-
   toggleNotifications(): void {
     this.showNotifications = !this.showNotifications;
+  }
+
+  trackByStr(_i: number, str: string): string {
+    return str;
+  }
+
+  trackById(_i: number, item: AdviserCardView): number {
+    return item.id;
   }
 
   clearFilters(): void {
@@ -206,30 +195,22 @@ export class StudentHome implements OnInit {
     });
   }
 
+  toggleBookmark(adviser: AdviserCardView): void {
+    adviser.bookmarked = !adviser.bookmarked;
+  }
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
   }
 
-  trackByStr(_i: number, str: string): string {
-    return str;
-  }
-
-  trackById(_i: number, item: AdviserCardView): number {
-    return item.id;
-  }
-
-  toggleBookmark(adviser: AdviserCardView): void {
-    adviser.bookmarked = !adviser.bookmarked;
-  }
-
   onSeeMore(adviser: AdviserCardView): void {
-    console.log('StudentHome: ver más asesor', adviser);
-    // Aquí después se puede navegar al detalle cuando exista la vista:
-    // this.router.navigate(['/asesor', adviser.id]);
+    console.log('StudentHome: ver más', adviser);
+    // aquí después se puede navegar al detalle de asesor
   }
 }
+
 
 
 

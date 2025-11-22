@@ -1,229 +1,273 @@
-<section class="home-wrap" [class.sidebar-open]="isSidebarOpen">
-  <!-- TOP BAR -->
-  <header class="top-bar">
-    <div class="top-left">
-      <button class="menu-toggle" type="button"
-              (click)="toggleSidebar()"
-              aria-label="Abrir menú de navegación">
-        <span class="menu-lines"></span>
-      </button>
-
-      <div class="brand">
-        <img src="/agora_icon.png" alt="Logo de Agora" class="brand-logo" />
-        <div class="brand-text">
-          <span class="brand-title">Agora</span>
-          <span class="brand-subtitle">Alumno</span>
-        </div>
+<section class="layout">
+  <!-- SIDEBAR (se abre con el botón hamburguesa) -->
+  <aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <img src="/agora_icon.png" alt="Agora" />
       </div>
+      <button
+        class="sidebar-close"
+        type="button"
+        (click)="toggleSidebar()"
+        aria-label="Cerrar menú"
+      >
+        ✕
+      </button>
     </div>
 
-    <!-- Buscador -->
-    <div class="search-bar" [formGroup]="filtros">
-      <div class="search">
+    <nav class="sidebar-menu" aria-label="Navegación principal">
+      <button class="sidebar-item active" type="button">
+        Inicio
+      </button>
+      <button class="sidebar-item" type="button">
+        Favoritos
+      </button>
+      <button class="sidebar-item" type="button">
+        Chats
+      </button>
+      <button class="sidebar-item" type="button">
+        Sesiones
+      </button>
+      <button class="sidebar-item" type="button">
+        Solicitudes
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button
+        class="logout-btn"
+        type="button"
+        (click)="logout()"
+      >
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="main">
+    <!-- HEADER SUPERIOR -->
+    <header class="main-header">
+      <div class="header-left">
+        <button
+          class="icon-button"
+          type="button"
+          (click)="toggleSidebar()"
+          aria-label="Abrir menú"
+        >
+          ☰
+        </button>
+
+        <div class="brand">
+          <span class="brand-name">Agora</span>
+          <span class="brand-role">Alumno</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button
+          class="icon-button"
+          type="button"
+          (click)="toggleNotifications()"
+          aria-label="Ver notificaciones"
+        >
+          <img src="/icon/Bell.png" alt="Notificaciones" />
+        </button>
+
+        <button
+          class="avatar-button"
+          type="button"
+          [routerLink]="['/complete-profile']"
+          [attr.aria-busy]="isLoadingProfile"
+        >
+          <img
+            *ngIf="topAvatarUrl"
+            [src]="topAvatarUrl"
+            alt="Perfil"
+          />
+          <span *ngIf="!topAvatarUrl">A</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- BARRA DE BÚSQUEDA + FILTROS EN UNA SOLA TARJETA -->
+    <section class="search-card" [formGroup]="filtros">
+      <div class="search-row">
+        <span class="search-icon">🔍</span>
         <input
           type="text"
           placeholder="Buscar asesor por nombre o materia"
           formControlName="search"
         />
         <button
-          class="clear"
+          class="clear-search"
           type="button"
           *ngIf="filtros.controls['search'].value"
           (click)="filtros.controls['search'].setValue('')"
           aria-label="Limpiar búsqueda"
         >
-          ×
+          ✕
         </button>
       </div>
-    </div>
 
-    <!-- Acciones derechas -->
-    <div class="right-actions">
-      <button class="icon-btn" type="button" aria-label="Ver notificaciones">
-        <img src="/icon/Bell.png" alt="Notificaciones" />
-      </button>
+      <div class="filters-row">
+        <div class="filter">
+          <label>Lugar</label>
+          <select formControlName="lugar">
+            <option value="">Todos</option>
+            <option
+              *ngFor="let l of lugares; trackBy: trackByStr"
+              [value]="l"
+            >
+              {{ l }}
+            </option>
+          </select>
+        </div>
 
-      <a
-        class="avatar"
-        [class.has-img]="topAvatarUrl"
-        [routerLink]="['/complete-profile']"
-        title="Completar mi perfil"
-        [attr.aria-busy]="isLoadingProfile"
-      >
-        <img *ngIf="topAvatarUrl" [src]="topAvatarUrl" alt="Mi avatar" />
-        <span *ngIf="!topAvatarUrl" class="avatar-placeholder"></span>
-      </a>
-    </div>
-  </header>
+        <div class="filter">
+          <label>Nivel</label>
+          <select formControlName="nivel">
+            <option value="">Todos</option>
+            <option
+              *ngFor="let n of niveles; trackBy: trackByStr"
+              [value]="n"
+            >
+              {{ n }}
+            </option>
+          </select>
+        </div>
 
-  <!-- BARRA DE FILTROS -->
-  <section class="filters-bar" [formGroup]="filtros">
-    <div class="filters-group">
-      <div class="filter-item">
-        <label for="filterLugar">Lugar</label>
-        <select id="filterLugar" formControlName="lugar">
-          <option value="">Todos</option>
-          <option *ngFor="let l of lugares; trackBy: trackByStr" [value]="l">
-            {{ l }}
-          </option>
-        </select>
-      </div>
+        <div class="filter">
+          <label>Materia</label>
+          <select formControlName="materia">
+            <option value="">Todas</option>
+            <option
+              *ngFor="let m of materias"
+              [value]="m.id"
+            >
+              {{ m.name }}
+            </option>
+          </select>
+        </div>
 
-      <div class="filter-item">
-        <label for="filterNivel">Nivel</label>
-        <select id="filterNivel" formControlName="nivel">
-          <option value="">Todos</option>
-          <option *ngFor="let n of niveles; trackBy: trackByStr" [value]="n">
-            {{ n }}
-          </option>
-        </select>
-      </div>
-
-      <div class="filter-item">
-        <label for="filterMateria">Materia</label>
-        <select id="filterMateria" formControlName="materia">
-          <option value="">Todas</option>
-          <option *ngFor="let m of materias" [value]="m.id">
-            {{ m.name }}
-          </option>
-        </select>
-      </div>
-    </div>
-
-    <button
-      class="filters-reset"
-      type="button"
-      (click)="clearFilters()"
-      aria-label="Limpiar filtros"
-    >
-      Restablecer filtros
-    </button>
-  </section>
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
-    <div class="sidebar-header">
-      <div class="sidebar-brand">
-        <img class="sidebar-logo" src="/agora_icon.png" alt="Logo de Agora" />
-        <span class="sidebar-title">Menú</span>
-      </div>
-      <button
-        class="close-menu-btn"
-        type="button"
-        (click)="closeSidebar()"
-        aria-label="Cerrar menú"
-      >
-        ×
-      </button>
-    </div>
-
-    <nav class="sidebar-menu" aria-label="Navegación principal">
-      <button class="menu-item active" type="button" (click)="closeSidebar()">
-        Inicio
-      </button>
-      <button class="menu-item" type="button" (click)="closeSidebar()">
-        Favoritos
-      </button>
-      <button class="menu-item" type="button" (click)="closeSidebar()">
-        Chats
-      </button>
-      <button class="menu-item" type="button" (click)="closeSidebar()">
-        Sesiones
-      </button>
-      <button class="menu-item" type="button" (click)="closeSidebar()">
-        Solicitudes
-      </button>
-    </nav>
-
-    <div class="sidebar-footer">
-      <button class="logout-btn" type="button" (click)="logout()">
-        Cerrar sesión
-      </button>
-    </div>
-  </aside>
-
-  <!-- OVERLAY -->
-  <div
-    class="sidebar-overlay"
-    *ngIf="isSidebarOpen"
-    (click)="closeSidebar()"
-  ></div>
-
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="content">
-    <header class="section-header">
-      <h2 class="section-title">Recomendaciones</h2>
-      <p class="section-subtitle">
-        Explora asesores según tu nivel, lugar y materias de interés.
-      </p>
-    </header>
-
-    <!-- Estado de carga -->
-    <div *ngIf="isLoadingAdvisers" class="loading-state">
-      <span class="loading-spinner"></span>
-      <span>Cargando asesores…</span>
-    </div>
-
-    <!-- Grid de asesores -->
-    <section class="grid">
-      <article class="card" *ngFor="let t of advisers; trackBy: trackById">
         <button
-          class="fav"
+          class="reset-filters"
           type="button"
-          [class.on]="t.bookmarked"
-          (click)="toggleBookmark(t)"
-          title="Guardar asesor"
+          (click)="clearFilters()"
         >
-          ★
+          Restablecer filtros
         </button>
-
-        <div class="avatar-card" [class.has-img]="t.avatarUrl">
-          <img *ngIf="t.avatarUrl" [src]="t.avatarUrl" [alt]="t.name" />
-          <span *ngIf="!t.avatarUrl" class="avatar-placeholder"></span>
-        </div>
-
-        <h3 class="name">{{ t.name }}</h3>
-
-        <p class="level" *ngIf="t.nivel; else sinNivel">
-          {{ t.nivel }}
-        </p>
-        <ng-template #sinNivel>
-          <p class="level level-muted">Nivel no especificado</p>
-        </ng-template>
-
-        <div class="tags" *ngIf="t.tags && t.tags.length">
-          <span class="tag" *ngFor="let tag of t.tags; trackBy: trackByStr">
-            {{ tag }}
-          </span>
-        </div>
-
-        <p class="desc">
-          {{ t.description || 'Este asesor aún no ha añadido una descripción.' }}
-        </p>
-
-        <div class="actions">
-          <button
-            type="button"
-            class="see-more"
-            (click)="onSeeMore(t)"
-          >
-            Ver más
-          </button>
-        </div>
-      </article>
+      </div>
     </section>
 
-    <!-- Sin resultados -->
+    <!-- PANEL DE NOTIFICACIONES SIMPLE -->
     <section
-      *ngIf="!isLoadingAdvisers && advisers.length === 0"
-      class="no-results"
+      class="notifications-panel"
+      *ngIf="showNotifications"
     >
-      <p class="no-results-title">
-        No se encontraron asesores según tus filtros.
-      </p>
-      <p class="no-results-text">
-        Cambia el lugar, el nivel o la materia para ver más opciones disponibles.
-      </p>
+      <h3>Notificaciones</h3>
+      <p>No tienes notificaciones nuevas.</p>
+      <button
+        type="button"
+        class="close-notifications"
+        (click)="toggleNotifications()"
+      >
+        Cerrar
+      </button>
     </section>
-  </main>
+
+    <!-- CONTENIDO (RECOMENDACIONES) -->
+    <main class="page-content">
+      <header class="section-header">
+        <div>
+          <h2>Recomendaciones</h2>
+          <p>
+            Explora asesores según tu nivel, lugar y materias de interés.
+          </p>
+        </div>
+
+        <div *ngIf="isLoadingAdvisers" class="loading">
+          <span class="loading-dot"></span>
+          <span>Cargando asesores…</span>
+        </div>
+      </header>
+
+      <!-- GRID DE ASESORES -->
+      <section class="cards-grid" *ngIf="advisers.length > 0">
+        <article
+          class="card"
+          *ngFor="let t of advisers; trackBy: trackById"
+        >
+          <button
+            class="card-fav"
+            type="button"
+            [class.on]="t.bookmarked"
+            (click)="toggleBookmark(t)"
+            title="Guardar asesor"
+          >
+            ★
+          </button>
+
+          <div class="card-avatar" [class.has-img]="t.avatarUrl">
+            <img
+              *ngIf="t.avatarUrl"
+              [src]="t.avatarUrl"
+              [alt]="t.name"
+            />
+            <span *ngIf="!t.avatarUrl">
+              {{ t.name | slice:0:1 }}
+            </span>
+          </div>
+
+          <div class="card-name">{{ t.name }}</div>
+
+          <div class="card-level">
+            <ng-container *ngIf="t.nivel; else nivelNoDefinido">
+              {{ t.nivel }}
+            </ng-container>
+            <ng-template #nivelNoDefinido>
+              Nivel no especificado
+            </ng-template>
+          </div>
+
+          <div
+            class="card-tags"
+            *ngIf="t.tags && t.tags.length > 0"
+          >
+            <span
+              class="tag"
+              *ngFor="let tag of t.tags; trackBy: trackByStr"
+            >
+              {{ tag }}
+            </span>
+          </div>
+
+          <p class="card-desc">
+            {{ t.description || 'Este asesor aún no ha añadido una descripción.' }}
+          </p>
+
+          <div class="card-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="onSeeMore(t)"
+            >
+              Ver más
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <!-- ESTADO SIN RESULTADOS -->
+      <section
+        class="empty-state"
+        *ngIf="!isLoadingAdvisers && advisers.length === 0"
+      >
+        <h3>No se encontraron asesores según tus filtros.</h3>
+        <p>
+          Cambia el lugar, el nivel o la materia para ver más opciones disponibles.
+        </p>
+      </section>
+    </main>
+  </div>
 </section>

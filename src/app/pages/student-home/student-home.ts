@@ -3,18 +3,9 @@ import { Router, RouterLink } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  map,
-  startWith,
-  tap,
-  catchError
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, startWith, switchMap, tap, catchError, map } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
-/** ====== API models ====== */
 interface AdviserCardResponse {
   userId: number;
   firstName: string;
@@ -35,7 +26,6 @@ interface AdviserCardView {
   bookmarked: boolean;
 }
 
-/** Perfil para traer la foto del usuario logueado */
 interface ProfileResponse {
   userId: number;
   description: string | null;
@@ -46,6 +36,11 @@ interface ProfileResponse {
   specialties: { id: number; name: string }[];
 }
 
+interface NotificationItem {
+  title: string;
+  body: string;
+}
+
 @Component({
   selector: 'app-student-home',
   standalone: true,
@@ -54,20 +49,22 @@ interface ProfileResponse {
   styleUrls: ['./student-home.css']
 })
 export class StudentHome implements OnInit {
-  /** ====== Endpoints (coinciden con AGORA-API en Ktor) ====== */
+
   private advisersApiUrl = 'http://localhost:8080/api/v1/advisers';
   private profileApiUrl = 'http://localhost:8080/api/v1/profile';
 
-  /** ====== UI State ====== */
   isSidebarOpen = false;
-  topAvatarUrl: string | null = null; // foto del usuario en top bar
-  isLoadingProfile = false;
-  isLoadingAdvisers = false; // estado de carga para la lista de asesores
+  notificationsOpen = false;
 
-  /** ====== Filtros / Catálogos (placeholder hasta conectar catálogos reales) ====== */
-  lugares: string[] = ['CHIS', 'JAL', 'CDMX', 'NL'];
-  niveles: string[] = ['Bachillerato', 'Universidad', 'Maestría'];
-  materias: any[] = [
+  topAvatarUrl: string | null = null;
+  isLoadingProfile = false;
+  isLoadingAdvisers = false;
+
+  notifications: NotificationItem[] = [];
+
+  lugares = ['CHIS', 'JAL', 'CDMX', 'NL'];
+  niveles = ['Bachillerato', 'Universidad', 'Maestría'];
+  materias = [
     { id: 1, name: 'Ciencias Naturales' },
     { id: 2, name: 'Idiomas' },
     { id: 3, name: 'Artes' }
@@ -82,7 +79,6 @@ export class StudentHome implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
-    // FormGroup que controla todos los filtros de la barra superior
     this.filtros = this.fb.group({
       search: [''],
       lugar: [''],
@@ -92,33 +88,29 @@ export class StudentHome implements OnInit {
   }
 
   ngOnInit(): void {
-    // 1) Cargar foto del usuario (no rompe si no tiene perfil aún)
-    this.loadMyProfile().subscribe(() => {
-      // nada extra; sólo actualizamos topAvatarUrl
-    });
+    this.loadMyProfile().subscribe();
 
-    // 2) Suscribirse a los cambios del formulario de filtros
-    //    Para cada cambio, llamamos a la API de asesores.
-    this.filtros.valueChanges
-      .pipe(
-        // startWith: dispara una primera carga con los filtros por defecto
-        startWith(this.filtros.value),
-        // debounce: evitamos disparar la API por cada tecla
-        debounceTime(300),
-        // distinctUntilChanged: solo reaccionamos si cambió algo realmente
-        distinctUntilChanged(
-          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
-        ),
-        // switchMap: cancela la petición anterior si el usuario cambia filtros rápido
-        switchMap(filterValues => this.fetchAdvisers(filterValues))
-      )
-      .subscribe(mappedData => {
-        this.advisers = mappedData;
-        this.cdr.detectChanges();
-      });
+    this.filtros.valueChanges.pipe(
+      startWith(this.filtros.value),
+      debounceTime(300),
+      distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+      switchMap(filters => this.fetchAdvisers(filters))
+    ).subscribe(data => {
+      this.advisers = data;
+      this.cdr.detectChanges();
+    });
   }
 
-  /** ====== Cargar perfil del usuario autenticado ====== */
+  toggleNotifications(): void {
+    this.notificationsOpen = !this.notificationsOpen;
+
+    if (this.notificationsOpen && this.notifications.length === 0) {
+      this.notifications = [
+        // Ejemplo de estructura
+      ];
+    }
+  }
+
   private loadMyProfile(): Observable<void> {
     this.isLoadingProfile = true;
 
@@ -126,33 +118,18 @@ export class StudentHome implements OnInit {
       tap(profile => {
         this.topAvatarUrl = profile?.photoUrl ?? null;
       }),
-      catchError(err => {
-        if (err?.status === 404) {
-          // No hay perfil creado: avatar por defecto (null)
-          this.topAvatarUrl = null;
-          return of(null);
-        }
-        if (err?.status === 401) {
-          // Sesión expirada → a login
-          this.router.navigate(['/login']);
-          return of(null);
-        }
-        // Otros errores: no bloqueamos la vista principal
+      catchError(() => {
         this.topAvatarUrl = null;
         return of(null);
       }),
-      tap(() => {
-        this.isLoadingProfile = false;
-      }),
+      tap(() => this.isLoadingProfile = false),
       map(() => void 0)
     );
   }
 
-  /** ====== Data de asesores ====== */
   fetchAdvisers(filters: any = {}): Observable<AdviserCardView[]> {
     let params = new HttpParams();
 
-    // Mapeo filtros → query params del backend
     if (filters.search) params = params.set('q', filters.search);
     if (filters.lugar) params = params.set('state', filters.lugar);
     if (filters.nivel) params = params.set('level', filters.nivel);
@@ -160,43 +137,25 @@ export class StudentHome implements OnInit {
 
     this.isLoadingAdvisers = true;
 
-    return this.http
-      .get<AdviserCardResponse[]>(this.advisersApiUrl, { params })
-      .pipe(
-        tap(apiResponse =>
-          console.log(
-            'StudentHome: datos crudos recibidos de la API /advisers',
-            apiResponse
-          )
-        ),
-        map(apiResponse => apiResponse.map(adviser => this.mapApiToView(adviser))),
-        catchError(err => {
-          console.error('StudentHome: error al obtener asesores', err);
-          // En caso de error devolvemos lista vacía para no romper la vista
-          return of<AdviserCardView[]>([]);
-        }),
-        tap(() => {
-          this.isLoadingAdvisers = false;
-        })
-      );
+    return this.http.get<AdviserCardResponse[]>(this.advisersApiUrl, { params }).pipe(
+      map(api => api.map(a => this.mapApiToView(a))),
+      catchError(() => of([])),
+      tap(() => this.isLoadingAdvisers = false)
+    );
   }
 
-  /** Mapea el modelo de la API al modelo de la tarjeta de la UI */
-  private mapApiToView(adviser: AdviserCardResponse): AdviserCardView {
+  private mapApiToView(api: AdviserCardResponse): AdviserCardView {
     return {
-      id: adviser.userId,
-      name: `${adviser.firstName} ${adviser.lastName}`,
-      avatarUrl: adviser.photoUrl,
-      nivel: adviser.level,
-      // specialties viene como string[], lo usamos tal cual como "tags"
-      tags: adviser.specialties,
-      description: adviser.description,
-      // Estado inicial del bookmark solo es local (no persistimos aún)
+      id: api.userId,
+      name: `${api.firstName} ${api.lastName}`,
+      avatarUrl: api.photoUrl,
+      nivel: api.level,
+      tags: api.specialties ?? [],
+      description: api.description,
       bookmarked: false
     };
   }
 
-  /** ====== UI helpers ====== */
   toggleSidebar(): void {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
@@ -205,49 +164,32 @@ export class StudentHome implements OnInit {
     this.isSidebarOpen = false;
   }
 
-  trackByStr(_i: number, str: string): string {
-    return str;
-  }
-
-  trackById(_i: number, item: AdviserCardView): number {
-    return item.id;
-  }
-
   clearFilters(): void {
-    this.filtros.setValue({
-      search: '',
-      lugar: '',
-      nivel: '',
-      materia: ''
-    });
+    this.filtros.setValue({ search: '', lugar: '', nivel: '', materia: '' });
   }
 
   logout(): void {
-    // Limpiamos la sesión básica en el cliente
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
   }
 
-  toggleBookmark(adviser: AdviserCardView): void {
-    // Por ahora solo cambia el estado en memoria.
-    // Si en el futuro se requiere persistir favoritos,
-    // aquí podríamos llamar a un endpoint /favorites.
-    adviser.bookmarked = !adviser.bookmarked;
+  toggleBookmark(a: AdviserCardView): void {
+    a.bookmarked = !a.bookmarked;
   }
 
-  iconFor(_tag: string): string {
-    // En caso de querer iconos por tipo de tag,
-    // aquí se puede aplicar lógica de mapeo (ej: idioma, matemáticas, etc.).
-    return '📚';
+  trackByStr(_: number, v: string): string {
+    return v;
   }
 
-  /** Handler para el botón "Ver más" de cada card */
-  onSeeMore(adviser: AdviserCardView): void {
-    console.log('StudentHome: ver más detalles de asesor', adviser);
-    // TODO: cuando exista la pantalla de detalle de asesor,
-    // podríamos navegar con su id:
-    // this.router.navigate(['/asesor', adviser.id]);
+  trackById(_: number, v: AdviserCardView): number {
+    return v.id;
   }
+
+  onSeeMore(a: AdviserCardView): void {
+    console.log('Detalles:', a);
+  }
+
 }
+
 

@@ -14,6 +14,20 @@ import {
 } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
+// ========================================
+// Interfaces
+// ========================================
+
+interface ProfileResponse {
+  userId: number;
+  description: string | null;
+  photoUrl: string | null;
+  city: string | null;
+  stateCode: string | null;
+  level: string | null;
+  specialties: { id: number; name: string }[];
+}
+
 interface AdviserCardResponse {
   userId: number;
   firstName: string;
@@ -34,15 +48,9 @@ interface AdviserCardView {
   bookmarked: boolean;
 }
 
-interface ProfileResponse {
-  userId: number;
-  description: string | null;
-  photoUrl: string | null;
-  city: string | null;
-  stateCode: string | null;
-  level: string | null;
-  specialties: { id: number; name: string }[];
-}
+// ========================================
+// Component
+// ========================================
 
 @Component({
   selector: 'app-student-home',
@@ -168,10 +176,16 @@ export class StudentHome implements OnInit {
     };
   }
 
-  /* UI helpers */
+  // ========================================
+  // UI Actions
+  // ========================================
 
   toggleSidebar(): void {
     this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  closeSidebar(): void {
+    this.isSidebarOpen = false;
   }
 
   toggleNotifications(): void {
@@ -207,10 +221,9 @@ export class StudentHome implements OnInit {
 
   onSeeMore(adviser: AdviserCardView): void {
     console.log('StudentHome: ver más', adviser);
-    // aquí después se puede navegar al detalle de asesor
+    // TODO: Navegar a la vista de detalle del asesor
   }
 }
-
 
 
 

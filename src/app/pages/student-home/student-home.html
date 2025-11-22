@@ -1,5 +1,5 @@
-<section class="student-layout">
-  <!-- Barra superior fija -->
+<section class="home-wrap" [class.sidebar-open]="isSidebarOpen">
+  <!-- Barra superior fija: menú, título y acciones -->
   <header class="top-bar">
     <button
       class="menu-toggle"
@@ -7,92 +7,24 @@
       (click)="toggleSidebar()"
       aria-label="Abrir menú lateral"
     >
-      <img src="/icon/Hamburger_MD.png" alt="Abrir menú" />
+      ☰
     </button>
 
-    <!-- Buscador + filtros -->
-    <div class="top-bar-center" [formGroup]="filtros">
-      <div class="search">
-        <span class="search-icon" aria-hidden="true">🔍</span>
-        <input
-          type="text"
-          placeholder="Buscar asesor por nombre o materia"
-          formControlName="search"
-        />
-        <button
-          class="clear-btn"
-          type="button"
-          *ngIf="filtros.controls['search'].value"
-          (click)="filtros.controls['search'].setValue('')"
-          aria-label="Limpiar búsqueda"
-        >
-          ✕
-        </button>
-      </div>
-
-      <div class="filters">
-        <div class="filter">
-          <label for="fLugar">Lugar</label>
-          <select id="fLugar" formControlName="lugar">
-            <option value="">Todos</option>
-            <option *ngFor="let l of lugares; trackBy: trackByStr" [value]="l">
-              {{ l }}
-            </option>
-          </select>
-        </div>
-
-        <div class="filter">
-          <label for="fNivel">Nivel</label>
-          <select id="fNivel" formControlName="nivel">
-            <option value="">Todos</option>
-            <option *ngFor="let n of niveles; trackBy: trackByStr" [value]="n">
-              {{ n }}
-            </option>
-          </select>
-        </div>
-
-        <div class="filter">
-          <label for="fMateria">Materia</label>
-          <select id="fMateria" formControlName="materia">
-            <option value="">Todas</option>
-            <option *ngFor="let m of materias" [value]="m.id">
-              {{ m.name }}
-            </option>
-          </select>
-        </div>
-
-        <button
-          type="button"
-          class="reset-filters"
-          (click)="clearFilters()"
-          aria-label="Limpiar filtros"
-        >
-          ↻
-        </button>
-      </div>
+    <div class="top-brand">
+      <span class="top-title">Ágora · Alumno</span>
     </div>
 
-    <!-- Acciones derechas -->
-    <div class="top-bar-right">
-      <div class="notifications-wrapper">
-        <button
-          type="button"
-          class="icon-btn"
-          (click)="toggleNotifications()"
-          aria-label="Ver notificaciones"
-        >
-          <img src="/icon/Bell.png" alt="Notificaciones" />
-        </button>
+    <div class="top-spacer"></div>
 
-        <!-- Panel de notificaciones -->
-        <div
-          class="notifications-panel"
-          *ngIf="showNotifications"
-        >
-          <h3>Notificaciones</h3>
-          <p>No tienes notificaciones nuevas.</p>
-        </div>
-      </div>
+    <div class="right-actions">
+      <button
+        class="icon-btn"
+        type="button"
+        aria-label="Ver notificaciones"
+        (click)="toggleNotifications()"
+      >
+        <img src="/icon/Bell.png" alt="Notificaciones" />
+      </button>
 
       <a
         class="avatar"
@@ -102,7 +34,7 @@
         [attr.aria-busy]="isLoadingProfile"
       >
         <img *ngIf="topAvatarUrl" [src]="topAvatarUrl" alt="Mi avatar" />
-        <span *ngIf="!topAvatarUrl" aria-hidden="true">👤</span>
+        <span *ngIf="!topAvatarUrl" aria-hidden="true">A</span>
       </a>
     </div>
   </header>
@@ -110,18 +42,18 @@
   <!-- Sidebar lateral -->
   <aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
     <div class="sidebar-header">
-      <img class="sidebar-logo" src="/agora_icon.png" alt="Logo Agora" />
+      <img class="agora-icon" src="/agora_icon.png" alt="Logo de Ágora" />
       <button
+        class="close-menu-btn"
         type="button"
-        class="close-sidebar"
         (click)="closeSidebar()"
         aria-label="Cerrar menú lateral"
       >
-        ×
+        ✕
       </button>
     </div>
 
-    <nav class="sidebar-menu">
+    <nav class="sidebar-menu" aria-label="Navegación del alumno">
       <button type="button" class="menu-item active" (click)="closeSidebar()">
         Inicio
       </button>
@@ -140,42 +72,108 @@
     </nav>
 
     <div class="sidebar-footer">
-      <button type="button" class="logout-btn" (click)="logout()">
+      <button class="logout-btn" type="button" (click)="logout()">
         Cerrar sesión
       </button>
     </div>
   </aside>
 
-  <!-- Overlay para mobile -->
+  <!-- Overlay con ligero blur cuando el menú está abierto -->
   <div
-    class="sidebar-backdrop"
+    class="sidebar-overlay"
     *ngIf="isSidebarOpen"
     (click)="closeSidebar()"
   ></div>
 
   <!-- Contenido principal -->
-  <main class="page-content">
-    <header class="section-header">
-      <h2>Recomendaciones</h2>
-      <p>
+  <main class="content">
+    <!-- Panel de búsqueda y filtros -->
+    <section class="search-panel" [formGroup]="filtros">
+      <div class="search-row">
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Buscar asesor por nombre o materia"
+          formControlName="search"
+        />
+        <button
+          class="clear-btn"
+          type="button"
+          *ngIf="filtros.controls['search'].value"
+          (click)="filtros.controls['search'].setValue('')"
+        >
+          Limpiar
+        </button>
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-group">
+          <span class="filter-label">Lugar</span>
+          <select formControlName="lugar">
+            <option value="">Todos</option>
+            <option *ngFor="let l of lugares; trackBy: trackByStr" [value]="l">
+              {{ l }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Nivel</span>
+          <select formControlName="nivel">
+            <option value="">Todos</option>
+            <option *ngFor="let n of niveles; trackBy: trackByStr" [value]="n">
+              {{ n }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Materia</span>
+          <select formControlName="materia">
+            <option value="">Todas</option>
+            <option *ngFor="let m of materias" [value]="m.id">
+              {{ m.name }}
+            </option>
+          </select>
+        </div>
+
+        <button
+          class="filters-reset"
+          type="button"
+          (click)="clearFilters()"
+          aria-label="Restablecer filtros"
+        >
+          ↻
+        </button>
+      </div>
+    </section>
+
+    <!-- Panel de notificaciones (solo texto por ahora) -->
+    <section class="notifications-panel" *ngIf="showNotifications">
+      <h3>Notificaciones</h3>
+      <p>No tienes notificaciones nuevas.</p>
+    </section>
+
+    <!-- Encabezado de sección -->
+    <section class="section-header">
+      <h2 class="section-title">Recomendaciones</h2>
+      <p class="section-subtitle">
         Explora asesores según tu nivel, lugar y materias de interés.
       </p>
-    </header>
+    </section>
 
     <!-- Estado de carga -->
-    <div *ngIf="isLoadingAdvisers" class="loading">
-      Cargando asesores…
+    <div *ngIf="isLoadingAdvisers" class="loading-state">
+      <span class="loading-dot"></span>
+      <span>Cargando asesores…</span>
     </div>
 
-    <!-- Tarjetas -->
-    <section class="cards-grid" *ngIf="!isLoadingAdvisers && advisers.length">
-      <article
-        class="card"
-        *ngFor="let t of advisers; trackBy: trackById"
-      >
+    <!-- Grid de asesores -->
+    <section class="grid">
+      <article class="card" *ngFor="let t of advisers; trackBy: trackById">
         <button
+          class="fav"
           type="button"
-          class="fav-btn"
           [class.on]="t.bookmarked"
           (click)="toggleBookmark(t)"
           aria-label="Guardar asesor"
@@ -183,31 +181,38 @@
           ★
         </button>
 
-        <div class="card-avatar" [class.has-img]="t.avatarUrl">
+        <div class="avatar" [class.has-img]="t.avatarUrl">
           <img *ngIf="t.avatarUrl" [src]="t.avatarUrl" [alt]="t.name" />
-          <span *ngIf="!t.avatarUrl" aria-hidden="true">👤</span>
+          <span *ngIf="!t.avatarUrl" aria-hidden="true">A</span>
         </div>
 
-        <h3 class="card-name">{{ t.name }}</h3>
+        <div class="name">{{ t.name }}</div>
 
-        <p class="card-level">
-          {{ t.nivel || 'Nivel no especificado' }}
-        </p>
+        <div class="sub">
+          <span class="level-chip" *ngIf="t.nivel; else sinNivel">
+            {{ t.nivel }}
+          </span>
+          <ng-template #sinNivel>
+            <span class="level-chip level-chip--muted">
+              Nivel no especificado
+            </span>
+          </ng-template>
+        </div>
 
-        <div class="card-tags" *ngIf="t.tags && t.tags.length">
+        <div class="tags" *ngIf="t.tags && t.tags.length > 0">
           <span class="tag" *ngFor="let tag of t.tags; trackBy: trackByStr">
             {{ tag }}
           </span>
         </div>
 
-        <p class="card-desc">
+        <p class="desc">
           {{ t.description || 'Este asesor aún no ha añadido una descripción.' }}
         </p>
 
-        <div class="card-actions">
+        <div class="actions">
           <button
+            class="see-more"
             type="button"
-            class="link-btn"
             (click)="onSeeMore(t)"
           >
             Ver más
@@ -219,13 +224,12 @@
     <!-- Sin resultados -->
     <section
       *ngIf="!isLoadingAdvisers && advisers.length === 0"
-      class="empty-state"
+      class="no-results"
     >
-      <h3>No se encontraron asesores según tus filtros.</h3>
-      <p>
+      <p>No se encontraron asesores según tus filtros.</p>
+      <p class="no-results-hint">
         Prueba cambiar el lugar, el nivel o la materia para ver más opciones.
       </p>
     </section>
   </main>
 </section>
-

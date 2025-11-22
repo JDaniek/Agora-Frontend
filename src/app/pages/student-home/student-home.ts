@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, startWith, switchMap, tap, catchError, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, map, startWith, tap, catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
 interface AdviserCardResponse {
@@ -27,18 +27,7 @@ interface AdviserCardView {
 }
 
 interface ProfileResponse {
-  userId: number;
-  description: string | null;
   photoUrl: string | null;
-  city: string | null;
-  stateCode: string | null;
-  level: string | null;
-  specialties: { id: number; name: string }[];
-}
-
-interface NotificationItem {
-  title: string;
-  body: string;
 }
 
 @Component({
@@ -50,17 +39,11 @@ interface NotificationItem {
 })
 export class StudentHome implements OnInit {
 
-  private advisersApiUrl = 'http://localhost:8080/api/v1/advisers';
-  private profileApiUrl = 'http://localhost:8080/api/v1/profile';
+  advisersApiUrl = 'http://localhost:8080/api/v1/advisers';
+  profileApiUrl  = 'http://localhost:8080/api/v1/profile';
 
-  isSidebarOpen = false;
-  notificationsOpen = false;
-
-  topAvatarUrl: string | null = null;
-  isLoadingProfile = false;
-  isLoadingAdvisers = false;
-
-  notifications: NotificationItem[] = [];
+  filtros: FormGroup;
+  advisers: AdviserCardView[] = [];
 
   lugares = ['CHIS', 'JAL', 'CDMX', 'NL'];
   niveles = ['Bachillerato', 'Universidad', 'Maestría'];
@@ -70,8 +53,11 @@ export class StudentHome implements OnInit {
     { id: 3, name: 'Artes' }
   ];
 
-  filtros: FormGroup;
-  advisers: AdviserCardView[] = [];
+  isLoadingAdvisers = false;
+  isSidebarOpen = false;
+  notificationsOpen = false;
+
+  topAvatarUrl: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -89,47 +75,32 @@ export class StudentHome implements OnInit {
 
   ngOnInit(): void {
     this.loadMyProfile().subscribe();
+    this.setupFilterListener();
+  }
 
+  setupFilterListener() {
     this.filtros.valueChanges.pipe(
       startWith(this.filtros.value),
       debounceTime(300),
       distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
-      switchMap(filters => this.fetchAdvisers(filters))
-    ).subscribe(data => {
-      this.advisers = data;
+      switchMap(values => this.fetchAdvisers(values))
+    )
+    .subscribe(res => {
+      this.advisers = res;
       this.cdr.detectChanges();
     });
   }
 
-  toggleNotifications(): void {
-    this.notificationsOpen = !this.notificationsOpen;
-
-    if (this.notificationsOpen && this.notifications.length === 0) {
-      this.notifications = [
-        // Ejemplo de estructura
-      ];
-    }
-  }
-
-  private loadMyProfile(): Observable<void> {
-    this.isLoadingProfile = true;
-
+  loadMyProfile(): Observable<void> {
     return this.http.get<ProfileResponse>(this.profileApiUrl).pipe(
-      tap(profile => {
-        this.topAvatarUrl = profile?.photoUrl ?? null;
-      }),
-      catchError(() => {
-        this.topAvatarUrl = null;
-        return of(null);
-      }),
-      tap(() => this.isLoadingProfile = false),
+      tap(p => this.topAvatarUrl = p.photoUrl),
+      catchError(() => of(void 0)),
       map(() => void 0)
     );
   }
 
-  fetchAdvisers(filters: any = {}): Observable<AdviserCardView[]> {
+  fetchAdvisers(filters: any): Observable<AdviserCardView[]> {
     let params = new HttpParams();
-
     if (filters.search) params = params.set('q', filters.search);
     if (filters.lugar) params = params.set('state', filters.lugar);
     if (filters.nivel) params = params.set('level', filters.nivel);
@@ -138,58 +109,46 @@ export class StudentHome implements OnInit {
     this.isLoadingAdvisers = true;
 
     return this.http.get<AdviserCardResponse[]>(this.advisersApiUrl, { params }).pipe(
-      map(api => api.map(a => this.mapApiToView(a))),
+      map(res => res.map(a => ({
+        id: a.userId,
+        name: `${a.firstName} ${a.lastName}`,
+        avatarUrl: a.photoUrl,
+        nivel: a.level,
+        tags: a.specialties,
+        description: a.description,
+        bookmarked: false
+      }))),
       catchError(() => of([])),
       tap(() => this.isLoadingAdvisers = false)
     );
   }
 
-  private mapApiToView(api: AdviserCardResponse): AdviserCardView {
-    return {
-      id: api.userId,
-      name: `${api.firstName} ${api.lastName}`,
-      avatarUrl: api.photoUrl,
-      nivel: api.level,
-      tags: api.specialties ?? [],
-      description: api.description,
-      bookmarked: false
-    };
+  toggleSidebar() { this.isSidebarOpen = true; }
+  closeSidebar() { this.isSidebarOpen = false; }
+
+  toggleNotifications() {
+    this.notificationsOpen = !this.notificationsOpen;
   }
 
-  toggleSidebar(): void {
-    this.isSidebarOpen = !this.isSidebarOpen;
-  }
-
-  closeSidebar(): void {
-    this.isSidebarOpen = false;
-  }
-
-  clearFilters(): void {
+  clearFilters() {
     this.filtros.setValue({ search: '', lugar: '', nivel: '', materia: '' });
   }
 
-  logout(): void {
+  logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
   }
 
-  toggleBookmark(a: AdviserCardView): void {
-    a.bookmarked = !a.bookmarked;
+  toggleBookmark(t: AdviserCardView) {
+    t.bookmarked = !t.bookmarked;
   }
 
-  trackByStr(_: number, v: string): string {
-    return v;
+  onSeeMore(t: AdviserCardView) {
+    console.log(t);
   }
 
-  trackById(_: number, v: AdviserCardView): number {
-    return v.id;
-  }
-
-  onSeeMore(a: AdviserCardView): void {
-    console.log('Detalles:', a);
-  }
-
+  trackById(_: number, item: AdviserCardView) { return item.id; }
 }
 
 

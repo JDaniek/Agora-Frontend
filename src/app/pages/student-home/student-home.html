@@ -1,150 +1,115 @@
-<section class="home-wrap" [class.sidebar-open]="isSidebarOpen">
+<section class="layout">
 
-  <!-- Top bar fija -->
-  <header class="top-bar">
-    <button class="menu-toggle" (click)="toggleSidebar()" aria-label="Abrir menú lateral">
-      <img src="/icon/Hamburger_MD.png" alt="Menú" />
+  <!-- ===== Header ===== -->
+  <header class="header">
+    <button class="menu-btn" (click)="toggleSidebar()">
+      <img src="/icon/Hamburger_MD.png" alt="Menu">
     </button>
 
-    <!-- Buscador + filtros -->
-    <div class="search-bar" [formGroup]="filtros">
-      <div class="search">
-        <span class="ico" aria-hidden="true">🔍</span>
-        <input type="text" placeholder="Buscar asesor" formControlName="search" />
-        <button class="clear" type="button" *ngIf="filtros.controls['search'].value"
-          (click)="filtros.controls['search'].setValue('')">✕</button>
-      </div>
-
-      <div class="filters">
-        <div class="select">
-          <select formControlName="lugar">
-            <option value="">Lugar</option>
-            <option *ngFor="let l of lugares; trackBy: trackByStr" [value]="l">{{ l }}</option>
-          </select>
-        </div>
-
-        <div class="select">
-          <select formControlName="nivel">
-            <option value="">Nivel</option>
-            <option *ngFor="let n of niveles; trackBy: trackByStr" [value]="n">{{ n }}</option>
-          </select>
-        </div>
-
-        <div class="select">
-          <select formControlName="materia">
-            <option value="">Materias</option>
-            <option *ngFor="let m of materias" [value]="m.id">{{ m.name }}</option>
-          </select>
-        </div>
-
-        <button type="button" class="refresh" (click)="clearFilters()">↻</button>
+    <div class="search-area" [formGroup]="filtros">
+      <div class="search-box">
+        <span class="s-ico">🔍</span>
+        <input type="text" formControlName="search" placeholder="Buscar asesor…">
+        <button *ngIf="filtros.controls['search'].value" (click)="filtros.controls['search'].setValue('')" class="clear-btn">×</button>
       </div>
     </div>
 
-    <!-- Notificaciones y perfil -->
-    <div class="right-actions">
-      <button class="icon-btn" type="button" (click)="toggleNotifications()">
-        <img src="/icon/Bell.png" alt="Notificaciones" />
+    <div class="filter-area" [formGroup]="filtros">
+      <select formControlName="lugar">
+        <option value="">Lugar</option>
+        <option *ngFor="let l of lugares" [value]="l">{{l}}</option>
+      </select>
+
+      <select formControlName="nivel">
+        <option value="">Nivel</option>
+        <option *ngFor="let n of niveles" [value]="n">{{n}}</option>
+      </select>
+
+      <select formControlName="materia">
+        <option value="">Materia</option>
+        <option *ngFor="let m of materias" [value]="m.id">{{m.name}}</option>
+      </select>
+
+      <button class="refresh-btn" (click)="clearFilters()">↻</button>
+    </div>
+
+    <div class="right-box">
+      <button class="noti-btn" (click)="toggleNotifications()">
+        <img src="/icon/Bell.png" alt="Notificaciones">
       </button>
 
-      <a class="avatar" [routerLink]="['/complete-profile']" [class.has-img]="topAvatarUrl"
-        [attr.aria-busy]="isLoadingProfile">
-        <img *ngIf="topAvatarUrl" [src]="topAvatarUrl" alt="Perfil" />
+      <a class="avatar" [class.has-img]="topAvatarUrl" [routerLink]="['/complete-profile']">
+        <img *ngIf="topAvatarUrl" [src]="topAvatarUrl">
         <span *ngIf="!topAvatarUrl">👤</span>
       </a>
     </div>
   </header>
 
-
-  <!-- CARD DE NOTIFICACIONES -->
-  <div class="notifications-card" *ngIf="notificationsOpen">
-    <div class="notifications-header">
-      <h4>Notificaciones</h4>
-      <button type="button" class="close-notif" (click)="toggleNotifications()">×</button>
-    </div>
-
-    <div *ngIf="notifications.length === 0" class="no-notif">
-      <p>No tienes notificaciones por el momento.</p>
-    </div>
-
-    <ul *ngIf="notifications.length > 0" class="notif-list">
-      <li *ngFor="let n of notifications">
-        <h5>{{ n.title }}</h5>
-        <p>{{ n.body }}</p>
-      </li>
-    </ul>
-  </div>
-
-
-  <!-- Sidebar -->
-  <aside class="sidebar" [class.sidebar-open]="isSidebarOpen">
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar" [class.open]="isSidebarOpen">
     <div class="sidebar-header">
-      <img class="agora-icon" src="/agora_icon.png" alt="Logo" />
-      <button class="close-menu-btn" (click)="closeSidebar()">×</button>
+      <img src="/agora_icon.png" class="logo">
+      <button class="close-btn" (click)="closeSidebar()">×</button>
     </div>
 
-    <nav class="sidebar-menu">
-      <a class="menu-item active">Inicio</a>
-      <a class="menu-item">Favoritos</a>
-      <a class="menu-item">Chats</a>
-      <a class="menu-item">Sesiones</a>
-      <a class="menu-item">Solicitudes</a>
+    <nav class="menu">
+      <a class="item active">Inicio</a>
+      <a class="item">Favoritos</a>
+      <a class="item">Chats</a>
+      <a class="item">Sesiones</a>
+      <a class="item">Solicitudes</a>
     </nav>
 
-    <div class="sidebar-footer">
-      <button class="logout-btn" (click)="logout()">
-        <img src="/icon/logout.png" alt="Salir" />
-        Cerrar sesión
-      </button>
-    </div>
+    <button class="logout" (click)="logout()">Cerrar sesión</button>
   </aside>
 
-  <div class="sidebar-overlay" *ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
+  <div class="overlay" *ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
 
+  <!-- ===== Notifications Panel ===== -->
+  <div class="notif-panel" *ngIf="notificationsOpen">
+    <h4>Notificaciones</h4>
+    <p class="empty-msg">No tienes notificaciones nuevas.</p>
+  </div>
 
-  <!-- Contenido principal -->
+  <!-- ===== Content ===== -->
   <main class="content">
-    <div class="section-header">
-      <h2 class="section-title">Recomendaciones</h2>
-      <p class="section-subtitle">Explora asesores según tus filtros.</p>
-    </div>
 
-    <div *ngIf="isLoadingAdvisers" class="loading-state">
-      <span class="loading-dot"></span>
-      <span>Cargando asesores…</span>
-    </div>
+    <h2 class="title">Recomendaciones</h2>
 
-    <div class="grid">
+    <div *ngIf="isLoadingAdvisers" class="loading">Cargando…</div>
+
+    <div class="cards">
       <article class="card" *ngFor="let t of advisers; trackBy: trackById">
-        <button class="fav" type="button" [class.on]="t.bookmarked" (click)="toggleBookmark(t)">★</button>
 
-        <div class="avatar" [class.has-img]="t.avatarUrl">
-          <img *ngIf="t.avatarUrl" [src]="t.avatarUrl" alt="Foto" />
+        <button class="fav" (click)="toggleBookmark(t)" [class.active]="t.bookmarked">★</button>
+
+        <div class="card-avatar" [class.has-img]="t.avatarUrl">
+          <img *ngIf="t.avatarUrl" [src]="t.avatarUrl">
           <span *ngIf="!t.avatarUrl">👤</span>
         </div>
 
-        <div class="name">{{ t.name }}</div>
+        <h3>{{t.name}}</h3>
 
-        <div class="sub">
-          <span *ngIf="t.nivel; else noLevel">{{ t.nivel }}</span>
-          <ng-template #noLevel><span class="no-level">Nivel no especificado</span></ng-template>
+        <p class="level">
+          {{ t.nivel || 'Nivel no especificado' }}
+        </p>
+
+        <div class="tags">
+          <span class="tag" *ngFor="let tag of t.tags">{{tag}}</span>
         </div>
 
-        <div class="tags" *ngIf="t.tags?.length">
-          <span class="tag" *ngFor="let tag of t.tags">{{ tag }}</span>
-        </div>
+        <p class="desc">
+          {{ t.description || 'Este asesor aún no ha añadido una descripción.' }}
+        </p>
 
-        <p class="desc">{{ t.description || 'Sin descripción disponible.' }}</p>
-
-        <div class="actions">
-          <button class="see-more" (click)="onSeeMore(t)">Ver más</button>
-        </div>
+        <button class="see-more" (click)="onSeeMore(t)">Ver más</button>
       </article>
     </div>
 
     <div *ngIf="!isLoadingAdvisers && advisers.length === 0" class="no-results">
-      <p>No se encontraron asesores según tus filtros.</p>
+      No se encontraron asesores según tus filtros.
     </div>
+
   </main>
 
 </section>

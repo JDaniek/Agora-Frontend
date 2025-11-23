@@ -74,6 +74,15 @@ export const routes: Routes = [
     ),
 },
 
+{
+  path: 'notificaciones',
+  loadComponent: () =>
+    import('./pages/notificaciones/notificaciones').then(
+      (m) => m.NotificacionesComponent
+    ),
+},
+
+
   /* fallback */
   { path: '**', redirectTo: '' },
 ];

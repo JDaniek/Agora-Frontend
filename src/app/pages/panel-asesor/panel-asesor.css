@@ -1,0 +1,300 @@
+/* panel-asesor.component.scss */
+
+/* Paleta base inspirada en Agora */
+:root {
+  --agora-blue: #1e3a8a;
+  --agora-blue-soft: #dbeafe;
+  --surface-bg: #ffffff;
+  --page-bg: #f3f4f6;
+  --border-color: #e5e7eb;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+/* Reset mínimo local al componente */
+:host {
+  display: block;
+  background: var(--page-bg);
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--text-main);
+}
+
+/* Contenedor principal */
+.advisor-panel {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+}
+
+/* Encabezado del panel */
+.panel-header {
+  margin-bottom: 20px;
+}
+
+.panel-header-title h1 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  color: var(--agora-blue);
+}
+
+.panel-header-title p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* Grid de bloques del dashboard */
+.panel-grid {
+  display: grid;
+  grid-template-columns: 2fr 2fr;
+  grid-auto-rows: min-content;
+  gap: 16px;
+}
+
+/* Cada bloque */
+.block {
+  background: var(--surface-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-soft);
+  padding: 16px 18px 18px;
+}
+
+/* Permite que el bloque de perfil ocupe todo el ancho en pantallas medianas */
+.block-profile {
+  grid-column: 1 / -1;
+}
+
+/* Encabezado de cada bloque */
+.block-header {
+  margin-bottom: 12px;
+}
+
+.block-header h2 {
+  margin: 0 0 2px;
+  font-size: 18px;
+  color: var(--text-main);
+}
+
+.block-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Estados vacíos */
+.empty-state {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 6px 0 4px;
+}
+
+/* Tablas reutilizables */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th,
+td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+td {
+  vertical-align: top;
+}
+
+.cell-message {
+  max-width: 260px;
+}
+
+/* Columnas de acciones */
+.col-actions {
+  white-space: nowrap;
+}
+
+/* Etiquetas de estado */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fbbf24;
+}
+
+.status-accepted {
+  background: #ecfdf3;
+  color: #166534;
+  border: 1px solid #22c55e;
+}
+
+.status-rejected {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #f97373;
+}
+
+/* Botones reutilizables */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #e5e7eb;
+  color: #111827;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn + .btn {
+  margin-left: 6px;
+}
+
+.btn-primary {
+  background: var(--agora-blue);
+  color: #ffffff;
+  border-color: var(--agora-blue);
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  color: #111827;
+  border-color: #d1d5db;
+}
+
+.btn-secondary:hover {
+  background: #d1d5db;
+}
+
+.btn-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.btn-danger:hover {
+  background: #fecaca;
+}
+
+/* Formulario de perfil */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.form-field input,
+.form-field textarea {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  background: #f9fafb;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: 2px solid var(--agora-blue-soft);
+  outline-offset: 1px;
+  border-color: var(--agora-blue);
+  background: #ffffff;
+}
+
+.field-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Acciones del formulario */
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.save-message {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Responsivo */
+@media (max-width: 960px) {
+  .panel-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .block-profile {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .advisor-panel {
+    padding-inline: 12px;
+  }
+
+  th,
+  td {
+    padding: 6px 8px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

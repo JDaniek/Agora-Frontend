@@ -1,10 +1,30 @@
-<!-- student-home.html -->
-<section class="student-layout">
-  <!-- SIDEBAR FIJA -->
-  <aside class="sidebar">
+<!-- student-home.component.html -->
+<section
+  class="student-layout"
+  [class.sidebar-collapsed]="isSidebarCollapsed"
+>
+  <!-- SIDEBAR (colapsable + móvil) -->
+  <aside
+    class="sidebar"
+    [class.is-collapsed]="isSidebarCollapsed"
+    [class.is-mobile-open]="isMobileSidebarOpen"
+  >
     <div class="sidebar-header">
-      <div class="sidebar-brand">
-        <img src="/agora_icon.png" alt="Logo de Agora" class="sidebar-logo" />
+      <button
+        type="button"
+        class="sidebar-toggle"
+        (click)="toggleSidebarCollapse()"
+        aria-label="Contraer/expandir menú"
+      >
+        ☰
+      </button>
+
+      <div class="sidebar-brand" *ngIf="!isSidebarCollapsed">
+        <img
+          src="/agora_icon.png"
+          alt="Logo de Agora"
+          class="sidebar-logo"
+        />
         <div class="sidebar-text">
           <span class="sidebar-title">Agora</span>
           <span class="sidebar-role">Alumno</span>
@@ -13,56 +33,160 @@
     </div>
 
     <nav class="sidebar-nav" aria-label="Navegación principal">
-      <button type="button" class="nav-item active">
-        <span class="nav-icon nav-icon-home" aria-hidden="true"></span>
-        <span class="nav-label">Inicio</span>
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === 'inicio'"
+        (click)="onNavigate('inicio')"
+      >
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">Inicio</span>
       </button>
-      <button type="button" class="nav-item">
-        <span class="nav-icon nav-icon-fav" aria-hidden="true"></span>
-        <span class="nav-label">Favoritos</span>
+
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === 'buscar'"
+        (click)="onNavigate('buscar')"
+      >
+        <span class="nav-icon">🔎</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed"
+          >Buscar asesores</span
+        >
       </button>
-      <button type="button" class="nav-item">
-        <span class="nav-icon nav-icon-chat" aria-hidden="true"></span>
-        <span class="nav-label">Chats</span>
+
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === 'mis-asesores'"
+        (click)="onNavigate('mis-asesores')"
+      >
+        <span class="nav-icon">👥</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed"
+          >Mis asesores</span
+        >
       </button>
-      <button type="button" class="nav-item">
-        <span class="nav-icon nav-icon-session" aria-hidden="true"></span>
-        <span class="nav-label">Sesiones</span>
+
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === 'sesiones'"
+        (click)="onNavigate('sesiones')"
+      >
+        <span class="nav-icon">📅</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed"
+          >Sesiones agendadas</span
+        >
       </button>
-      <button type="button" class="nav-item">
-        <span class="nav-icon nav-icon-request" aria-hidden="true"></span>
-        <span class="nav-label">Solicitudes</span>
+
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === 'historial'"
+        (click)="onNavigate('historial')"
+      >
+        <span class="nav-icon">📂</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed"
+          >Historial de sesiones</span
+        >
+      </button>
+
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === 'favoritos'"
+        (click)="onNavigate('favoritos')"
+      >
+        <span class="nav-icon">★</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">Favoritos</span>
+      </button>
+
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === 'notificaciones'"
+        (click)="onNavigate('notificaciones')"
+      >
+        <span class="nav-icon">🔔</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed"
+          >Notificaciones</span
+        >
+      </button>
+
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === 'configuracion'"
+        (click)="onNavigate('configuracion')"
+      >
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed"
+          >Configuración</span
+        >
+      </button>
+
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === 'ayuda'"
+        (click)="onNavigate('ayuda')"
+      >
+        <span class="nav-icon">❓</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">Ayuda</span>
       </button>
     </nav>
 
     <div class="sidebar-footer">
-      <button type="button" class="logout-btn" (click)="logout()">
+      <button
+        type="button"
+        class="logout-btn"
+        (click)="logout()"
+      >
         Cerrar sesión
       </button>
     </div>
   </aside>
 
+  <!-- Backdrop móvil -->
+  <div
+    class="sidebar-backdrop"
+    *ngIf="isMobileSidebarOpen"
+    (click)="closeMobileSidebar()"
+  ></div>
+
   <!-- ZONA PRINCIPAL -->
   <div class="main-area">
     <!-- BARRA SUPERIOR -->
     <header class="main-header" [formGroup]="filtros">
-      <div class="search-area">
-        <div class="search-box">
-          <span class="search-icon" aria-hidden="true"></span>
-          <input
-            type="text"
-            formControlName="search"
-            placeholder="Buscar asesor por nombre o materia"
-          />
-          <button
-            type="button"
-            class="search-clear"
-            *ngIf="filtros.controls['search'].value"
-            (click)="filtros.controls['search'].setValue('')"
-            aria-label="Limpiar búsqueda"
-          >
-            ×
-          </button>
+      <div class="header-left">
+        <button
+          type="button"
+          class="hamburger-btn"
+          (click)="toggleMobileSidebar()"
+          aria-label="Abrir menú"
+        >
+          ☰
+        </button>
+
+        <div class="search-area">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              formControlName="search"
+              (input)="onSearchChange()"
+              placeholder="Buscar asesor por nombre o materia"
+            />
+            <button
+              type="button"
+              class="search-clear"
+              *ngIf="filtros.controls['search'].value"
+              (click)="clearSearch()"
+              aria-label="Limpiar búsqueda"
+            >
+              ×
+            </button>
+          </div>
         </div>
       </div>
 
@@ -70,7 +194,10 @@
         <div class="filters-row">
           <div class="filter">
             <span class="filter-label">Lugar</span>
-            <select formControlName="lugar">
+            <select
+              formControlName="lugar"
+              (change)="onFiltersChange()"
+            >
               <option value="">Todos</option>
               <option
                 *ngFor="let l of lugares; trackBy: trackByStr"
@@ -83,7 +210,10 @@
 
           <div class="filter">
             <span class="filter-label">Nivel</span>
-            <select formControlName="nivel">
+            <select
+              formControlName="nivel"
+              (change)="onFiltersChange()"
+            >
               <option value="">Todos</option>
               <option
                 *ngFor="let n of niveles; trackBy: trackByStr"
@@ -96,7 +226,10 @@
 
           <div class="filter">
             <span class="filter-label">Materia</span>
-            <select formControlName="materia">
+            <select
+              formControlName="materia"
+              (change)="onFiltersChange()"
+            >
               <option value="">Todas</option>
               <option *ngFor="let m of materias" [value]="m.id">
                 {{ m.name }}
@@ -120,7 +253,7 @@
             (click)="toggleNotificationsPanel()"
             aria-label="Ver notificaciones"
           >
-            <span class="icon-bell" aria-hidden="true"></span>
+            🔔
           </button>
 
           <button
@@ -134,7 +267,10 @@
               [src]="topAvatarUrl"
               alt="Foto de perfil"
             />
-            <span *ngIf="!topAvatarUrl" class="avatar-placeholder"></span>
+            <span
+              *ngIf="!topAvatarUrl"
+              class="avatar-placeholder"
+            ></span>
           </button>
         </div>
       </div>
@@ -142,375 +278,301 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main class="main-content">
-      <!-- LAYOUT TIPO DASHBOARD -->
-      <section class="dashboard-grid">
-        <!-- COLUMNA PRINCIPAL -->
-        <div class="dashboard-main">
-          <!-- Tarjeta de bienvenida -->
-          <section class="panel panel-welcome">
-            <div class="welcome-header">
-              <div class="welcome-avatar" [class.has-image]="topAvatarUrl">
-                <img
-                  *ngIf="topAvatarUrl"
-                  [src]="topAvatarUrl"
-                  alt="Foto de perfil"
-                />
-                <span
-                  *ngIf="!topAvatarUrl"
-                  class="welcome-avatar-initial"
-                >
-                  {{ studentInitial }}
-                </span>
-              </div>
-
-              <div class="welcome-text">
-                <h1 class="welcome-title">
-                  Bienvenido/a, {{ studentName }}
-                </h1>
-                <p class="welcome-subtitle">
-                  Tu perfil está {{ profileCompletion }}% completo.
-                  Completa tu información para que los asesores te encuentren más fácil.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                class="link-edit"
-                (click)="onEditProfile()"
-              >
-                Editar perfil
-              </button>
+      <section class="content-grid">
+        <!-- COLUMNA IZQUIERDA: resumen + asesores -->
+        <div class="content-main">
+          <!-- Resumen superior -->
+          <section class="summary-row">
+            <!-- Recomendaciones -->
+            <div class="summary-card summary-recommendations">
+              <h1 class="summary-title">Recomendaciones</h1>
+              <p class="summary-text">
+                Explora asesores según tu nivel, lugar y materias de interés.
+              </p>
             </div>
 
-            <div class="welcome-progress">
-              <div class="progress-header">
-                <span>Progreso de perfil</span>
-                <span>{{ profileCompletion }}%</span>
+            <!-- Estado de perfil -->
+            <div class="summary-card summary-status">
+              <div class="status-row">
+                <span class="status-label">Estado de perfil</span>
+                <span
+                  class="status-pill"
+                  [class.status-complete]="profileCompletion >= 100"
+                >
+                  {{ profileCompletion | number : '1.0-0' }}%
+                </span>
               </div>
-              <div class="progress-bar">
+              <p class="status-text">
+                Mantén tu perfil actualizado para recibir mejores
+                recomendaciones.
+              </p>
+              <div class="status-progress">
                 <div
-                  class="progress-bar-fill"
+                  class="status-progress-bar"
                   [style.width.%]="profileCompletion"
                 ></div>
               </div>
-            </div>
-          </section>
-
-          <!-- Próximas asesorías -->
-          <section class="panel panel-sessions">
-            <div class="panel-header">
-              <h2 class="panel-title">Próximas asesorías</h2>
               <button
                 type="button"
-                class="link-small"
-                (click)="onViewAllSessions()"
+                class="status-edit-btn"
+                (click)="onEditProfile()"
               >
-                Ver todas
+                Completar perfil
               </button>
             </div>
 
-            <div *ngIf="upcomingSessions.length; else emptySessions">
-              <ul class="session-list">
-                <li class="session-item" *ngFor="let s of upcomingSessions">
-                  <div class="session-main">
-                    <div class="session-subject">{{ s.subject }}</div>
-                    <div class="session-adviser">
-                      Con {{ s.adviserName }}
-                    </div>
-                  </div>
-                  <div class="session-meta">
-                    <span class="session-date">{{ s.date }}</span>
-                    <span class="session-time">{{ s.time }}</span>
-                    <span
-                      class="session-mode"
-                      *ngIf="s.mode"
-                    >
-                      {{ s.mode }}
-                    </span>
-                  </div>
+            <!-- Panel rápido de notificaciones -->
+            <div
+              class="summary-card summary-notifications"
+              *ngIf="showNotificationsPanel"
+            >
+              <h2 class="summary-subtitle">
+                Notificaciones
+              </h2>
+              <p
+                class="summary-text"
+                *ngIf="!notices.length"
+              >
+                No tienes notificaciones nuevas.
+              </p>
+              <ul
+                class="summary-notice-list"
+                *ngIf="notices.length"
+              >
+                <li
+                  *ngFor="let n of notices"
+                  class="summary-notice-item"
+                >
+                  <span class="notice-dot"></span>
+                  <span class="notice-title">{{ n.title }}</span>
                 </li>
               </ul>
             </div>
+          </section>
 
-            <ng-template #emptySessions>
-              <div class="empty-box">
-                <p>No tienes asesorías agendadas.</p>
+          <!-- Listado de asesores -->
+          <section class="list-section">
+            <div
+              *ngIf="isLoadingAdvisers"
+              class="loading-box"
+            >
+              Cargando asesores…
+            </div>
+
+            <div
+              class="advisers-grid"
+              *ngIf="!isLoadingAdvisers && advisers.length > 0"
+            >
+              <article
+                class="adviser-card"
+                *ngFor="let t of advisers; trackBy: trackById"
+              >
                 <button
                   type="button"
-                  class="btn-secondary"
-                  (click)="clearFilters()"
+                  class="card-bookmark"
+                  [class.is-on]="t.bookmarked"
+                  (click)="toggleBookmark(t)"
+                  aria-label="Guardar asesor"
                 >
-                  Buscar asesores
+                  ★
                 </button>
-              </div>
-            </ng-template>
-          </section>
 
-          <!-- Estado de solicitudes -->
-          <section class="panel panel-requests">
-            <div class="panel-header">
-              <h2 class="panel-title">Estado de solicitudes</h2>
-              <button
-                type="button"
-                class="link-small"
-                (click)="onViewRequests()"
-              >
-                Ver detalle
-              </button>
-            </div>
-
-            <div class="requests-grid">
-              <div
-                class="request-pill"
-                *ngFor="let r of requestsSummary"
-              >
-                <span class="request-label">{{ r.label }}</span>
-                <span class="request-count">{{ r.count }}</span>
-              </div>
-            </div>
-          </section>
-
-          <!-- Materias / cursos activos -->
-          <section class="panel panel-courses">
-            <div class="panel-header">
-              <h2 class="panel-title">Materias activas</h2>
-              <button
-                type="button"
-                class="link-small"
-                (click)="onViewAllCourses()"
-              >
-                Ver todas
-              </button>
-            </div>
-
-            <div *ngIf="activeCourses.length; else emptyCourses">
-              <div class="courses-grid">
-                <article
-                  class="course-card"
-                  *ngFor="let c of activeCourses"
-                >
-                  <h3 class="course-name">{{ c.name }}</h3>
-                  <p class="course-subtitle">{{ c.subtitle }}</p>
-
+                <div class="card-header">
                   <div
-                    class="course-progress"
-                    *ngIf="c.progress !== undefined"
+                    class="card-avatar"
+                    [class.has-image]="t.avatarUrl"
                   >
-                    <div class="course-progress-bar">
-                      <div
-                        class="course-progress-fill"
-                        [style.width.%]="c.progress"
-                      ></div>
-                    </div>
-                    <span class="course-progress-label">
-                      {{ c.progress }}%
-                    </span>
+                    <img
+                      *ngIf="t.avatarUrl"
+                      [src]="t.avatarUrl"
+                      [alt]="t.name"
+                    />
                   </div>
+                  <div class="card-header-text">
+                    <div class="card-name">{{ t.name }}</div>
+                    <div class="card-level">
+                      {{ t.nivel || 'Nivel no especificado' }}
+                    </div>
+                    <div
+                      class="card-location"
+                      *ngIf="t.location"
+                    >
+                      {{ t.location }}
+                    </div>
+                  </div>
+                </div>
 
+                <p class="card-description">
+                  {{
+                    t.description ||
+                      'Este asesor aún no ha añadido una descripción.'
+                  }}
+                </p>
+
+                <div
+                  class="card-tags"
+                  *ngIf="t.tags && t.tags.length"
+                >
+                  <span
+                    class="card-tag"
+                    *ngFor="let tag of t.tags; trackBy: trackByStr"
+                  >
+                    {{ tag }}
+                  </span>
+                </div>
+
+                <div class="card-footer">
                   <button
                     type="button"
-                    class="btn-primary"
-                    (click)="onViewCourse(c.id)"
+                    class="card-button"
+                    (click)="onSeeMore(t)"
                   >
-                    Ver
+                    Ver más
                   </button>
-                </article>
-              </div>
+                </div>
+              </article>
             </div>
 
-            <ng-template #emptyCourses>
-              <div class="empty-box">
-                <p>No tienes materias activas por el momento.</p>
-              </div>
-            </ng-template>
+            <div
+              class="no-results-box"
+              *ngIf="!isLoadingAdvisers && advisers.length === 0"
+            >
+              <p class="no-results-title">
+                No se encontraron asesores que coincidan con tu búsqueda.
+              </p>
+              <p class="no-results-text">
+                Intenta cambiar el lugar, el nivel o la materia para ver más
+                opciones disponibles.
+              </p>
+            </div>
           </section>
         </div>
 
-        <!-- COLUMNA LATERAL DERECHA -->
-        <div class="dashboard-side">
-          <!-- Calendario / agenda -->
-          <section class="panel panel-schedule">
-            <div class="panel-header">
-              <h2 class="panel-title">Agenda</h2>
-            </div>
+        <!-- COLUMNA DERECHA: calendario + agenda + avisos -->
+        <aside class="content-aside">
+          <!-- Calendario / Agenda -->
+          <section class="calendar-card">
+            <header class="calendar-header">
+              <div>
+                <h2 class="calendar-title">Agenda</h2>
+                <p class="calendar-subtitle">
+                  Revisa tus próximas asesorías.
+                </p>
+              </div>
+              <div class="calendar-month-nav">
+                <button
+                  type="button"
+                  class="calendar-nav-btn"
+                  (click)="goToPreviousMonth()"
+                  aria-label="Mes anterior"
+                >
+                  ‹
+                </button>
+                <span class="calendar-month-label">
+                  {{ currentMonthLabel }}
+                </span>
+                <button
+                  type="button"
+                  class="calendar-nav-btn"
+                  (click)="goToNextMonth()"
+                  aria-label="Mes siguiente"
+                >
+                  ›
+                </button>
+              </div>
+            </header>
 
-            <div class="schedule-month">
-              {{ currentMonthLabel }}
-            </div>
-
-            <div class="schedule-grid">
-              <div class="schedule-weekday">L</div>
-              <div class="schedule-weekday">M</div>
-              <div class="schedule-weekday">X</div>
-              <div class="schedule-weekday">J</div>
-              <div class="schedule-weekday">V</div>
-              <div class="schedule-weekday">S</div>
-              <div class="schedule-weekday">D</div>
-
+            <div class="calendar-grid">
               <div
-                class="schedule-day"
+                class="calendar-weekday"
+                *ngFor="let w of weekDays"
+              >
+                {{ w }}
+              </div>
+
+              <button
+                type="button"
+                class="calendar-day"
                 *ngFor="let d of calendarDays"
                 [class.is-today]="d.isToday"
-                [class.has-session]="d.hasSession"
+                [class.is-selected]="d.dateKey === selectedDateKey"
+                [class.has-session]="d.hasSessions"
+                (click)="onSelectDate(d)"
               >
-                <span class="schedule-day-number">
-                  {{ d.label }}
-                </span>
-              </div>
+                {{ d.dayNumber }}
+              </button>
             </div>
 
-            <div class="schedule-mini">
-              <h3 class="schedule-mini-title">
-                Próximas asesorías
+            <div class="calendar-sessions">
+              <h3 class="calendar-sessions-title">
+                Sesiones para {{ selectedDateLabel }}
               </h3>
-              <ul class="schedule-mini-list">
+
+              <p
+                class="calendar-empty"
+                *ngIf="selectedDaySessions.length === 0"
+              >
+                No tienes sesiones para este día.
+              </p>
+
+              <ul
+                class="calendar-session-list"
+                *ngIf="selectedDaySessions.length > 0"
+              >
                 <li
-                  class="schedule-mini-item"
-                  *ngFor="let s of upcomingSessions | slice: 0:3"
+                  class="calendar-session-item"
+                  *ngFor="let s of selectedDaySessions"
                 >
-                  <span class="mini-session-title">
-                    {{ s.subject }}
-                  </span>
-                  <span class="mini-session-meta">
-                    {{ s.date }} · {{ s.time }}
-                  </span>
+                  <div class="session-time">{{ s.time }}</div>
+                  <div class="session-main">
+                    <div class="session-subject">{{ s.subject }}</div>
+                    <div class="session-advisor">
+                      con {{ s.advisor }}
+                    </div>
+                  </div>
+                  <div class="session-modality">
+                    {{ s.modality || '—' }}
+                  </div>
                 </li>
               </ul>
             </div>
           </section>
 
-          <!-- Avisos / notificaciones importantes -->
-          <section
-            class="panel panel-notices"
-            [class.is-open]="showNotificationsPanel"
-          >
-            <div class="panel-header">
-              <h2 class="panel-title">Avisos</h2>
+          <!-- Avisos importantes -->
+          <section class="notice-card">
+            <header class="notice-header">
+              <h2 class="notice-title">Avisos</h2>
               <button
                 type="button"
-                class="link-small"
+                class="notice-link"
                 (click)="onViewAllNotices()"
               >
                 Ver todos
               </button>
-            </div>
+            </header>
 
-            <div *ngIf="notices.length; else emptyNotices">
-              <ul class="notice-list">
-                <li class="notice-item" *ngFor="let n of notices">
-                  <div class="notice-title">{{ n.title }}</div>
-                  <p class="notice-text">
-                    {{ n.description }}
-                  </p>
-                  <button
-                    type="button"
-                    class="link-small"
-                    (click)="onViewNotice(n.id)"
-                  >
-                    Ver más
-                  </button>
-                </li>
-              </ul>
-            </div>
-
-            <ng-template #emptyNotices>
-              <div class="empty-box">
-                <p>No hay avisos por el momento.</p>
-              </div>
-            </ng-template>
+            <ul class="notice-list">
+              <li
+                class="notice-item"
+                *ngFor="let n of notices"
+              >
+                <h3 class="notice-item-title">
+                  {{ n.title }}
+                </h3>
+                <p class="notice-item-text">
+                  {{ n.text }}
+                </p>
+                <button
+                  type="button"
+                  class="notice-item-link"
+                  (click)="onViewNotice(n.id)"
+                >
+                  Ver más
+                </button>
+              </li>
+            </ul>
           </section>
-        </div>
-      </section>
-
-      <!-- LISTADO DE ASESORES RECOMENDADOS -->
-      <section class="advisers-section">
-        <header class="advisers-header">
-          <div>
-            <h2 class="advisers-title">Recomendaciones</h2>
-            <p class="advisers-subtitle">
-              Explora asesores según tu nivel, lugar y materias de interés.
-            </p>
-          </div>
-        </header>
-
-        <div *ngIf="isLoadingAdvisers" class="loading-box">
-          Cargando asesores…
-        </div>
-
-        <div
-          class="advisers-grid"
-          *ngIf="!isLoadingAdvisers && advisers.length > 0"
-        >
-          <article
-            class="adviser-card"
-            *ngFor="let t of advisers; trackBy: trackById"
-          >
-            <button
-              type="button"
-              class="card-bookmark"
-              [class.is-on]="t.bookmarked"
-              (click)="toggleBookmark(t)"
-              aria-label="Guardar asesor"
-            >
-              ★
-            </button>
-
-            <div class="card-header">
-              <div class="card-avatar" [class.has-image]="t.avatarUrl">
-                <img
-                  *ngIf="t.avatarUrl"
-                  [src]="t.avatarUrl"
-                  [alt]="t.name"
-                />
-              </div>
-              <div class="card-header-text">
-                <div class="card-name">{{ t.name }}</div>
-                <div class="card-level">
-                  {{ t.nivel || 'Nivel no especificado' }}
-                </div>
-              </div>
-            </div>
-
-            <p class="card-description">
-              {{
-                t.description ||
-                  'Este asesor aún no ha añadido una descripción.'
-              }}
-            </p>
-
-            <div class="card-tags" *ngIf="t.tags && t.tags.length">
-              <span
-                class="card-tag"
-                *ngFor="let tag of t.tags; trackBy: trackByStr"
-              >
-                {{ tag }}
-              </span>
-            </div>
-
-            <div class="card-footer">
-              <button
-                type="button"
-                class="card-button"
-                (click)="onSeeMore(t)"
-              >
-                Ver más
-              </button>
-            </div>
-          </article>
-        </div>
-
-        <div
-          class="no-results-box"
-          *ngIf="!isLoadingAdvisers && advisers.length === 0"
-        >
-          <p class="no-results-title">
-            No se encontraron asesores según tus filtros.
-          </p>
-          <p class="no-results-text">
-            Cambia el lugar, el nivel o la materia para ver más opciones
-            disponibles.
-          </p>
-        </div>
+        </aside>
       </section>
     </main>
   </div>

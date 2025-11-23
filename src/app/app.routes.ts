@@ -66,6 +66,14 @@ export const routes: Routes = [
       .then(m => m.SesionesAgendadasComponent),
 },
 
+{
+  path: 'perfil-alumno',
+  loadComponent: () =>
+    import('./pages/perfil-alumno/perfil-alumno').then(
+      (m) => m.PerfilAlumnoComponent
+    ),
+},
+
   /* fallback */
   { path: '**', redirectTo: '' },
 ];

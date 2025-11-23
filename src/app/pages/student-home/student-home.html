@@ -14,7 +14,7 @@
         type="button"
         class="sidebar-toggle"
         (click)="toggleSidebarCollapse()"
-        aria-label="Contraer/expandir menú"
+        aria-label="Contraer o expandir menú"
       >
         ☰
       </button>
@@ -39,7 +39,7 @@
         [class.active]="activeSection === 'inicio'"
         (click)="onNavigate('inicio')"
       >
-        <span class="nav-icon">🏠</span>
+        <span class="nav-icon">IN</span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Inicio</span>
       </button>
 
@@ -49,7 +49,7 @@
         [class.active]="activeSection === 'buscar'"
         (click)="onNavigate('buscar')"
       >
-        <span class="nav-icon">🔎</span>
+        <span class="nav-icon">BA</span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed"
           >Buscar asesores</span
         >
@@ -61,7 +61,7 @@
         [class.active]="activeSection === 'mis-asesores'"
         (click)="onNavigate('mis-asesores')"
       >
-        <span class="nav-icon">👥</span>
+        <span class="nav-icon">MA</span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed"
           >Mis asesores</span
         >
@@ -73,7 +73,7 @@
         [class.active]="activeSection === 'sesiones'"
         (click)="onNavigate('sesiones')"
       >
-        <span class="nav-icon">📅</span>
+        <span class="nav-icon">SA</span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed"
           >Sesiones agendadas</span
         >
@@ -85,7 +85,7 @@
         [class.active]="activeSection === 'historial'"
         (click)="onNavigate('historial')"
       >
-        <span class="nav-icon">📂</span>
+        <span class="nav-icon">HS</span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed"
           >Historial de sesiones</span
         >
@@ -97,7 +97,7 @@
         [class.active]="activeSection === 'favoritos'"
         (click)="onNavigate('favoritos')"
       >
-        <span class="nav-icon">★</span>
+        <span class="nav-icon">FV</span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Favoritos</span>
       </button>
 
@@ -107,7 +107,7 @@
         [class.active]="activeSection === 'notificaciones'"
         (click)="onNavigate('notificaciones')"
       >
-        <span class="nav-icon">🔔</span>
+        <span class="nav-icon">NT</span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed"
           >Notificaciones</span
         >
@@ -119,7 +119,7 @@
         [class.active]="activeSection === 'configuracion'"
         (click)="onNavigate('configuracion')"
       >
-        <span class="nav-icon">⚙️</span>
+        <span class="nav-icon">CF</span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed"
           >Configuración</span
         >
@@ -131,7 +131,7 @@
         [class.active]="activeSection === 'ayuda'"
         (click)="onNavigate('ayuda')"
       >
-        <span class="nav-icon">❓</span>
+        <span class="nav-icon">AY</span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Ayuda</span>
       </button>
     </nav>
@@ -170,7 +170,7 @@
 
         <div class="search-area">
           <div class="search-box">
-            <span class="search-icon">🔍</span>
+            <span class="search-icon"></span>
             <input
               type="text"
               formControlName="search"
@@ -253,7 +253,7 @@
             (click)="toggleNotificationsPanel()"
             aria-label="Ver notificaciones"
           >
-            🔔
+            <span class="icon-bell"></span>
           </button>
 
           <button
@@ -279,11 +279,10 @@
     <!-- CONTENIDO PRINCIPAL -->
     <main class="main-content">
       <section class="content-grid">
-        <!-- COLUMNA IZQUIERDA: resumen + asesores -->
+        <!-- COLUMNA IZQUIERDA -->
         <div class="content-main">
-          <!-- Resumen superior -->
+          <!-- Resumen -->
           <section class="summary-row">
-            <!-- Recomendaciones -->
             <div class="summary-card summary-recommendations">
               <h1 class="summary-title">Recomendaciones</h1>
               <p class="summary-text">
@@ -291,7 +290,6 @@
               </p>
             </div>
 
-            <!-- Estado de perfil -->
             <div class="summary-card summary-status">
               <div class="status-row">
                 <span class="status-label">Estado de perfil</span>
@@ -321,7 +319,6 @@
               </button>
             </div>
 
-            <!-- Panel rápido de notificaciones -->
             <div
               class="summary-card summary-notifications"
               *ngIf="showNotificationsPanel"
@@ -356,7 +353,7 @@
               *ngIf="isLoadingAdvisers"
               class="loading-box"
             >
-              Cargando asesores…
+              Cargando asesores...
             </div>
 
             <div
@@ -448,7 +445,7 @@
           </section>
         </div>
 
-        <!-- COLUMNA DERECHA: calendario + agenda + avisos -->
+        <!-- COLUMNA DERECHA: agenda y avisos -->
         <aside class="content-aside">
           <!-- Calendario / Agenda -->
           <section class="calendar-card">
@@ -531,14 +528,14 @@
                     </div>
                   </div>
                   <div class="session-modality">
-                    {{ s.modality || '—' }}
+                    {{ s.modality || 'No especificado' }}
                   </div>
                 </li>
               </ul>
             </div>
           </section>
 
-          <!-- Avisos importantes -->
+          <!-- Avisos -->
           <section class="notice-card">
             <header class="notice-header">
               <h2 class="notice-title">Avisos</h2>

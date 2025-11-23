@@ -22,7 +22,7 @@ import {
 } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
-/** Modelos de la API */
+/* Modelos de la API */
 interface AdviserCardResponse {
   userId: number;
   firstName: string;
@@ -31,9 +31,13 @@ interface AdviserCardResponse {
   level: string | null;
   description: string | null;
   specialties: string[];
+
+  // Nuevo: campo opcional para poder usar adviser.stateCode sin error
+  stateCode?: string | null;
 }
 
-/** Modelo usado en la UI y para filtrado local */
+
+/* Modelo para la tarjeta del asesor en la UI */
 interface AdviserCardView {
   id: number;
   name: string;
@@ -42,12 +46,11 @@ interface AdviserCardView {
   tags: string[];
   description: string | null;
   bookmarked: boolean;
-  /** Campos para filtrado local */
   subject?: string | null;
   location?: string | null;
 }
 
-/** Perfil para la barra superior */
+/* Perfil para la barra superior */
 interface ProfileResponse {
   userId: number;
   description: string | null;
@@ -58,26 +61,26 @@ interface ProfileResponse {
   specialties: { id: number; name: string }[];
 }
 
-/** Sesiones de agenda (datos locales) */
+/* Sesiones de agenda (datos locales) */
 interface Session {
   id: number;
-  date: string; // 'YYYY-MM-DD'
-  time: string; // 'HH:mm'
+  date: string; // YYYY-MM-DD
+  time: string; // HH:mm
   subject: string;
   advisor: string;
   modality?: 'En línea' | 'Presencial';
 }
 
-/** Día renderizado en el calendario */
+/* Día del calendario */
 interface CalendarDay {
   date: Date;
-  dateKey: string; // 'YYYY-MM-DD'
+  dateKey: string;
   dayNumber: number;
   isToday: boolean;
   hasSessions: boolean;
 }
 
-/** Avisos locales */
+/* Avisos locales */
 interface Notice {
   id: string;
   title: string;
@@ -92,22 +95,22 @@ interface Notice {
   styleUrls: ['./student-home.css']
 })
 export class StudentHome implements OnInit {
-  /** Endpoints de AGORA-API */
+  /* Endpoints de la API de Agora */
   private advisersApiUrl = 'http://localhost:8080/api/v1/advisers';
   private profileApiUrl = 'http://localhost:8080/api/v1/profile';
 
-  /** Estado UI general */
+  /* Estado general de UI */
   topAvatarUrl: string | null = null;
   isLoadingProfile = false;
   isLoadingAdvisers = false;
   showNotificationsPanel = false;
 
-  /** Estado del menú lateral */
+  /* Estado del menú lateral */
   isSidebarCollapsed = false;
   isMobileSidebarOpen = false;
   activeSection = 'inicio';
 
-  /** Filtros y catálogos */
+  /* Catálogos y filtros */
   lugares: string[] = ['CHIS', 'JAL', 'CDMX', 'NL'];
   niveles: string[] = ['Bachillerato', 'Universidad', 'Maestría'];
   materias: { id: number; name: string }[] = [
@@ -118,14 +121,14 @@ export class StudentHome implements OnInit {
 
   filtros: FormGroup;
 
-  /** Data de asesores */
-  allAdvisers: AdviserCardView[] = []; // dataset completo (API o mock)
-  advisers: AdviserCardView[] = []; // dataset filtrado y mostrado
+  /* Datos de asesores */
+  allAdvisers: AdviserCardView[] = [];
+  advisers: AdviserCardView[] = [];
 
-  /** Perfil (por ahora, progreso mock) */
+  /* Perfil (progreso de ejemplo) */
   profileCompletion = 60;
 
-  /** Agenda y calendario (datos locales) */
+  /* Agenda y calendario (datos locales) */
   weekDays: string[] = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   upcomingSessions: Session[] = [
     {
@@ -157,16 +160,16 @@ export class StudentHome implements OnInit {
   calendarDays: CalendarDay[] = [];
   currentDate: Date = new Date();
   currentYear = this.currentDate.getFullYear();
-  currentMonth = this.currentDate.getMonth(); // 0-11
+  currentMonth = this.currentDate.getMonth();
   selectedDateKey: string = this.buildDateKey(this.currentDate);
   selectedDaySessions: Session[] = [];
 
-  /** Avisos locales */
+  /* Avisos locales */
   notices: Notice[] = [
     {
       id: '1',
       title: 'Nueva solicitud aceptada',
-      text: 'Un asesor aceptó tu solicitud de asesoría. Revisa tu bandeja de sesiones.'
+      text: 'Un asesor aceptó tu solicitud de asesoría. Revisa tus sesiones agendadas.'
     },
     {
       id: '2',
@@ -176,7 +179,7 @@ export class StudentHome implements OnInit {
     {
       id: '3',
       title: 'Actualización en Agora',
-      text: 'Hemos mejorado el sistema de notificaciones para que no te pierdas nada.'
+      text: 'Se actualizó el sistema de notificaciones para mejorar los recordatorios.'
     }
   ];
 
@@ -194,19 +197,13 @@ export class StudentHome implements OnInit {
     });
   }
 
-  /* =========================
-     CICLO DE VIDA
-     ========================= */
+  /* Ciclo de vida */
 
   ngOnInit(): void {
-    this.loadMyProfile().subscribe(() => {
-      // nada extra por ahora
-    });
+    this.loadMyProfile().subscribe();
 
-    // Cargar asesores una vez y luego filtrar localmente
     this.loadInitialAdvisers();
 
-    // Reaccionar a cambios del formulario para filtrar local
     this.filtros.valueChanges
       .pipe(
         startWith(this.filtros.value),
@@ -219,14 +216,11 @@ export class StudentHome implements OnInit {
         this.applyFilters();
       });
 
-    // Inicializar calendario
     this.buildCalendar();
     this.updateSelectedDaySessions();
   }
 
-  /* =========================
-     PERFIL ACTUAL
-     ========================= */
+  /* Perfil */
 
   private loadMyProfile(): Observable<void> {
     this.isLoadingProfile = true;
@@ -235,8 +229,6 @@ export class StudentHome implements OnInit {
       tap(profile => {
         this.topAvatarUrl = profile?.photoUrl ?? null;
 
-        // Ejemplo simple: si tiene foto y al menos una especialidad,
-        // consideramos el perfil más completo
         if (this.topAvatarUrl && profile?.specialties?.length) {
           this.profileCompletion = 100;
         }
@@ -260,15 +252,12 @@ export class StudentHome implements OnInit {
     this.router.navigate(['/complete-profile']);
   }
 
-  /* =========================
-     DATA DE ASESORES
-     ========================= */
+  /* Datos de asesores */
 
   private loadInitialAdvisers(): void {
     this.fetchAdvisers()
       .pipe(
         catchError(() => {
-          // Si falla la API, usamos mocks
           return of(this.buildMockAdvisers());
         })
       )
@@ -279,11 +268,9 @@ export class StudentHome implements OnInit {
       });
   }
 
-  /** Llamada a la API (sin filtros, filtramos localmente) */
   private fetchAdvisers(filters: any = {}): Observable<AdviserCardView[]> {
     let params = new HttpParams();
 
-    // Conservamos la posibilidad de mandar filtros si en el futuro se requieren
     if (filters.search) params = params.set('q', filters.search);
     if (filters.lugar) params = params.set('state', filters.lugar);
     if (filters.nivel) params = params.set('level', filters.nivel);
@@ -306,7 +293,6 @@ export class StudentHome implements OnInit {
       );
   }
 
-  /** Mapea el modelo de la API al modelo de la tarjeta de la UI */
   private mapApiToView(adviser: AdviserCardResponse): AdviserCardView {
     const subject =
       adviser.specialties && adviser.specialties.length
@@ -322,11 +308,10 @@ export class StudentHome implements OnInit {
       description: adviser.description,
       bookmarked: false,
       subject,
-      location: null // cuando el backend tenga stateCode, se puede mapear aquí
-    };
+      location: adviser.stateCode ?? null
+    } as AdviserCardView; // stateCode se puede añadir al modelo de la API más adelante
   }
 
-  /** Datos mock locales, por si la API no está disponible */
   private buildMockAdvisers(): AdviserCardView[] {
     return [
       {
@@ -365,13 +350,11 @@ export class StudentHome implements OnInit {
     ];
   }
 
-  /** Aplica búsqueda y filtros sobre allAdvisers */
   private applyFilters(): void {
     const { search, lugar, nivel, materia } = this.filtros.value;
     const searchTerm = (search || '').toLowerCase().trim();
 
     this.advisers = this.allAdvisers.filter(adviser => {
-      // Búsqueda por nombre, descripción y tags
       let matchesSearch = true;
       if (searchTerm) {
         const haystack = [
@@ -386,19 +369,16 @@ export class StudentHome implements OnInit {
         matchesSearch = haystack.includes(searchTerm);
       }
 
-      // Filtro por lugar
       let matchesLugar = true;
-      if (lugar && adviser.location) {
+      if (lugar) {
         matchesLugar = adviser.location === lugar;
       }
 
-      // Filtro por nivel
       let matchesNivel = true;
       if (nivel && adviser.nivel) {
         matchesNivel = adviser.nivel === nivel;
       }
 
-      // Filtro por materia (en este ejemplo, buscamos en tags)
       let matchesMateria = true;
       if (materia && adviser.tags && adviser.tags.length) {
         const materiaStr = String(materia).toLowerCase();
@@ -410,10 +390,6 @@ export class StudentHome implements OnInit {
       return matchesSearch && matchesLugar && matchesNivel && matchesMateria;
     });
   }
-
-  /* =========================
-     MANEJO DE FILTROS (UI)
-     ========================= */
 
   onSearchChange(): void {
     this.applyFilters();
@@ -439,9 +415,7 @@ export class StudentHome implements OnInit {
     );
   }
 
-  /* =========================
-     CALENDARIO / AGENDA
-     ========================= */
+  /* Calendario y agenda */
 
   private buildDateKey(date: Date): string {
     const y = date.getFullYear();
@@ -539,22 +513,17 @@ export class StudentHome implements OnInit {
     this.updateSelectedDaySessions();
   }
 
-  /* =========================
-     AVISOS
-     ========================= */
+  /* Avisos */
 
   onViewNotice(noticeId: string): void {
     console.log('Ver aviso', noticeId);
-    // En el futuro se puede navegar a un detalle
   }
 
   onViewAllNotices(): void {
     console.log('Ver todos los avisos');
   }
 
-  /* =========================
-     SIDEBAR / NAVEGACIÓN
-     ========================= */
+  /* Sidebar y navegación */
 
   toggleSidebarCollapse(): void {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
@@ -576,9 +545,7 @@ export class StudentHome implements OnInit {
     console.log('Navegar a sección', section);
   }
 
-  /* =========================
-     HELPERS GENERALES
-     ========================= */
+  /* Utilidades */
 
   trackByStr(_: number, value: string): string {
     return value;
@@ -604,10 +571,8 @@ export class StudentHome implements OnInit {
 
   onSeeMore(adviser: AdviserCardView): void {
     console.log('Ver más de asesor', adviser.id);
-    // this.router.navigate(['/asesor', adviser.id]);
   }
 }
-
 
 
 

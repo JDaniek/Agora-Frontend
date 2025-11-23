@@ -1,0 +1,185 @@
+<!-- mis-solicitudes.component.html -->
+<section class="requests-layout">
+  <header class="requests-header">
+    <div>
+      <h1 class="requests-title">Mis solicitudes de asesoría</h1>
+      <p class="requests-subtitle">
+        Consulta el estado de las solicitudes que has enviado a tus asesores.
+      </p>
+    </div>
+  </header>
+
+  <div class="requests-body">
+    <!-- Columna izquierda: listado y filtros -->
+    <section class="requests-list">
+      <!-- Filtros por estado -->
+      <div class="status-filters">
+        <button
+          type="button"
+          class="status-filter"
+          [class.is-active]="selectedStatusFilter === 'TODOS'"
+          (click)="setStatusFilter('TODOS')"
+        >
+          Todas
+        </button>
+        <button
+          type="button"
+          class="status-filter"
+          [class.is-active]="selectedStatusFilter === 'PENDIENTE'"
+          (click)="setStatusFilter('PENDIENTE')"
+        >
+          Pendientes
+        </button>
+        <button
+          type="button"
+          class="status-filter"
+          [class.is-active]="selectedStatusFilter === 'ACEPTADA'"
+          (click)="setStatusFilter('ACEPTADA')"
+        >
+          Aceptadas
+        </button>
+        <button
+          type="button"
+          class="status-filter"
+          [class.is-active]="selectedStatusFilter === 'RECHAZADA'"
+          (click)="setStatusFilter('RECHAZADA')"
+        >
+          Rechazadas
+        </button>
+        <button
+          type="button"
+          class="status-filter"
+          [class.is-active]="selectedStatusFilter === 'FINALIZADA'"
+          (click)="setStatusFilter('FINALIZADA')"
+        >
+          Finalizadas
+        </button>
+      </div>
+
+      <!-- Tabla en escritorio / filas en mobile -->
+      <div class="table-wrapper" *ngIf="filteredRequests.length > 0; else emptyState">
+        <table class="requests-table">
+          <thead>
+            <tr>
+              <th>Asesor</th>
+              <th>Materia / tema</th>
+              <th>Fecha de solicitud</th>
+              <th>Estado</th>
+              <th class="col-action">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let req of filteredRequests; trackBy: trackByRequestId"
+              (click)="selectRequest(req)"
+              [class.is-selected]="selectedRequest?.id === req.id"
+            >
+              <td data-label="Asesor">
+                <span class="cell-main">{{ req.advisorName }}</span>
+              </td>
+              <td data-label="Materia / tema">
+                <span>{{ req.subject }}</span>
+              </td>
+              <td data-label="Fecha">
+                <span>{{ req.requestDate }}</span>
+              </td>
+              <td data-label="Estado">
+                <span class="status-badge" [ngClass]="getStatusClass(req.status)">
+                  {{ getStatusLabel(req.status) }}
+                </span>
+              </td>
+              <td class="col-action" data-label="Acción">
+                <button
+                  type="button"
+                  class="details-button"
+                  (click)="selectRequest(req); $event.stopPropagation()"
+                >
+                  Ver detalles
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <h2>No hay solicitudes para mostrar</h2>
+          <p>
+            Cuando envíes solicitudes de asesoría, podrás consultar aquí su estado y los detalles de cada una.
+          </p>
+        </div>
+      </ng-template>
+    </section>
+
+    <!-- Columna derecha: detalle de solicitud -->
+    <aside class="request-detail">
+      <ng-container *ngIf="selectedRequest; else noSelection">
+        <header class="detail-header">
+          <h2>Detalle de la solicitud</h2>
+          <p>Consulta la información de la solicitud seleccionada.</p>
+        </header>
+
+        <div class="detail-section">
+          <h3>Información general</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Asesor</span>
+              <span class="detail-value">{{ selectedRequest.advisorName }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Materia / tema</span>
+              <span class="detail-value">{{ selectedRequest.subject }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Fecha de solicitud</span>
+              <span class="detail-value">{{ selectedRequest.requestDate }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Estado</span>
+              <span class="detail-value">
+                <span
+                  class="status-badge"
+                  [ngClass]="getStatusClass(selectedRequest.status)"
+                >
+                  {{ getStatusLabel(selectedRequest.status) }}
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Mensaje enviado</h3>
+          <p class="detail-text">
+            {{ selectedRequest.message }}
+          </p>
+        </div>
+
+        <div class="detail-section">
+          <h3>Respuesta del asesor</h3>
+          <ng-container *ngIf="selectedRequest.advisorResponse; else noResponse">
+            <p class="detail-text">
+              {{ selectedRequest.advisorResponse }}
+            </p>
+          </ng-container>
+          <ng-template #noResponse>
+            <p class="detail-text detail-text-muted">
+              El asesor aún no ha registrado una respuesta para esta solicitud.
+            </p>
+          </ng-template>
+        </div>
+      </ng-container>
+
+      <ng-template #noSelection>
+        <div class="placeholder-detail">
+          <h2>Selecciona una solicitud</h2>
+          <p>
+            Elige una solicitud en la lista para ver aquí el mensaje enviado
+            y la respuesta del asesor si ya fue registrada.
+          </p>
+        </div>
+      </ng-template>
+    </aside>
+  </div>
+</section>

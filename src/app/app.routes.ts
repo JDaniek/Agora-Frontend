@@ -51,7 +51,15 @@ export const routes: Routes = [
       ),
   },
 
-  // fallback
+   /* ⭐ NUEVA RUTA */
+  {
+    path: 'mis-solicitudes',
+    loadComponent: () =>
+      import('./pages/mis-solicitudes/mis-solicitudes')
+        .then(m => m.MisSolicitudesComponent),
+  },
+
+  /* fallback */
   { path: '**', redirectTo: '' },
 ];
 

@@ -1,3 +1,4 @@
+<!-- student-home.html -->
 <section class="student-layout">
   <!-- SIDEBAR FIJA -->
   <aside class="sidebar">
@@ -13,23 +14,23 @@
 
     <nav class="sidebar-nav" aria-label="Navegación principal">
       <button type="button" class="nav-item active">
-        <span class="nav-icon">🏠</span>
+        <span class="nav-icon nav-icon-home" aria-hidden="true"></span>
         <span class="nav-label">Inicio</span>
       </button>
       <button type="button" class="nav-item">
-        <span class="nav-icon">★</span>
+        <span class="nav-icon nav-icon-fav" aria-hidden="true"></span>
         <span class="nav-label">Favoritos</span>
       </button>
       <button type="button" class="nav-item">
-        <span class="nav-icon">💬</span>
+        <span class="nav-icon nav-icon-chat" aria-hidden="true"></span>
         <span class="nav-label">Chats</span>
       </button>
       <button type="button" class="nav-item">
-        <span class="nav-icon">📅</span>
+        <span class="nav-icon nav-icon-session" aria-hidden="true"></span>
         <span class="nav-label">Sesiones</span>
       </button>
       <button type="button" class="nav-item">
-        <span class="nav-icon">📨</span>
+        <span class="nav-icon nav-icon-request" aria-hidden="true"></span>
         <span class="nav-label">Solicitudes</span>
       </button>
     </nav>
@@ -47,7 +48,7 @@
     <header class="main-header" [formGroup]="filtros">
       <div class="search-area">
         <div class="search-box">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon" aria-hidden="true"></span>
           <input
             type="text"
             formControlName="search"
@@ -119,7 +120,7 @@
             (click)="toggleNotificationsPanel()"
             aria-label="Ver notificaciones"
           >
-            🔔
+            <span class="icon-bell" aria-hidden="true"></span>
           </button>
 
           <button
@@ -141,43 +142,297 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main class="main-content">
-      <!-- Panel superior tipo dashboard -->
-      <section class="summary-row">
-        <div class="summary-card">
-          <h1 class="summary-title">Recomendaciones</h1>
-          <p class="summary-text">
-            Explora asesores según tu nivel, lugar y materias de interés.
-          </p>
+      <!-- LAYOUT TIPO DASHBOARD -->
+      <section class="dashboard-grid">
+        <!-- COLUMNA PRINCIPAL -->
+        <div class="dashboard-main">
+          <!-- Tarjeta de bienvenida -->
+          <section class="panel panel-welcome">
+            <div class="welcome-header">
+              <div class="welcome-avatar" [class.has-image]="topAvatarUrl">
+                <img
+                  *ngIf="topAvatarUrl"
+                  [src]="topAvatarUrl"
+                  alt="Foto de perfil"
+                />
+                <span
+                  *ngIf="!topAvatarUrl"
+                  class="welcome-avatar-initial"
+                >
+                  {{ studentInitial }}
+                </span>
+              </div>
+
+              <div class="welcome-text">
+                <h1 class="welcome-title">
+                  Bienvenido/a, {{ studentName }}
+                </h1>
+                <p class="welcome-subtitle">
+                  Tu perfil está {{ profileCompletion }}% completo.
+                  Completa tu información para que los asesores te encuentren más fácil.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="link-edit"
+                (click)="onEditProfile()"
+              >
+                Editar perfil
+              </button>
+            </div>
+
+            <div class="welcome-progress">
+              <div class="progress-header">
+                <span>Progreso de perfil</span>
+                <span>{{ profileCompletion }}%</span>
+              </div>
+              <div class="progress-bar">
+                <div
+                  class="progress-bar-fill"
+                  [style.width.%]="profileCompletion"
+                ></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Próximas asesorías -->
+          <section class="panel panel-sessions">
+            <div class="panel-header">
+              <h2 class="panel-title">Próximas asesorías</h2>
+              <button
+                type="button"
+                class="link-small"
+                (click)="onViewAllSessions()"
+              >
+                Ver todas
+              </button>
+            </div>
+
+            <div *ngIf="upcomingSessions.length; else emptySessions">
+              <ul class="session-list">
+                <li class="session-item" *ngFor="let s of upcomingSessions">
+                  <div class="session-main">
+                    <div class="session-subject">{{ s.subject }}</div>
+                    <div class="session-adviser">
+                      Con {{ s.adviserName }}
+                    </div>
+                  </div>
+                  <div class="session-meta">
+                    <span class="session-date">{{ s.date }}</span>
+                    <span class="session-time">{{ s.time }}</span>
+                    <span
+                      class="session-mode"
+                      *ngIf="s.mode"
+                    >
+                      {{ s.mode }}
+                    </span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <ng-template #emptySessions>
+              <div class="empty-box">
+                <p>No tienes asesorías agendadas.</p>
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  (click)="clearFilters()"
+                >
+                  Buscar asesores
+                </button>
+              </div>
+            </ng-template>
+          </section>
+
+          <!-- Estado de solicitudes -->
+          <section class="panel panel-requests">
+            <div class="panel-header">
+              <h2 class="panel-title">Estado de solicitudes</h2>
+              <button
+                type="button"
+                class="link-small"
+                (click)="onViewRequests()"
+              >
+                Ver detalle
+              </button>
+            </div>
+
+            <div class="requests-grid">
+              <div
+                class="request-pill"
+                *ngFor="let r of requestsSummary"
+              >
+                <span class="request-label">{{ r.label }}</span>
+                <span class="request-count">{{ r.count }}</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Materias / cursos activos -->
+          <section class="panel panel-courses">
+            <div class="panel-header">
+              <h2 class="panel-title">Materias activas</h2>
+              <button
+                type="button"
+                class="link-small"
+                (click)="onViewAllCourses()"
+              >
+                Ver todas
+              </button>
+            </div>
+
+            <div *ngIf="activeCourses.length; else emptyCourses">
+              <div class="courses-grid">
+                <article
+                  class="course-card"
+                  *ngFor="let c of activeCourses"
+                >
+                  <h3 class="course-name">{{ c.name }}</h3>
+                  <p class="course-subtitle">{{ c.subtitle }}</p>
+
+                  <div
+                    class="course-progress"
+                    *ngIf="c.progress !== undefined"
+                  >
+                    <div class="course-progress-bar">
+                      <div
+                        class="course-progress-fill"
+                        [style.width.%]="c.progress"
+                      ></div>
+                    </div>
+                    <span class="course-progress-label">
+                      {{ c.progress }}%
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="btn-primary"
+                    (click)="onViewCourse(c.id)"
+                  >
+                    Ver
+                  </button>
+                </article>
+              </div>
+            </div>
+
+            <ng-template #emptyCourses>
+              <div class="empty-box">
+                <p>No tienes materias activas por el momento.</p>
+              </div>
+            </ng-template>
+          </section>
         </div>
 
-        <div class="summary-card summary-status">
-          <div class="status-row">
-            <span class="status-label">Estado de perfil</span>
-            <span
-              class="status-pill"
-              [class.status-complete]="topAvatarUrl"
-            >
-              {{ topAvatarUrl ? 'Completo' : 'Pendiente' }}
-            </span>
-          </div>
-          <p class="status-text">
-            Mantén tu perfil actualizado para recibir mejores recomendaciones.
-          </p>
-        </div>
+        <!-- COLUMNA LATERAL DERECHA -->
+        <div class="dashboard-side">
+          <!-- Calendario / agenda -->
+          <section class="panel panel-schedule">
+            <div class="panel-header">
+              <h2 class="panel-title">Agenda</h2>
+            </div>
 
-        <div
-          class="summary-card summary-notifications"
-          *ngIf="showNotificationsPanel"
-        >
-          <h2 class="summary-subtitle">Notificaciones</h2>
-          <p class="summary-text">
-            No tienes notificaciones nuevas.
-          </p>
+            <div class="schedule-month">
+              {{ currentMonthLabel }}
+            </div>
+
+            <div class="schedule-grid">
+              <div class="schedule-weekday">L</div>
+              <div class="schedule-weekday">M</div>
+              <div class="schedule-weekday">X</div>
+              <div class="schedule-weekday">J</div>
+              <div class="schedule-weekday">V</div>
+              <div class="schedule-weekday">S</div>
+              <div class="schedule-weekday">D</div>
+
+              <div
+                class="schedule-day"
+                *ngFor="let d of calendarDays"
+                [class.is-today]="d.isToday"
+                [class.has-session]="d.hasSession"
+              >
+                <span class="schedule-day-number">
+                  {{ d.label }}
+                </span>
+              </div>
+            </div>
+
+            <div class="schedule-mini">
+              <h3 class="schedule-mini-title">
+                Próximas asesorías
+              </h3>
+              <ul class="schedule-mini-list">
+                <li
+                  class="schedule-mini-item"
+                  *ngFor="let s of upcomingSessions | slice: 0:3"
+                >
+                  <span class="mini-session-title">
+                    {{ s.subject }}
+                  </span>
+                  <span class="mini-session-meta">
+                    {{ s.date }} · {{ s.time }}
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- Avisos / notificaciones importantes -->
+          <section
+            class="panel panel-notices"
+            [class.is-open]="showNotificationsPanel"
+          >
+            <div class="panel-header">
+              <h2 class="panel-title">Avisos</h2>
+              <button
+                type="button"
+                class="link-small"
+                (click)="onViewAllNotices()"
+              >
+                Ver todos
+              </button>
+            </div>
+
+            <div *ngIf="notices.length; else emptyNotices">
+              <ul class="notice-list">
+                <li class="notice-item" *ngFor="let n of notices">
+                  <div class="notice-title">{{ n.title }}</div>
+                  <p class="notice-text">
+                    {{ n.description }}
+                  </p>
+                  <button
+                    type="button"
+                    class="link-small"
+                    (click)="onViewNotice(n.id)"
+                  >
+                    Ver más
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <ng-template #emptyNotices>
+              <div class="empty-box">
+                <p>No hay avisos por el momento.</p>
+              </div>
+            </ng-template>
+          </section>
         </div>
       </section>
 
-      <!-- Listado de asesores -->
-      <section class="list-section">
+      <!-- LISTADO DE ASESORES RECOMENDADOS -->
+      <section class="advisers-section">
+        <header class="advisers-header">
+          <div>
+            <h2 class="advisers-title">Recomendaciones</h2>
+            <p class="advisers-subtitle">
+              Explora asesores según tu nivel, lugar y materias de interés.
+            </p>
+          </div>
+        </header>
+
         <div *ngIf="isLoadingAdvisers" class="loading-box">
           Cargando asesores…
         </div>
@@ -217,7 +472,10 @@
             </div>
 
             <p class="card-description">
-              {{ t.description || 'Este asesor aún no ha añadido una descripción.' }}
+              {{
+                t.description ||
+                  'Este asesor aún no ha añadido una descripción.'
+              }}
             </p>
 
             <div class="card-tags" *ngIf="t.tags && t.tags.length">
@@ -249,7 +507,8 @@
             No se encontraron asesores según tus filtros.
           </p>
           <p class="no-results-text">
-            Cambia el lugar, el nivel o la materia para ver más opciones disponibles.
+            Cambia el lugar, el nivel o la materia para ver más opciones
+            disponibles.
           </p>
         </div>
       </section>

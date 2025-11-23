@@ -34,13 +34,24 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/student-home/student-home').then((m) => m.StudentHome),
   },
+
+  // 🔵 NUEVA RUTA ASESOR DETALLE
+  {
+    path: 'details-asesor/:id',
+    loadComponent: () =>
+      import('./pages/detail-asesor/detail-asesor')
+        .then((m) => m.AsesorDetalleComponent),
+  },
+
   {
     path: 'complete-profile',
     loadComponent: () =>
       import('./pages/complete-profile/complete-profile').then(
-        (m) => m.CompleteProfile // ← sin espacio
+        (m) => m.CompleteProfile
       ),
   },
-  // (opcional) fallback
+
+  // fallback
   { path: '**', redirectTo: '' },
 ];
+

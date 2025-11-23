@@ -36,7 +36,6 @@ interface AdviserCardResponse {
   stateCode?: string | null;
 }
 
-
 /* Modelo para la tarjeta del asesor en la UI */
 interface AdviserCardView {
   id: number;
@@ -309,7 +308,7 @@ export class StudentHome implements OnInit {
       bookmarked: false,
       subject,
       location: adviser.stateCode ?? null
-    } as AdviserCardView; // stateCode se puede añadir al modelo de la API más adelante
+    } as AdviserCardView;
   }
 
   private buildMockAdvisers(): AdviserCardView[] {
@@ -570,7 +569,8 @@ export class StudentHome implements OnInit {
   }
 
   onSeeMore(adviser: AdviserCardView): void {
-    console.log('Ver más de asesor', adviser.id);
+    // Navegación al detalle del asesor
+    this.router.navigate(['/details-asesor', adviser.id]);
   }
 }
 

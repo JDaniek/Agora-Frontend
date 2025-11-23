@@ -59,6 +59,13 @@ export const routes: Routes = [
         .then(m => m.MisSolicitudesComponent),
   },
 
+  {
+  path: 'sesiones-agendadas',
+  loadComponent: () =>
+    import('./pages/sesiones-agendadas/sesiones-agendadas')
+      .then(m => m.SesionesAgendadasComponent),
+},
+
   /* fallback */
   { path: '**', redirectTo: '' },
 ];

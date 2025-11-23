@@ -96,7 +96,7 @@ interface ChatMessageView {
 @Component({
   selector: 'app-dashboard-asesor',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './dashboard-asesor.html',
   styleUrls: ['./dashboard-asesor.css'],
 })

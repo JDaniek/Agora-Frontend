@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { LandingPage } from './pages/landing-page/landing.page';
+import { Signup } from './pages/signup/signup';
 
 export const routes: Routes = [
   {
@@ -99,6 +101,6 @@ export const routes: Routes = [
   },
 
   // fallback
-  { path: '**', redirectTo: '' },
+  { path: '**', component:Signup },
 ];
 

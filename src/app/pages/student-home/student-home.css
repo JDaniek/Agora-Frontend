@@ -79,15 +79,10 @@ img {
   gap: 12px;
 }
 
-.sidebar-logo-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.3);
-  display: grid;
-  place-items: center;
-  font-weight: 600;
-  font-size: 18px;
+.sidebar-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
 }
 
 .sidebar-text {
@@ -185,8 +180,39 @@ img {
   background: rgba(248, 250, 252, 0.08);
 }
 
+/* Icono de logout simple, sin emojis */
 .logout-icon {
-  font-size: 14px;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 2px solid var(--sidebar-text);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.logout-icon::before,
+.logout-icon::after {
+  content: '';
+  position: absolute;
+  background: var(--sidebar-text);
+}
+
+.logout-icon::before {
+  top: 50%;
+  left: 2px;
+  right: 2px;
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+.logout-icon::after {
+  top: 4px;
+  right: -4px;
+  width: 6px;
+  height: 6px;
+  border-top: 2px solid var(--sidebar-text);
+  border-right: 2px solid var(--sidebar-text);
+  transform: rotate(45deg);
 }
 
 /* Sidebar colapsada */
@@ -275,10 +301,26 @@ img {
   font-size: 14px;
 }
 
+/* Icono de búsqueda sin emoji */
 .search-icon {
   position: absolute;
   left: 16px;
-  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid #9ca3af;
+  box-sizing: border-box;
+}
+
+.search-icon::after {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 2px;
+  background: #9ca3af;
+  right: -3px;
+  bottom: -1px;
+  transform: rotate(45deg);
 }
 
 .search-clear {
@@ -353,7 +395,39 @@ img {
   display: grid;
   place-items: center;
   cursor: pointer;
-  font-size: 16px;
+}
+
+/* Icono de campana sin emoji */
+.icon-bell {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+
+.icon-bell::before,
+.icon-bell::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+}
+
+.icon-bell::before {
+  top: 2px;
+  width: 10px;
+  height: 8px;
+  border-radius: 10px 10px 0 0;
+  border: 2px solid #6b7280;
+  border-bottom: 0;
+}
+
+.icon-bell::after {
+  bottom: 2px;
+  width: 6px;
+  height: 2px;
+  border-radius: 999px;
+  background: #6b7280;
 }
 
 /* Avatar */
@@ -942,6 +1016,7 @@ img {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
 
 
 

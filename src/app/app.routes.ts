@@ -93,8 +93,8 @@ export const routes: Routes = [
   {
     path: 'detail-asesor/:id',
     loadComponent: () =>
-      import('./pages/detail-asesor/detail-asesor').then(
-        m => m.AsesorDetalleComponent
+      import('./pages/advisor-detail/advisor-detail').then(
+        m => m.AdvisorDetailComponent
       ),
   },
 

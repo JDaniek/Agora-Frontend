@@ -1,29 +1,35 @@
-<!-- student-home.html -->
+<!-- student-home.component.html -->
 <section
   class="student-layout"
   [class.sidebar-collapsed]="isSidebarCollapsed"
-  [class.mobile-sidebar-open]="isMobileSidebarOpen"
 >
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <!-- SIDEBAR (colapsable + móvil) -->
+  <aside
+    class="sidebar"
+    [class.is-collapsed]="isSidebarCollapsed"
+    [class.is-mobile-open]="isMobileSidebarOpen"
+  >
     <div class="sidebar-header">
-      <div class="sidebar-brand">
-        <div class="sidebar-logo-circle">A</div>
+      <button
+        type="button"
+        class="sidebar-toggle"
+        (click)="toggleSidebarCollapse()"
+        aria-label="Contraer o expandir menú"
+      >
+        ☰
+      </button>
+
+      <div class="sidebar-brand" *ngIf="!isSidebarCollapsed">
+        <img
+          src="/agora_icon.png"
+          alt="Logo de Agora"
+          class="sidebar-logo"
+        />
         <div class="sidebar-text">
           <span class="sidebar-title">Agora</span>
           <span class="sidebar-role">Alumno</span>
         </div>
       </div>
-
-      <button
-        type="button"
-        class="sidebar-collapse-btn"
-        (click)="toggleSidebarCollapse()"
-        aria-label="Colapsar menú lateral"
-      >
-        <span class="collapse-icon" *ngIf="!isSidebarCollapsed">&lt;</span>
-        <span class="collapse-icon" *ngIf="isSidebarCollapsed">&gt;</span>
-      </button>
     </div>
 
     <nav class="sidebar-nav" aria-label="Navegación principal">
@@ -33,8 +39,20 @@
         [class.active]="activeSection === 'inicio'"
         (click)="onNavigate('inicio')"
       >
-        <div class="nav-icon-circle">IN</div>
-        <span class="nav-label">Inicio</span>
+        <span class="nav-icon">IN</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">Inicio</span>
+      </button>
+
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === 'buscar'"
+        (click)="onNavigate('buscar')"
+      >
+        <span class="nav-icon">BA</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed"
+          >Buscar asesores</span
+        >
       </button>
 
       <button
@@ -43,8 +61,10 @@
         [class.active]="activeSection === 'mis-asesores'"
         (click)="onNavigate('mis-asesores')"
       >
-        <div class="nav-icon-circle">MA</div>
-        <span class="nav-label">Mis asesores</span>
+        <span class="nav-icon">MA</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed"
+          >Mis asesores</span
+        >
       </button>
 
       <button
@@ -53,18 +73,32 @@
         [class.active]="activeSection === 'sesiones'"
         (click)="onNavigate('sesiones')"
       >
-        <div class="nav-icon-circle">SE</div>
-        <span class="nav-label">Sesiones</span>
+        <span class="nav-icon">SA</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed"
+          >Sesiones agendadas</span
+        >
       </button>
 
       <button
         type="button"
         class="nav-item"
-        [class.active]="activeSection === 'solicitudes'"
-        (click)="onNavigate('solicitudes')"
+        [class.active]="activeSection === 'historial'"
+        (click)="onNavigate('historial')"
       >
-        <div class="nav-icon-circle">SO</div>
-        <span class="nav-label">Mis solicitudes</span>
+        <span class="nav-icon">HS</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed"
+          >Historial de sesiones</span
+        >
+      </button>
+
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === 'favoritos'"
+        (click)="onNavigate('favoritos')"
+      >
+        <span class="nav-icon">FV</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">Favoritos</span>
       </button>
 
       <button
@@ -73,60 +107,75 @@
         [class.active]="activeSection === 'notificaciones'"
         (click)="onNavigate('notificaciones')"
       >
-        <div class="nav-icon-circle">NT</div>
-        <span class="nav-label">Notificaciones</span>
+        <span class="nav-icon">NT</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed"
+          >Notificaciones</span
+        >
       </button>
 
       <button
         type="button"
         class="nav-item"
-        [class.active]="activeSection === 'perfil'"
-        (click)="onNavigate('perfil')"
+        [class.active]="activeSection === 'configuracion'"
+        (click)="onNavigate('configuracion')"
       >
-        <div class="nav-icon-circle">PF</div>
-        <span class="nav-label">Perfil</span>
+        <span class="nav-icon">CF</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed"
+          >Configuración</span
+        >
+      </button>
+
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="activeSection === 'ayuda'"
+        (click)="onNavigate('ayuda')"
+      >
+        <span class="nav-icon">AY</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">Ayuda</span>
       </button>
     </nav>
 
     <div class="sidebar-footer">
-      <button type="button" class="logout-btn" (click)="logout()">
-        <span class="logout-icon">⎋</span>
-        <span class="logout-label">Cerrar sesión</span>
+      <button
+        type="button"
+        class="logout-btn"
+        (click)="logout()"
+      >
+        Cerrar sesión
       </button>
     </div>
   </aside>
 
-  <!-- OVERLAY MÓVIL -->
+  <!-- Backdrop móvil -->
   <div
-    class="mobile-backdrop"
+    class="sidebar-backdrop"
     *ngIf="isMobileSidebarOpen"
     (click)="closeMobileSidebar()"
   ></div>
 
   <!-- ZONA PRINCIPAL -->
   <div class="main-area">
-    <!-- HEADER -->
+    <!-- BARRA SUPERIOR -->
     <header class="main-header" [formGroup]="filtros">
       <div class="header-left">
         <button
           type="button"
-          class="mobile-menu-btn"
+          class="hamburger-btn"
           (click)="toggleMobileSidebar()"
           aria-label="Abrir menú"
         >
-          <span class="mobile-menu-line"></span>
-          <span class="mobile-menu-line"></span>
-          <span class="mobile-menu-line"></span>
+          ☰
         </button>
 
         <div class="search-area">
           <div class="search-box">
-            <span class="search-icon">🔍</span>
+            <span class="search-icon"></span>
             <input
               type="text"
               formControlName="search"
-              placeholder="Buscar asesor por nombre o materia"
               (input)="onSearchChange()"
+              placeholder="Buscar asesor por nombre o materia"
             />
             <button
               type="button"
@@ -182,7 +231,7 @@
               (change)="onFiltersChange()"
             >
               <option value="">Todas</option>
-              <option *ngFor="let m of materias" [value]="m.name">
+              <option *ngFor="let m of materias" [value]="m.id">
                 {{ m.name }}
               </option>
             </select>
@@ -202,9 +251,9 @@
             type="button"
             class="icon-button"
             (click)="toggleNotificationsPanel()"
-            aria-label="Ver notificaciones rápidas"
+            aria-label="Ver notificaciones"
           >
-            🔔
+            <span class="icon-bell"></span>
           </button>
 
           <button
@@ -218,7 +267,10 @@
               [src]="topAvatarUrl"
               alt="Foto de perfil"
             />
-            <span *ngIf="!topAvatarUrl" class="avatar-placeholder"></span>
+            <span
+              *ngIf="!topAvatarUrl"
+              class="avatar-placeholder"
+            ></span>
           </button>
         </div>
       </div>
@@ -226,26 +278,26 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main class="main-content">
-      <section class="dashboard-grid">
-        <!-- Columna principal -->
-        <div class="dashboard-main">
-          <!-- Resumen superior -->
+      <section class="content-grid">
+        <!-- COLUMNA IZQUIERDA -->
+        <div class="content-main">
+          <!-- Resumen -->
           <section class="summary-row">
-            <article class="summary-card">
+            <div class="summary-card summary-recommendations">
               <h1 class="summary-title">Recomendaciones</h1>
               <p class="summary-text">
                 Explora asesores según tu nivel, lugar y materias de interés.
               </p>
-            </article>
+            </div>
 
-            <article class="summary-card summary-status">
+            <div class="summary-card summary-status">
               <div class="status-row">
                 <span class="status-label">Estado de perfil</span>
                 <span
                   class="status-pill"
-                  [class.status-complete]="profileCompletion === 100"
+                  [class.status-complete]="profileCompletion >= 100"
                 >
-                  {{ profileCompletion === 100 ? 'Completo' : 'Pendiente' }}
+                  {{ profileCompletion | number : '1.0-0' }}%
                 </span>
               </div>
               <p class="status-text">
@@ -260,45 +312,48 @@
               </div>
               <button
                 type="button"
-                class="status-action"
+                class="status-edit-btn"
                 (click)="onEditProfile()"
               >
                 Completar perfil
               </button>
-            </article>
+            </div>
 
-            <article
+            <div
               class="summary-card summary-notifications"
               *ngIf="showNotificationsPanel"
             >
-              <h2 class="summary-subtitle">Notificaciones rápidas</h2>
-              <p class="summary-text" *ngIf="!notices.length">
+              <h2 class="summary-subtitle">
+                Notificaciones
+              </h2>
+              <p
+                class="summary-text"
+                *ngIf="!notices.length"
+              >
                 No tienes notificaciones nuevas.
               </p>
-              <ul class="summary-notice-list" *ngIf="notices.length">
+              <ul
+                class="summary-notice-list"
+                *ngIf="notices.length"
+              >
                 <li
-                  class="summary-notice-item"
                   *ngFor="let n of notices"
-                  (click)="onViewNotice(n.id)"
+                  class="summary-notice-item"
                 >
-                  <span class="summary-notice-title">{{ n.title }}</span>
-                  <span class="summary-notice-text">{{ n.text }}</span>
+                  <span class="notice-dot"></span>
+                  <span class="notice-title">{{ n.title }}</span>
                 </li>
               </ul>
-              <button
-                type="button"
-                class="summary-link"
-                (click)="onViewAllNotices()"
-              >
-                Ver todas
-              </button>
-            </article>
+            </div>
           </section>
 
           <!-- Listado de asesores -->
           <section class="list-section">
-            <div *ngIf="isLoadingAdvisers" class="loading-box">
-              Cargando asesores…
+            <div
+              *ngIf="isLoadingAdvisers"
+              class="loading-box"
+            >
+              Cargando asesores...
             </div>
 
             <div
@@ -314,7 +369,7 @@
                   class="card-bookmark"
                   [class.is-on]="t.bookmarked"
                   (click)="toggleBookmark(t)"
-                  aria-label="Marcar como favorito"
+                  aria-label="Guardar asesor"
                 >
                   ★
                 </button>
@@ -335,7 +390,10 @@
                     <div class="card-level">
                       {{ t.nivel || 'Nivel no especificado' }}
                     </div>
-                    <div class="card-location" *ngIf="t.location">
+                    <div
+                      class="card-location"
+                      *ngIf="t.location"
+                    >
                       {{ t.location }}
                     </div>
                   </div>
@@ -377,125 +435,133 @@
               *ngIf="!isLoadingAdvisers && advisers.length === 0"
             >
               <p class="no-results-title">
-                No se encontraron asesores que coincidan con tus filtros.
+                No se encontraron asesores que coincidan con tu búsqueda.
               </p>
               <p class="no-results-text">
-                Prueba ajustando el lugar, el nivel o la materia para ver más
-                opciones.
+                Intenta cambiar el lugar, el nivel o la materia para ver más
+                opciones disponibles.
               </p>
             </div>
           </section>
         </div>
 
-        <!-- Columna lateral derecha: agenda y avisos -->
-        <aside class="dashboard-side">
-          <section class="agenda-card">
-            <div class="agenda-header">
-              <h2 class="agenda-title">Agenda</h2>
-              <span class="agenda-subtitle">
-                Revisa tus próximas asesorías.
-              </span>
-            </div>
-
-            <div class="calendar-header">
-              <button
-                type="button"
-                class="calendar-nav-btn"
-                (click)="goToPreviousMonth()"
-              >
-                ‹
-              </button>
-              <span class="calendar-month-label">
-                {{ currentMonthLabel }}
-              </span>
-              <button
-                type="button"
-                class="calendar-nav-btn"
-                (click)="goToNextMonth()"
-              >
-                ›
-              </button>
-            </div>
+        <!-- COLUMNA DERECHA: agenda y avisos -->
+        <aside class="content-aside">
+          <!-- Calendario / Agenda -->
+          <section class="calendar-card">
+            <header class="calendar-header">
+              <div>
+                <h2 class="calendar-title">Agenda</h2>
+                <p class="calendar-subtitle">
+                  Revisa tus próximas asesorías.
+                </p>
+              </div>
+              <div class="calendar-month-nav">
+                <button
+                  type="button"
+                  class="calendar-nav-btn"
+                  (click)="goToPreviousMonth()"
+                  aria-label="Mes anterior"
+                >
+                  ‹
+                </button>
+                <span class="calendar-month-label">
+                  {{ currentMonthLabel }}
+                </span>
+                <button
+                  type="button"
+                  class="calendar-nav-btn"
+                  (click)="goToNextMonth()"
+                  aria-label="Mes siguiente"
+                >
+                  ›
+                </button>
+              </div>
+            </header>
 
             <div class="calendar-grid">
               <div
                 class="calendar-weekday"
-                *ngFor="let wd of weekDays"
+                *ngFor="let w of weekDays"
               >
-                {{ wd }}
+                {{ w }}
               </div>
 
               <button
                 type="button"
                 class="calendar-day"
-                *ngFor="let day of calendarDays"
-                [class.is-today]="day.isToday"
-                [class.is-selected]="day.dateKey === selectedDateKey"
-                [class.has-sessions]="day.hasSessions"
-                (click)="onSelectDate(day)"
+                *ngFor="let d of calendarDays"
+                [class.is-today]="d.isToday"
+                [class.is-selected]="d.dateKey === selectedDateKey"
+                [class.has-session]="d.hasSessions"
+                (click)="onSelectDate(d)"
               >
-                {{ day.dayNumber }}
+                {{ d.dayNumber }}
               </button>
             </div>
 
-            <div class="day-sessions">
-              <h3 class="day-sessions-title">
+            <div class="calendar-sessions">
+              <h3 class="calendar-sessions-title">
                 Sesiones para {{ selectedDateLabel }}
               </h3>
 
               <p
-                class="day-sessions-empty"
-                *ngIf="!selectedDaySessions.length"
+                class="calendar-empty"
+                *ngIf="selectedDaySessions.length === 0"
               >
                 No tienes sesiones para este día.
               </p>
 
               <ul
-                class="day-sessions-list"
-                *ngIf="selectedDaySessions.length"
+                class="calendar-session-list"
+                *ngIf="selectedDaySessions.length > 0"
               >
                 <li
-                  class="day-session-item"
+                  class="calendar-session-item"
                   *ngFor="let s of selectedDaySessions"
                 >
-                  <div class="day-session-time">
-                    {{ s.time }}
+                  <div class="session-time">{{ s.time }}</div>
+                  <div class="session-main">
+                    <div class="session-subject">{{ s.subject }}</div>
+                    <div class="session-advisor">
+                      con {{ s.advisor }}
+                    </div>
                   </div>
-                  <div class="day-session-info">
-                    <div class="day-session-subject">
-                      {{ s.subject }}
-                    </div>
-                    <div class="day-session-meta">
-                      {{ s.advisor }} · {{ s.modality }}
-                    </div>
+                  <div class="session-modality">
+                    {{ s.modality || 'No especificado' }}
                   </div>
                 </li>
               </ul>
             </div>
           </section>
 
-          <section class="notices-card">
-            <div class="notices-header">
-              <h2 class="notices-title">Avisos</h2>
+          <!-- Avisos -->
+          <section class="notice-card">
+            <header class="notice-header">
+              <h2 class="notice-title">Avisos</h2>
               <button
                 type="button"
-                class="notices-link"
+                class="notice-link"
                 (click)="onViewAllNotices()"
               >
                 Ver todos
               </button>
-            </div>
+            </header>
 
-            <ul class="notices-list">
+            <ul class="notice-list">
               <li
                 class="notice-item"
                 *ngFor="let n of notices"
               >
-                <h3 class="notice-title">{{ n.title }}</h3>
-                <p class="notice-text">{{ n.text }}</p>
+                <h3 class="notice-item-title">
+                  {{ n.title }}
+                </h3>
+                <p class="notice-item-text">
+                  {{ n.text }}
+                </p>
                 <button
                   type="button"
-                  class="notice-more"
+                  class="notice-item-link"
                   (click)="onViewNotice(n.id)"
                 >
                   Ver más
@@ -508,4 +574,3 @@
     </main>
   </div>
 </section>
-

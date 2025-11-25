@@ -2,8 +2,8 @@
 
 /* Variables de color y layout */
 :root {
-  --sidebar-bg: #1e3a8a;
-  --sidebar-bg-soft: #1b4580;
+  --sidebar-bg: #2B5797;
+  --sidebar-bg-soft: #2558a0;
   --sidebar-text: #f9fafb;
   --sidebar-text-muted: #cbd5f5;
 
@@ -61,7 +61,7 @@ img {
   padding: 20px 18px;
   position: relative;
   z-index: 20;
-  box-shadow: 4px 0 20px rgba(15, 23, 42, 0.25);
+  box-shadow: 4px 0 20px rgba(43, 87, 151, 0.25);
 }
 
 .sidebar-header {
@@ -70,7 +70,7 @@ img {
   justify-content: space-between;
   gap: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .sidebar-brand {
@@ -102,7 +102,7 @@ img {
 
 .sidebar-collapse-btn {
   border: none;
-  background: rgba(15, 23, 42, 0.35);
+  background: rgba(255, 255, 255, 0.15);
   color: var(--sidebar-text);
   width: 28px;
   height: 28px;
@@ -111,6 +111,10 @@ img {
   display: grid;
   place-items: center;
   font-size: 14px;
+}
+
+.sidebar-collapse-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* Navegación */
@@ -133,15 +137,16 @@ img {
   cursor: pointer;
   font-size: 14px;
   text-align: left;
+  transition: background 0.2s ease;
 }
 
 .nav-item:hover {
-  background: rgba(15, 23, 42, 0.35);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .nav-item.active {
   background: #ffffff;
-  color: #1e3a8a;
+  color: #2B5797;
 }
 
 .nav-icon-circle {
@@ -153,6 +158,11 @@ img {
   place-items: center;
   font-size: 12px;
   font-weight: 600;
+}
+
+.nav-item.active .nav-icon-circle {
+  border-color: #2B5797;
+  color: #2B5797;
 }
 
 /* Footer sidebar */
@@ -174,13 +184,13 @@ img {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  transition: background 0.2s ease;
 }
 
 .logout-btn:hover {
-  background: rgba(248, 250, 252, 0.08);
+  background: rgba(248, 250, 252, 0.1);
 }
 
-/* Icono de logout simple, sin emojis */
 .logout-icon {
   width: 16px;
   height: 16px;
@@ -301,7 +311,6 @@ img {
   font-size: 14px;
 }
 
-/* Icono de búsqueda sin emoji */
 .search-icon {
   position: absolute;
   left: 16px;
@@ -334,6 +343,10 @@ img {
   color: #9ca3af;
 }
 
+.search-clear:hover {
+  color: #4b5563;
+}
+
 /* Filtros + acciones */
 .header-right {
   display: flex;
@@ -356,6 +369,7 @@ img {
 .filter-label {
   font-size: 12px;
   color: var(--text-muted);
+  font-weight: 500;
 }
 
 .filter select {
@@ -365,6 +379,18 @@ img {
   background: #f9fafb;
   font-size: 13px;
   min-width: 120px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.filter select:hover {
+  border-color: #d1d5db;
+}
+
+.filter select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 /* Acciones header */
@@ -380,10 +406,11 @@ img {
   font-size: 13px;
   color: var(--accent);
   cursor: pointer;
+  transition: opacity 0.2s ease;
 }
 
 .link-reset:hover {
-  text-decoration: underline;
+  opacity: 0.8;
 }
 
 .icon-button {
@@ -395,9 +422,13 @@ img {
   display: grid;
   place-items: center;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-/* Icono de campana sin emoji */
+.icon-button:hover {
+  background: #f3f4f6;
+}
+
 .icon-bell {
   position: relative;
   width: 16px;
@@ -440,6 +471,11 @@ img {
   background: #f9fafb;
   cursor: pointer;
   overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.avatar-button:hover {
+  transform: scale(1.05);
 }
 
 .avatar-button img {
@@ -567,6 +603,7 @@ img {
   background: var(--accent);
   color: #ffffff;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 .status-action:hover {
@@ -586,6 +623,13 @@ img {
 .summary-notice-item {
   font-size: 12px;
   cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.summary-notice-item:hover {
+  background: #f9fafb;
 }
 
 .summary-notice-title {
@@ -606,6 +650,11 @@ img {
   font-size: 13px;
   color: var(--accent);
   cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.summary-link:hover {
+  opacity: 0.8;
 }
 
 /* Sección de listado */
@@ -638,6 +687,12 @@ img {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.adviser-card:hover {
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+  transform: translateY(-2px);
 }
 
 .card-bookmark {
@@ -652,6 +707,12 @@ img {
   cursor: pointer;
   font-size: 18px;
   color: #9ca3af;
+  transition: all 0.2s ease;
+}
+
+.card-bookmark:hover {
+  background: #f3f4f6;
+  transform: scale(1.1);
 }
 
 .card-bookmark.is-on {
@@ -670,6 +731,7 @@ img {
   border-radius: 999px;
   background: #e5e7eb;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .card-avatar img {
@@ -681,6 +743,7 @@ img {
 .card-header-text {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .card-name {
@@ -703,6 +766,11 @@ img {
   margin: 0;
   font-size: 13px;
   color: var(--text-muted);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .card-tags {
@@ -717,6 +785,7 @@ img {
   border-radius: var(--radius-pill);
   background: var(--accent-soft);
   color: var(--accent);
+  font-weight: 500;
 }
 
 .card-footer {
@@ -731,6 +800,7 @@ img {
   background: var(--accent);
   color: #ffffff;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 .card-button:hover {
@@ -741,12 +811,17 @@ img {
 .no-results-box {
   margin-top: 24px;
   text-align: center;
+  padding: 40px 20px;
+  background: var(--panel-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--panel-border);
 }
 
 .no-results-title {
   margin: 0 0 4px;
   font-size: 14px;
   color: var(--text-main);
+  font-weight: 500;
 }
 
 .no-results-text {
@@ -808,6 +883,11 @@ img {
   height: 28px;
   background: #f9fafb;
   cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.calendar-nav-btn:hover {
+  background: #f3f4f6;
 }
 
 .calendar-grid {
@@ -821,6 +901,7 @@ img {
 .calendar-weekday {
   text-align: center;
   color: var(--text-muted);
+  font-weight: 500;
 }
 
 .calendar-day {
@@ -830,6 +911,11 @@ img {
   background: transparent;
   cursor: pointer;
   color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+.calendar-day:hover {
+  background: #f3f4f6;
 }
 
 .calendar-day.is-today {
@@ -843,6 +929,23 @@ img {
 
 .calendar-day.has-sessions {
   font-weight: 600;
+  position: relative;
+}
+
+.calendar-day.has-sessions::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.calendar-day.is-selected.has-sessions::after {
+  background: #ffffff;
 }
 
 /* Sesiones por día */
@@ -854,6 +957,7 @@ img {
   margin: 0 0 4px;
   font-size: 13px;
   color: var(--text-main);
+  font-weight: 500;
 }
 
 .day-sessions-empty {
@@ -875,6 +979,9 @@ img {
   display: flex;
   gap: 8px;
   font-size: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #f9fafb;
 }
 
 .day-session-time {
@@ -915,6 +1022,11 @@ img {
   font-size: 13px;
   color: var(--accent);
   cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.notices-link:hover {
+  opacity: 0.8;
 }
 
 .notices-list {
@@ -928,6 +1040,9 @@ img {
 
 .notice-item {
   font-size: 13px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f9fafb;
 }
 
 .notice-title {
@@ -947,6 +1062,12 @@ img {
   font-size: 12px;
   color: var(--accent);
   cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s ease;
+}
+
+.notice-more:hover {
+  opacity: 0.8;
 }
 
 /* Overlay móvil */
@@ -976,7 +1097,7 @@ img {
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.35);
+    background: rgba(43, 87, 151, 0.3);
     z-index: 10;
   }
 
@@ -1015,9 +1136,11 @@ img {
   .summary-row {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  .advisers-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
-
-
 
 
 

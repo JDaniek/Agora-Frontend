@@ -1,0 +1,286 @@
+/* advisor-detail.component.scss */
+
+/* Paleta base Agora */
+:root {
+  --agora-blue: #2b5797;
+  --agora-blue-soft: #3b6bb0;
+  --panel-bg: #ffffff;
+  --page-bg: #f3f4f6;
+  --border-color: #e5e7eb;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+  --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.advisor-detail {
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--page-bg);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.advisor-detail__grid {
+  width: 100%;
+  max-width: 1120px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.1fr);
+  gap: 24px;
+}
+
+/* Tarjeta principal del asesor */
+.advisor-card {
+  background: var(--panel-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-soft);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.advisor-card__header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.advisor-card__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.advisor-card__avatar.has-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.advisor-card__headline {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.advisor-card__name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.advisor-card__location {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Secciones internas */
+.advisor-card__section {
+  margin-top: 6px;
+}
+
+.section-title {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.chips {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(43, 87, 151, 0.08);
+  color: var(--agora-blue);
+  font-size: 12px;
+  border: 1px solid rgba(43, 87, 151, 0.16);
+}
+
+.chip--soft {
+  background: #f9fafb;
+  color: var(--text-main);
+  border-color: var(--border-color);
+}
+
+.advisor-card__description {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Footer tarjeta */
+.advisor-card__footer {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Panel de solicitud */
+.request-panel {
+  background: var(--panel-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-soft);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.request-panel__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.request-panel__subtitle {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Alertas */
+.request-panel__alert {
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+}
+
+.request-panel__alert--success {
+  border-color: rgba(22, 163, 74, 0.4);
+  background: #ecfdf3;
+  color: #166534;
+}
+
+/* Formulario */
+.request-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-row label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  padding: 8px 10px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: inherit;
+}
+
+.form-row textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus {
+  border-color: var(--agora-blue);
+  box-shadow: 0 0 0 1px rgba(43, 87, 151, 0.3);
+}
+
+/* Acciones */
+.form-actions {
+  margin-top: 6px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Botones */
+.primary-btn,
+.secondary-btn {
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.primary-btn {
+  background: var(--agora-blue);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.primary-btn:hover:enabled {
+  background: var(--agora-blue-soft);
+}
+
+.primary-btn:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.secondary-btn {
+  background: #f9fafb;
+  color: var(--text-main);
+  border-color: var(--border-color);
+}
+
+.secondary-btn:hover:enabled {
+  background: #e5e7eb;
+}
+
+/* Estado vacío */
+.request-panel__empty {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .advisor-detail {
+    padding: 16px;
+  }
+
+  .advisor-detail__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+

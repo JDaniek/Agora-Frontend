@@ -1,66 +1,63 @@
 <!-- advisor-detail.component.html -->
 <section class="advisor-detail">
-  <div class="advisor-detail__header">
-    <h1 class="advisor-detail__title">Detalle del asesor</h1>
-    <p class="advisor-detail__subtitle">
-      Revisa la información del asesor y envía una solicitud de asesoría.
-    </p>
-  </div>
-
   <div class="advisor-detail__grid">
-    <!-- COLUMNA IZQUIERDA: PERFIL DEL ASESOR -->
+    <!-- COLUMNA IZQUIERDA: INFORMACIÓN DEL ASESOR -->
     <article class="advisor-card">
-      <div class="advisor-card__header">
+      <header class="advisor-card__header">
         <div class="advisor-card__avatar" [class.has-image]="advisor.photoUrl">
-          <img *ngIf="advisor.photoUrl" [src]="advisor.photoUrl" [alt]="advisor.name" />
-          <span *ngIf="!advisor.photoUrl" class="advisor-card__avatar-placeholder">
+          <img
+            *ngIf="advisor.photoUrl"
+            [src]="advisor.photoUrl"
+            [alt]="advisor.name"
+          />
+          <span *ngIf="!advisor.photoUrl" class="advisor-card__initials">
             {{ advisorInitials }}
           </span>
         </div>
 
-        <div class="advisor-card__info">
-          <h2 class="advisor-card__name">{{ advisor.name }}</h2>
-
-          <div class="advisor-card__levels" *ngIf="advisor.levels?.length">
-            <span class="badge badge--level" *ngFor="let level of advisor.levels">
-              {{ level }}
-            </span>
-          </div>
-
-          <div class="advisor-card__location" *ngIf="advisor.location">
+        <div class="advisor-card__headline">
+          <h1 class="advisor-card__name">{{ advisor.name }}</h1>
+          <p class="advisor-card__location" *ngIf="advisor.location">
             {{ advisor.location }}
-          </div>
-        </div>
-      </div>
-
-      <div class="advisor-card__body">
-        <section class="advisor-card__section" *ngIf="advisor.subjects?.length">
-          <h3 class="section-title">Materias que imparte</h3>
-          <ul class="chips">
-            <li class="chip" *ngFor="let subject of advisor.subjects">
-              {{ subject }}
-            </li>
-          </ul>
-        </section>
-
-        <section class="advisor-card__section" *ngIf="advisor.modalities?.length">
-          <h3 class="section-title">Modalidad</h3>
-          <ul class="chips">
-            <li class="chip" *ngFor="let modality of advisor.modalities">
-              {{ modality }}
-            </li>
-          </ul>
-        </section>
-
-        <section class="advisor-card__section" *ngIf="advisor.description">
-          <h3 class="section-title">Descripción</h3>
-          <p class="advisor-card__description">
-            {{ advisor.description }}
           </p>
-        </section>
-      </div>
+        </div>
+      </header>
 
-      <div class="advisor-card__footer">
+      <section class="advisor-card__section" *ngIf="advisor.subjects.length">
+        <h3 class="section-title">Materias que imparte</h3>
+        <ul class="chips">
+          <li class="chip" *ngFor="let subject of advisor.subjects">
+            {{ subject }}
+          </li>
+        </ul>
+      </section>
+
+      <section class="advisor-card__section" *ngIf="advisor.levels.length">
+        <h3 class="section-title">Niveles que atiende</h3>
+        <ul class="chips">
+          <li class="chip chip--soft" *ngFor="let level of advisor.levels">
+            {{ level }}
+          </li>
+        </ul>
+      </section>
+
+      <section class="advisor-card__section" *ngIf="advisor.modalities.length">
+        <h3 class="section-title">Modalidad</h3>
+        <ul class="chips">
+          <li class="chip" *ngFor="let modality of advisor.modalities">
+            {{ modality }}
+          </li>
+        </ul>
+      </section>
+
+      <section class="advisor-card__section" *ngIf="advisor.description">
+        <h3 class="section-title">Descripción</h3>
+        <p class="advisor-card__description">
+          {{ advisor.description }}
+        </p>
+      </section>
+
+      <footer class="advisor-card__footer">
         <button
           type="button"
           class="primary-btn"
@@ -68,25 +65,21 @@
         >
           Enviar solicitud de asesoría
         </button>
-      </div>
+      </footer>
     </article>
 
     <!-- COLUMNA DERECHA: FORMULARIO DE SOLICITUD -->
     <section class="request-panel">
       <h2 class="request-panel__title">Solicitud de asesoría</h2>
       <p class="request-panel__subtitle">
-        Completa los datos para enviar una solicitud a este asesor.
+        Completa la información para enviar tu solicitud a este asesor.
       </p>
 
       <div
-        class="request-panel__info"
-        *ngIf="!showRequestForm && !requestSent"
+        class="request-panel__alert request-panel__alert--success"
+        *ngIf="requestSent"
       >
-        <p>
-          Para iniciar una solicitud, selecciona primero
-          <strong>"Enviar solicitud de asesoría"</strong> en la tarjeta del
-          asesor.
-        </p>
+        La solicitud se envió correctamente.
       </div>
 
       <form
@@ -95,91 +88,68 @@
         (ngSubmit)="submitRequest()"
         #requestForm="ngForm"
       >
-        <div class="form-field">
+        <div class="form-row">
           <label for="subject">Materia o tema</label>
-          <select
+          <input
             id="subject"
+            type="text"
             name="subject"
-            required
             [(ngModel)]="request.subject"
-          >
-            <option value="">Selecciona una materia</option>
-            <option
-              *ngFor="let s of advisor.subjects"
-              [value]="s"
-            >
-              {{ s }}
-            </option>
-          </select>
+            required
+            placeholder="Ejemplo: Cálculo diferencial, programación en Java"
+          />
         </div>
 
-        <div class="form-field">
+        <div class="form-row">
           <label for="modality">Modalidad</label>
           <select
             id="modality"
             name="modality"
-            required
             [(ngModel)]="request.modality"
+            required
           >
-            <option value="">Selecciona una modalidad</option>
-            <option
-              *ngFor="let m of advisor.modalities"
-              [value]="m"
-            >
-              {{ m }}
-            </option>
+            <option value="En línea">En línea</option>
+            <option value="Presencial">Presencial</option>
           </select>
         </div>
 
-        <div class="form-field">
+        <div class="form-row">
           <label for="message">Mensaje para el asesor (opcional)</label>
           <textarea
             id="message"
             name="message"
-            rows="4"
+            rows="5"
             [(ngModel)]="request.message"
-            placeholder="Describe brevemente lo que necesitas revisar en la asesoría."
+            placeholder="Describe brevemente en qué necesitas apoyo o qué esperas de la asesoría."
           ></textarea>
         </div>
 
-        <div class="request-form__actions">
+        <div class="form-actions">
           <button
             type="button"
             class="secondary-btn"
             (click)="resetForm()"
+            [disabled]="isSubmitting"
           >
-            Limpiar formulario
+            Limpiar
           </button>
 
           <button
             type="submit"
             class="primary-btn"
-            [disabled]="!request.subject || !request.modality"
+            [disabled]="isSubmitting || requestForm.invalid"
           >
-            Enviar solicitud
+            {{ isSubmitting ? 'Enviando…' : 'Enviar solicitud' }}
           </button>
         </div>
       </form>
 
-      <div
-        class="request-panel__confirmation"
-        *ngIf="requestSent"
-      >
-        <h3>Solicitud enviada correctamente</h3>
+      <div class="request-panel__empty" *ngIf="!showRequestForm">
         <p>
-          Tu solicitud ha sido registrada de forma local. Más adelante se podrá
-          conectar este flujo con el backend de Agora.
+          Presiona el botón “Enviar solicitud de asesoría” para completar los
+          datos de tu solicitud.
         </p>
-        <button
-          type="button"
-          class="secondary-btn"
-          (click)="resetForm()"
-        >
-          Enviar otra solicitud
-        </button>
       </div>
     </section>
   </div>
 </section>
-
-

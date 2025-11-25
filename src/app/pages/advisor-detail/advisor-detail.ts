@@ -27,10 +27,10 @@ interface AdvisorRequest {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './advisor-detail.html',
-  styleUrls: ['./advisor-detail.scss']
+  styleUrls: ['./advisor-detail.css']
 })
 export class AdvisorDetailComponent {
-  /* Datos mock del asesor. Más adelante se pueden cargar desde el router o un servicio */
+  /* Datos mock del asesor */
   advisor: Advisor = {
     id: 1,
     name: 'Ana López',
@@ -40,67 +40,62 @@ export class AdvisorDetailComponent {
     modalities: ['En línea', 'Presencial'],
     location: 'Tuxtla Gutiérrez, Chiapas',
     description:
-      'Asesora en áreas de matemáticas para estudiantes de bachillerato y primeros semestres de universidad. Enfocada en reforzar fundamentos y resolución de ejercicios.'
+      'Docente con experiencia en matemáticas para nivel medio superior y superior. Enfocada en la resolución guiada de ejercicios y en la preparación para evaluaciones parciales y finales.'
   };
 
   /* Estado del formulario de solicitud */
   showRequestForm = false;
+  isSubmitting = false;
   requestSent = false;
 
-  /* Modelo de la solicitud actual */
+  /* Modelo de la solicitud */
   request: AdvisorRequest = {
     subject: '',
-    modality: '',
+    modality: 'En línea',
     message: ''
   };
 
-  /** Iniciales del asesor para el avatar cuando no hay foto */
+  /* Iniciales del asesor, para avatar sin foto */
   get advisorInitials(): string {
-    if (!this.advisor.name) {
+    if (!this.advisor?.name) {
       return '';
     }
-    const parts = this.advisor.name.trim().split(' ');
-    if (parts.length === 1) {
-      return parts[0].charAt(0).toUpperCase();
-    }
-    const first = parts[0].charAt(0).toUpperCase();
-    const last = parts[parts.length - 1].charAt(0).toUpperCase();
-    return `${first}${last}`;
+
+    const parts = this.advisor.name.split(' ').filter(Boolean);
+    const first = parts[0]?.charAt(0) ?? '';
+    const second = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
+    return (first + second).toUpperCase();
   }
 
-  /** Muestra el formulario de solicitud */
+  /* Mostrar panel de formulario */
   showRequestFormPanel(): void {
     this.showRequestForm = true;
     this.requestSent = false;
   }
 
-  /** Envía la solicitud de forma local (sin backend) */
+  /* Simular envío de solicitud */
   submitRequest(): void {
     if (!this.request.subject || !this.request.modality) {
       return;
     }
 
-    const payload: AdvisorRequest = {
-      subject: this.request.subject,
-      modality: this.request.modality,
-      message: this.request.message
-    };
+    this.isSubmitting = true;
 
-    // Aquí en el futuro se podría llamar a un servicio HTTP para enviar la solicitud.
-    console.log('Solicitud de asesoría enviada (mock):', payload);
-
-    this.requestSent = true;
-    this.showRequestForm = false;
+    // Simulación de envío local
+    setTimeout(() => {
+      this.isSubmitting = false;
+      this.requestSent = true;
+      // Aquí en el futuro se podría llamar a un servicio HTTP
+    }, 600);
   }
 
-  /** Limpia el formulario y permite preparar una nueva solicitud */
+  /* Limpiar formulario */
   resetForm(): void {
     this.request = {
       subject: '',
-      modality: '',
+      modality: 'En línea',
       message: ''
     };
     this.requestSent = false;
-    this.showRequestForm = false;
   }
 }

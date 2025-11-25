@@ -1,9 +1,10 @@
 /* student-home.css */
 
 /* Variables de color y layout */
+
 :root {
   --sidebar-bg: #2B5797;
-  --sidebar-bg-soft: #2558a0;
+  --sidebar-bg-soft: #244674; /* un poco más oscuro para el degradado */
   --sidebar-text: #f9fafb;
   --sidebar-text-muted: #cbd5f5;
 

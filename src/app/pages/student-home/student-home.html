@@ -46,18 +46,6 @@
       <button
         type="button"
         class="nav-item"
-        [class.active]="activeSection === 'buscar'"
-        (click)="onNavigate('buscar')"
-      >
-        <span class="nav-icon">BA</span>
-        <span class="nav-label" *ngIf="!isSidebarCollapsed"
-          >Buscar asesores</span
-        >
-      </button>
-
-      <button
-        type="button"
-        class="nav-item"
         [class.active]="activeSection === 'mis-asesores'"
         (click)="onNavigate('mis-asesores')"
       >
@@ -76,18 +64,6 @@
         <span class="nav-icon">SA</span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed"
           >Sesiones agendadas</span
-        >
-      </button>
-
-      <button
-        type="button"
-        class="nav-item"
-        [class.active]="activeSection === 'historial'"
-        (click)="onNavigate('historial')"
-      >
-        <span class="nav-icon">HS</span>
-        <span class="nav-label" *ngIf="!isSidebarCollapsed"
-          >Historial de sesiones</span
         >
       </button>
 
@@ -116,23 +92,11 @@
       <button
         type="button"
         class="nav-item"
-        [class.active]="activeSection === 'configuracion'"
-        (click)="onNavigate('configuracion')"
+        [class.active]="activeSection === 'perfil'"
+        (click)="onNavigateToPerfil()"
       >
-        <span class="nav-icon">CF</span>
-        <span class="nav-label" *ngIf="!isSidebarCollapsed"
-          >Configuración</span
-        >
-      </button>
-
-      <button
-        type="button"
-        class="nav-item"
-        [class.active]="activeSection === 'ayuda'"
-        (click)="onNavigate('ayuda')"
-      >
-        <span class="nav-icon">AY</span>
-        <span class="nav-label" *ngIf="!isSidebarCollapsed">Ayuda</span>
+        <span class="nav-icon">PF</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">Perfil</span>
       </button>
     </nav>
 
@@ -281,72 +245,6 @@
       <section class="content-grid">
         <!-- COLUMNA IZQUIERDA -->
         <div class="content-main">
-          <!-- Resumen -->
-          <section class="summary-row">
-            <div class="summary-card summary-recommendations">
-              <h1 class="summary-title">Recomendaciones</h1>
-              <p class="summary-text">
-                Explora asesores según tu nivel, lugar y materias de interés.
-              </p>
-            </div>
-
-            <div class="summary-card summary-status">
-              <div class="status-row">
-                <span class="status-label">Estado de perfil</span>
-                <span
-                  class="status-pill"
-                  [class.status-complete]="profileCompletion >= 100"
-                >
-                  {{ profileCompletion | number : '1.0-0' }}%
-                </span>
-              </div>
-              <p class="status-text">
-                Mantén tu perfil actualizado para recibir mejores
-                recomendaciones.
-              </p>
-              <div class="status-progress">
-                <div
-                  class="status-progress-bar"
-                  [style.width.%]="profileCompletion"
-                ></div>
-              </div>
-              <button
-                type="button"
-                class="status-edit-btn"
-                (click)="onEditProfile()"
-              >
-                Completar perfil
-              </button>
-            </div>
-
-            <div
-              class="summary-card summary-notifications"
-              *ngIf="showNotificationsPanel"
-            >
-              <h2 class="summary-subtitle">
-                Notificaciones
-              </h2>
-              <p
-                class="summary-text"
-                *ngIf="!notices.length"
-              >
-                No tienes notificaciones nuevas.
-              </p>
-              <ul
-                class="summary-notice-list"
-                *ngIf="notices.length"
-              >
-                <li
-                  *ngFor="let n of notices"
-                  class="summary-notice-item"
-                >
-                  <span class="notice-dot"></span>
-                  <span class="notice-title">{{ n.title }}</span>
-                </li>
-              </ul>
-            </div>
-          </section>
-
           <!-- Listado de asesores -->
           <section class="list-section">
             <div

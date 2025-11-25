@@ -557,6 +557,14 @@ export class StudentHome implements OnInit {
     console.log('Navegar a sección', section);
   }
 
+  onNavigateToPerfil(): void {
+    this.activeSection = 'perfil';
+    if (this.isMobileSidebarOpen) {
+      this.closeMobileSidebar();
+    }
+    this.router.navigate(['/complete-profile']);
+  }
+
   /* Utilidades */
 
   trackByStr(_: number, value: string): string {
@@ -576,8 +584,7 @@ export class StudentHome implements OnInit {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.clear();
     this.router.navigate(['/login']);
   }
 

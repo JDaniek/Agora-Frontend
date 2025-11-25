@@ -21,6 +21,7 @@ import {
   catchError
 } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import { AdviserDetailModal, AdviserDetail, Review } from '../../shared/components/adviser-detail-modal/adviser-detail-modal';
 
 /* Modelos de la API */
 interface AdviserCardResponse {
@@ -89,7 +90,7 @@ interface Notice {
 @Component({
   selector: 'app-student-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, AdviserDetailModal],
   templateUrl: './student-home.html',
   styleUrls: ['./student-home.css']
 })
@@ -126,6 +127,10 @@ export class StudentHome implements OnInit {
 
   /* Perfil (progreso de ejemplo) */
   profileCompletion = 60;
+
+  /* Modal de detalle del asesor */
+  isModalOpen = false;
+  selectedAdviser: AdviserDetail | null = null;
 
   /* Agenda y calendario (datos locales) */
   weekDays: string[] = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
@@ -569,8 +574,51 @@ export class StudentHome implements OnInit {
   }
 
   onSeeMore(adviser: AdviserCardView): void {
-    // Navegación al detalle del asesor
-    this.router.navigate(['/details-asesor', adviser.id]);
+    // Abrir modal con detalle del asesor
+    this.openAdviserDetail(adviser);
+  }
+
+  /* Modal de detalle del asesor */
+  openAdviserDetail(adviser: AdviserCardView): void {
+    // Crear reseñas de ejemplo para el modal
+    const mockReviews: Review[] = [
+      {
+        userPhoto: null,
+        userName: 'Juan Pérez',
+        text: 'Excelente asesor, muy paciente y explica muy bien los conceptos.',
+        rating: 5
+      },
+      {
+        userPhoto: null,
+        userName: 'Laura García',
+        text: 'Me ayudó mucho con mis dudas, totalmente recomendado.',
+        rating: 5
+      },
+      {
+        userPhoto: null,
+        userName: 'Pedro Sánchez',
+        text: 'Buena experiencia, aprendí mucho en las sesiones.',
+        rating: 4
+      }
+    ];
+
+    this.selectedAdviser = {
+      ...adviser,
+      rating: 4.5,
+      reviews: mockReviews
+    };
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.selectedAdviser = null;
+  }
+
+  onWriteMessage(adviserId: number): void {
+    console.log('Escribir mensaje al asesor:', adviserId);
+    // Aquí puedes navegar a la vista de chat o abrir un componente de mensajería
+    this.closeModal();
   }
 }
 

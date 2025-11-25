@@ -573,4 +573,12 @@
       </section>
     </main>
   </div>
+
+  <!-- Modal de detalle del asesor -->
+  <app-adviser-detail-modal
+    [adviser]="selectedAdviser"
+    [isOpen]="isModalOpen"
+    (close)="closeModal()"
+    (writeMessage)="onWriteMessage($event)"
+  ></app-adviser-detail-modal>
 </section>

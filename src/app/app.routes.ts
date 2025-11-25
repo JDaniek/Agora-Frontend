@@ -91,7 +91,7 @@ export const routes: Routes = [
 
   /* NUEVA RUTA: Detalle de asesor */
   {
-    path: 'advisor-detail:id',
+    path: 'advisor-detail',
     loadComponent: () =>
       import('./pages/advisor-detail/advisor-detail').then(
         m => m.AdvisorDetailComponent

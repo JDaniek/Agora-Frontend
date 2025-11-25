@@ -1,0 +1,72 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <!-- Close button -->
+    <button class="close-btn" (click)="closeModal()">✕</button>
+
+    <!-- Modal content -->
+    <div class="modal-content" *ngIf="adviser">
+      <!-- Main section with scrollbar -->
+      <div class="modal-main">
+        <!-- Avatar -->
+        <div class="avatar-large" [class.has-img]="adviser.avatarUrl">
+          <img *ngIf="adviser.avatarUrl" [src]="adviser.avatarUrl" [alt]="adviser.name" />
+          <span *ngIf="!adviser.avatarUrl" class="avatar-placeholder">👤</span>
+        </div>
+
+        <!-- Name and level -->
+        <h2 class="adviser-name">{{ adviser.name }}</h2>
+        <span class="level-badge" *ngIf="adviser.nivel">{{ adviser.nivel }}</span>
+
+        <!-- Specialties chips -->
+        <div class="tags-row">
+          <span class="tag-chip" *ngFor="let tag of adviser.tags; trackBy: trackByIndex">
+            {{ tag }}
+          </span>
+        </div>
+
+        <!-- Description -->
+        <div class="description-section">
+          <h3>Acerca de mí</h3>
+          <p>{{ adviser.description || 'Sin descripción disponible.' }}</p>
+        </div>
+
+        <!-- Rating -->
+        <div class="rating-section">
+          <div class="stars">
+            <span *ngFor="let filled of getStarsArray(); trackBy: trackByIndex" 
+                  [class.filled]="filled">
+              ★
+            </span>
+          </div>
+          <span class="rating-text">{{ adviser.rating }} / 5.0 ({{ adviser.reviews.length }} reseñas)</span>
+        </div>
+
+        <!-- Reviews -->
+        <div class="reviews-section">
+          <h3>Reseñas</h3>
+          <div class="reviews-list">
+            <div class="review-item" *ngFor="let review of adviser.reviews; trackBy: trackByIndex">
+              <div class="review-avatar" [class.has-img]="review.userPhoto">
+                <img *ngIf="review.userPhoto" [src]="review.userPhoto" [alt]="review.userName" />
+                <span *ngIf="!review.userPhoto" class="avatar-placeholder">👤</span>
+              </div>
+              <div class="review-content">
+                <strong>{{ review.userName }}</strong>
+                <p>{{ review.text }}</p>
+              </div>
+            </div>
+            <div *ngIf="adviser.reviews.length === 0" class="no-reviews">
+              Aún no hay reseñas para este asesor.
+            </div>
+          </div>
+        </div>
+
+        <!-- Write button (bottom right) -->
+        <button class="write-btn" (click)="onWriteMessage()">
+          <span class="icon">✉️</span>
+          Escribir
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

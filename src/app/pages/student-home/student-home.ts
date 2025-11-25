@@ -22,6 +22,7 @@ import {
 } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { AdviserDetailModal, AdviserDetail, Review } from '../../shared/components/adviser-detail-modal/adviser-detail-modal';
+import { NotificationsModal, Notification, NotificationType } from '../../shared/components/notifications-modal/notifications-modal';
 
 /* Modelos de la API */
 interface AdviserCardResponse {
@@ -90,7 +91,7 @@ interface Notice {
 @Component({
   selector: 'app-student-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, AdviserDetailModal],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, AdviserDetailModal, NotificationsModal],
   templateUrl: './student-home.html',
   styleUrls: ['./student-home.css']
 })
@@ -131,6 +132,11 @@ export class StudentHome implements OnInit {
   /* Modal de detalle del asesor */
   isModalOpen = false;
   selectedAdviser: AdviserDetail | null = null;
+
+  /* Notificaciones */
+  isNotificationsModalOpen = false;
+  notifications: Notification[] = [];
+  unreadCount = 0;
 
   /* Agenda y calendario (datos locales) */
   weekDays: string[] = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
@@ -205,6 +211,8 @@ export class StudentHome implements OnInit {
 
   ngOnInit(): void {
     this.loadMyProfile().subscribe();
+
+    this.loadMockNotifications();
 
     this.loadInitialAdvisers();
 
@@ -560,7 +568,7 @@ export class StudentHome implements OnInit {
   }
 
   toggleNotificationsPanel(): void {
-    this.showNotificationsPanel = !this.showNotificationsPanel;
+    this.isNotificationsModalOpen = !this.isNotificationsModalOpen;
   }
 
   toggleBookmark(adviser: AdviserCardView): void {
@@ -619,6 +627,59 @@ export class StudentHome implements OnInit {
     console.log('Escribir mensaje al asesor:', adviserId);
     // Aquí puedes navegar a la vista de chat o abrir un componente de mensajería
     this.closeModal();
+  }
+
+  /* Métodos de notificaciones */
+  loadMockNotifications(): void {
+    this.notifications = [
+      {
+        id: 1,
+        type: NotificationType.REQUEST,
+        userPhoto: null,
+        userName: 'Ana López',
+        timestamp: new Date(Date.now() - 15 * 60000) // hace 15 min
+      },
+      {
+        id: 2,
+        type: NotificationType.REVIEW,
+        userPhoto: null,
+        userName: 'Carlos Méndez',
+        timestamp: new Date(Date.now() - 2 * 3600000) // hace 2 horas
+      },
+      {
+        id: 3,
+        type: NotificationType.CLASS,
+        userPhoto: null,
+        userName: 'María González',
+        classDate: '25 de Noviembre, 2025',
+        classTime: '14:00 - 15:00',
+        timestamp: new Date(Date.now() - 24 * 3600000) // hace 1 día
+      },
+      {
+        id: 4,
+        type: NotificationType.REQUEST,
+        userPhoto: null,
+        userName: 'Luis Hernández',
+        timestamp: new Date(Date.now() - 48 * 3600000) // hace 2 días
+      }
+    ];
+    this.unreadCount = this.notifications.length;
+  }
+
+  closeNotifications(): void {
+    this.isNotificationsModalOpen = false;
+  }
+
+  onAcceptRequest(notificationId: number): void {
+    console.log('Solicitud aceptada:', notificationId);
+    this.notifications = this.notifications.filter(n => n.id !== notificationId);
+    this.unreadCount = this.notifications.length;
+  }
+
+  onRejectRequest(notificationId: number): void {
+    console.log('Solicitud rechazada:', notificationId);
+    this.notifications = this.notifications.filter(n => n.id !== notificationId);
+    this.unreadCount = this.notifications.length;
   }
 }
 

@@ -581,4 +581,13 @@
     (close)="closeModal()"
     (writeMessage)="onWriteMessage($event)"
   ></app-adviser-detail-modal>
+
+  <!-- Modal de notificaciones -->
+  <app-notifications-modal
+    [notifications]="notifications"
+    [isOpen]="isNotificationsModalOpen"
+    (close)="closeNotifications()"
+    (acceptRequest)="onAcceptRequest($event)"
+    (rejectRequest)="onRejectRequest($event)"
+  ></app-notifications-modal>
 </section>

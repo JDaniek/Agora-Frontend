@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+// src/app/pages/register/register.ts
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormsModule} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {AuthService, RegisterRequest, AuthResponse} from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -13,21 +14,11 @@ import { CommonModule } from '@angular/common';
 })
 export class Register implements OnInit {
 
-  /** Endpoint de registro de la API */
-  private apiUrl = 'http://localhost:8080/api/v1/auth/register';
-
   /**
    * Modelo del formulario.
-   * Coincide con el JSON que espera el backend en RegisterRequest.
+   * Coincide con RegisterRequest del backend.
    */
-  public formData: {
-    firstName: string;
-    secondName: string | null;
-    lastName: string;
-    roleId: number;
-    email: string;
-    password: string;
-  } = {
+  public formData: RegisterRequest = {
     firstName: '',
     secondName: null,  // opcional
     lastName: '',
@@ -38,9 +29,10 @@ export class Register implements OnInit {
 
   constructor(
     private router: Router,
-    private http: HttpClient,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private authService: AuthService
+  ) {
+  }
 
   ngOnInit(): void {
     // Leemos el roleId desde la URL (?roleId=1 o 2) para saber si es alumno o asesor.
@@ -57,7 +49,6 @@ export class Register implements OnInit {
   }
 
   onSubmit(): void {
-    // Si por alguna razón no se recibió roleId, no permitimos continuar.
     if (this.formData.roleId === 0) {
       alert('Error: No se ha seleccionado un rol.');
       return;
@@ -65,9 +56,8 @@ export class Register implements OnInit {
 
     console.log('Enviando los siguientes datos de registro:', this.formData);
 
-    this.http.post<any>(this.apiUrl, this.formData).subscribe(
-      // Éxito
-      (response) => {
+    this.authService.register(this.formData).subscribe({
+      next: (response: AuthResponse) => {
         console.log('Registro exitoso. Respuesta del servidor:', response);
 
         // Guardamos token para mantener la sesión
@@ -84,13 +74,12 @@ export class Register implements OnInit {
         alert('¡Registro exitoso! Te redireccionaremos al inicio de sesión.');
         this.router.navigate(['/login']);
       },
-      // Error
-      (error) => {
+      error: (error) => {
         console.error('Error en el registro', error);
         const backendMessage = error?.error?.message;
         alert('Error en el registro: ' + (backendMessage || 'Inténtalo de nuevo más tarde.'));
       }
-    );
+    });
   }
 
   /** Ir a la pantalla de login */
@@ -106,4 +95,3 @@ export class Register implements OnInit {
     this.router.navigate(['/signup']);
   }
 }
-

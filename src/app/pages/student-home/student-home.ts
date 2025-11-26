@@ -4,9 +4,9 @@ import {
   OnInit,
   ChangeDetectorRef
 } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import {Router, RouterLink} from '@angular/router';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {CommonModule} from '@angular/common';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -20,23 +20,25 @@ import {
   tap,
   catchError
 } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
-import { AdviserDetailModal, AdviserDetail, Review } from '../../shared/components/adviser-detail-modal/adviser-detail-modal';
-import { NotificationsModal, Notification, NotificationType } from '../../shared/components/notifications-modal/notifications-modal';
-
-/* Modelos de la API */
-interface AdviserCardResponse {
-  userId: number;
-  firstName: string;
-  lastName: string;
-  photoUrl: string | null;
-  level: string | null;
-  description: string | null;
-  specialties: string[];
-
-  // Nuevo: campo opcional para poder usar adviser.stateCode sin error
-  stateCode?: string | null;
-}
+import {Observable, of} from 'rxjs';
+import {
+  AdviserDetailModal,
+  AdviserDetail,
+  Review
+} from '../../shared/components/adviser-detail-modal/adviser-detail-modal';
+import {
+  NotificationsModal,
+  Notification,
+  NotificationType
+} from '../../shared/components/notifications-modal/notifications-modal';
+import {environment} from '@env/environment';
+import {AdviserService, AdviserCardResponse} from '../../core/services/adviser.service';
+import {ProfileService, ProfileResponse} from '../../core/services/profile.service';
+import {ClassService, StudentClassResponse} from '../../core/services/class.service';
+import {
+  NotificationService,
+  NotificationDto
+} from '../../core/services/notification.service';
 
 /* Modelo para la tarjeta del asesor en la UI */
 interface AdviserCardView {
@@ -49,17 +51,6 @@ interface AdviserCardView {
   bookmarked: boolean;
   subject?: string | null;
   location?: string | null;
-}
-
-/* Perfil para la barra superior */
-interface ProfileResponse {
-  userId: number;
-  description: string | null;
-  photoUrl: string | null;
-  city: string | null;
-  stateCode: string | null;
-  level: string | null;
-  specialties: { id: number; name: string }[];
 }
 
 /* Sesiones de agenda (datos locales) */
@@ -97,8 +88,8 @@ interface Notice {
 })
 export class StudentHome implements OnInit {
   /* Endpoints de la API de Agora */
-  private advisersApiUrl = 'http://localhost:8080/api/v1/advisers';
-  private profileApiUrl = 'http://localhost:8080/api/v1/profile';
+  private advisersApiUrl = `${environment.apiUrl}${environment.endpoints.advisers.list}`;
+  private profileApiUrl = `${environment.apiUrl}${environment.endpoints.profile.me}`;
 
   /* Estado general de UI */
   topAvatarUrl: string | null = null;
@@ -115,9 +106,9 @@ export class StudentHome implements OnInit {
   lugares: string[] = ['CHIS', 'JAL', 'CDMX', 'NL'];
   niveles: string[] = ['Bachillerato', 'Universidad', 'Maestría'];
   materias: { id: number; name: string }[] = [
-    { id: 1, name: 'Ciencias Naturales' },
-    { id: 2, name: 'Idiomas' },
-    { id: 3, name: 'Artes' }
+    {id: 1, name: 'Ciencias Naturales'},
+    {id: 2, name: 'Idiomas'},
+    {id: 3, name: 'Artes'}
   ];
 
   filtros: FormGroup;
@@ -140,32 +131,7 @@ export class StudentHome implements OnInit {
 
   /* Agenda y calendario (datos locales) */
   weekDays: string[] = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-  upcomingSessions: Session[] = [
-    {
-      id: 1,
-      date: '2025-11-25',
-      time: '10:00',
-      subject: 'Cálculo diferencial',
-      advisor: 'Ana López',
-      modality: 'En línea'
-    },
-    {
-      id: 2,
-      date: '2025-11-25',
-      time: '16:30',
-      subject: 'Programación orientada a objetos',
-      advisor: 'Carlos Ramírez',
-      modality: 'Presencial'
-    },
-    {
-      id: 3,
-      date: '2025-11-28',
-      time: '09:00',
-      subject: 'Inglés B2',
-      advisor: 'María Gómez',
-      modality: 'En línea'
-    }
-  ];
+  upcomingSessions: Session[] = [];
 
   calendarDays: CalendarDay[] = [];
   currentDate: Date = new Date();
@@ -173,6 +139,28 @@ export class StudentHome implements OnInit {
   currentMonth = this.currentDate.getMonth();
   selectedDateKey: string = this.buildDateKey(this.currentDate);
   selectedDaySessions: Session[] = [];
+
+  private loadSessionsFromBackend(): void {
+    this.classService.getMyEnrolledClasses().subscribe({
+      next: (classes) => {
+        this.upcomingSessions = classes.map(c => ({
+          id: c.id,
+          date: c.classDate,
+          time: 'Sin horario',
+          subject: c.title,
+          advisor: c.tutorName,
+          modality: undefined
+        }));
+
+        this.buildCalendar();          // Recalcular calendario
+        this.updateSelectedDaySessions(); // Recalcular sesiones para día seleccionado
+      },
+      error: () => {
+        this.buildCalendar();
+        this.updateSelectedDaySessions();
+      }
+    });
+  }
 
   /* Avisos locales */
   notices: Notice[] = [
@@ -195,9 +183,13 @@ export class StudentHome implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private adviserService: AdviserService,
+    private profileService: ProfileService,
+    private classService: ClassService,
+    private notificationService: NotificationService,
+    private http: HttpClient
   ) {
     this.filtros = this.fb.group({
       search: [''],
@@ -212,9 +204,12 @@ export class StudentHome implements OnInit {
   ngOnInit(): void {
     this.loadMyProfile().subscribe();
 
-    this.loadMockNotifications();
+    this.loadNotificationsFromBackend();
 
     this.loadInitialAdvisers();
+
+    // Cargar sesiones REALES
+    this.loadSessionsFromBackend();
 
     this.filtros.valueChanges
       .pipe(
@@ -230,6 +225,7 @@ export class StudentHome implements OnInit {
 
     this.buildCalendar();
     this.updateSelectedDaySessions();
+
   }
 
   /* Perfil */
@@ -237,7 +233,7 @@ export class StudentHome implements OnInit {
   private loadMyProfile(): Observable<void> {
     this.isLoadingProfile = true;
 
-    return this.http.get<ProfileResponse>(this.profileApiUrl).pipe(
+    return this.profileService.getMyProfile().pipe(
       tap(profile => {
         this.topAvatarUrl = profile?.photoUrl ?? null;
 
@@ -281,28 +277,19 @@ export class StudentHome implements OnInit {
   }
 
   private fetchAdvisers(filters: any = {}): Observable<AdviserCardView[]> {
-    let params = new HttpParams();
-
-    if (filters.search) params = params.set('q', filters.search);
-    if (filters.lugar) params = params.set('state', filters.lugar);
-    if (filters.nivel) params = params.set('level', filters.nivel);
-    if (filters.materia) params = params.set('specialty', filters.materia);
-
     this.isLoadingAdvisers = true;
 
-    return this.http
-      .get<AdviserCardResponse[]>(this.advisersApiUrl, { params })
-      .pipe(
-        map(response => response.map(a => this.mapApiToView(a))),
-        tap(() => {
-          this.isLoadingAdvisers = false;
-        }),
-        catchError(err => {
-          console.error('Error al obtener asesores', err);
-          this.isLoadingAdvisers = false;
-          return of<AdviserCardView[]>([]);
-        })
-      );
+    return this.adviserService.getAdvisers(filters).pipe(
+      map((response: AdviserCardResponse[]) => response.map(a => this.mapApiToView(a))),
+      tap(() => {
+        this.isLoadingAdvisers = false;
+      }),
+      catchError(err => {
+        console.error('Error al obtener asesores', err);
+        this.isLoadingAdvisers = false;
+        return of<AdviserCardView[]>([]);
+      })
+    );
   }
 
   private mapApiToView(adviser: AdviserCardResponse): AdviserCardView {
@@ -363,7 +350,7 @@ export class StudentHome implements OnInit {
   }
 
   private applyFilters(): void {
-    const { search, lugar, nivel, materia } = this.filtros.value;
+    const {search, lugar, nivel, materia} = this.filtros.value;
     const searchTerm = (search || '').toLowerCase().trim();
 
     this.advisers = this.allAdvisers.filter(adviser => {
@@ -412,7 +399,7 @@ export class StudentHome implements OnInit {
   }
 
   clearSearch(): void {
-    this.filtros.patchValue({ search: '' }, { emitEvent: true });
+    this.filtros.patchValue({search: ''}, {emitEvent: true});
   }
 
   clearFilters(): void {
@@ -423,7 +410,7 @@ export class StudentHome implements OnInit {
         nivel: '',
         materia: ''
       },
-      { emitEvent: true }
+      {emitEvent: true}
     );
   }
 
@@ -678,16 +665,95 @@ export class StudentHome implements OnInit {
   }
 
   onAcceptRequest(notificationId: number): void {
-    console.log('Solicitud aceptada:', notificationId);
-    this.notifications = this.notifications.filter(n => n.id !== notificationId);
-    this.unreadCount = this.notifications.length;
+    this.notificationService.acceptRequest(notificationId).subscribe({
+      next: (res) => {
+        console.log('Solicitud aceptada, respuesta backend:', res);
+
+        // Si quieres, si viene chatId, puedes navegar al chat:
+        // if (res?.chatId) {
+        //   this.router.navigate(['/chat', res.chatId]);
+        // }
+
+        // Actualizamos la lista local
+        this.notifications = this.notifications.filter(n => n.id !== notificationId);
+        this.unreadCount = this.notifications.length;
+      },
+      error: (err) => {
+        console.error('Error al aceptar solicitud', err);
+      }
+    });
   }
 
   onRejectRequest(notificationId: number): void {
-    console.log('Solicitud rechazada:', notificationId);
-    this.notifications = this.notifications.filter(n => n.id !== notificationId);
-    this.unreadCount = this.notifications.length;
+    this.notificationService.declineRequest(notificationId).subscribe({
+      next: (res) => {
+        console.log('Solicitud rechazada, respuesta backend:', res);
+
+        this.notifications = this.notifications.filter(n => n.id !== notificationId);
+        this.unreadCount = this.notifications.length;
+      },
+      error: (err) => {
+        console.error('Error al rechazar solicitud', err);
+      }
+    });
   }
+
+  private mapDtoToNotification(dto: NotificationDto): Notification {
+    let type: NotificationType;
+
+    switch (dto.notificationTypeName) {
+      case 'contact_request':
+        type = NotificationType.REQUEST;
+        break;
+
+      case 'class_enrollment_request':
+      case 'class_enrollment_approved':
+      case 'class_enrollment_declined':
+        type = NotificationType.CLASS;
+        break;
+
+      case 'new_chat_message':
+        // Si tu enum tiene algo más específico, úsalo; si no, el más cercano
+        type = NotificationType.REVIEW;
+        break;
+
+      default:
+        type = NotificationType.CLASS;
+        break;
+    }
+
+    const fullName =
+      [dto.senderFirstName, dto.senderLastName].filter(Boolean).join(' ') || 'Usuario';
+
+    return {
+      id: dto.notificationId,
+      type,
+      userPhoto: dto.senderAvatarUrl ?? null,
+      userName: fullName,
+      classDate: dto.classDate ?? undefined,
+      classTime: dto.classTime ?? undefined,
+      timestamp: new Date(dto.createdAt),
+      status: dto.status ?? undefined
+    } as Notification;
+  }
+
+  private loadNotificationsFromBackend(): void {
+    // De momento SIN filtro de status para ver qué llega
+    this.notificationService.getMyNotifications().subscribe({
+      next: (dtos: NotificationDto[]) => {
+        console.log('Notificaciones desde backend:', dtos); // 👈 muy importante para ver el shape real
+
+        this.notifications = dtos.map(dto => this.mapDtoToNotification(dto));
+        this.unreadCount = this.notifications.length;
+      },
+      error: (err) => {
+        console.error('Error al cargar notificaciones, usando mocks', err);
+        this.loadMockNotifications();
+      }
+    });
+  }
+
+
 }
 
 

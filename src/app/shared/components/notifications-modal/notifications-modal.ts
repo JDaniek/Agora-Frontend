@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {Component, Input, Output, EventEmitter} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
 export enum NotificationType {
   REQUEST = 'request',
@@ -12,10 +12,10 @@ export interface Notification {
   type: NotificationType;
   userPhoto: string | null;
   userName: string;
-  message?: string;
+  timestamp: Date;
   classDate?: string;
   classTime?: string;
-  timestamp: Date;
+  status?: string;
 }
 
 @Component({

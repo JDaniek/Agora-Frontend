@@ -7,6 +7,15 @@ export enum NotificationType {
   CLASS = 'class'
 }
 
+export type NotificationStatusFilter =
+  | 'pending'
+  | 'accepted'
+  | 'declined'
+  | 'read'
+  | 'unread'
+  | 'archived'
+  | 'all';
+
 export interface Notification {
   id: number;
   type: NotificationType;
@@ -28,22 +37,41 @@ export interface Notification {
 export class NotificationsModal {
   @Input() notifications: Notification[] = [];
   @Input() isOpen = false;
+
+  // ⬇️ Filtro actual (para las pestañas)
+  @Input() currentFilter: NotificationStatusFilter = 'pending';
+
   @Output() close = new EventEmitter<void>();
   @Output() acceptRequest = new EventEmitter<number>();
   @Output() rejectRequest = new EventEmitter<number>();
 
+  // ⬇️ Emitimos cuando el usuario cambia de pestaña
+  @Output() filterChange = new EventEmitter<NotificationStatusFilter>();
+
   NotificationType = NotificationType;
 
-  closeModal() {
+  // ---- Métodos de UI ----
+
+  closeModal(): void {
     this.close.emit();
   }
 
-  onAcceptRequest(notificationId: number) {
+  // alias para el botón (click)="onClose()"
+  onClose(): void {
+    this.closeModal();
+  }
+
+  onAcceptRequest(notificationId: number): void {
     this.acceptRequest.emit(notificationId);
   }
 
-  onRejectRequest(notificationId: number) {
+  onRejectRequest(notificationId: number): void {
     this.rejectRequest.emit(notificationId);
+  }
+
+  onChangeFilter(filter: NotificationStatusFilter): void {
+    if (this.currentFilter === filter) return;
+    this.filterChange.emit(filter);
   }
 
   trackById(index: number, item: Notification): number {

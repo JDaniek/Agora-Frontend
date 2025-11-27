@@ -50,9 +50,9 @@
         (click)="onNavigate('mis-asesores')"
       >
         <span class="nav-icon">MA</span>
-        <span class="nav-label" *ngIf="!isSidebarCollapsed"
-          >Mis asesores</span
-        >
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">
+          Mis asesores
+        </span>
       </button>
 
       <button
@@ -62,9 +62,9 @@
         (click)="onNavigate('sesiones')"
       >
         <span class="nav-icon">SA</span>
-        <span class="nav-label" *ngIf="!isSidebarCollapsed"
-          >Sesiones agendadas</span
-        >
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">
+          Sesiones agendadas
+        </span>
       </button>
 
       <button
@@ -84,9 +84,9 @@
         (click)="onNavigate('notificaciones')"
       >
         <span class="nav-icon">NT</span>
-        <span class="nav-label" *ngIf="!isSidebarCollapsed"
-          >Notificaciones</span
-        >
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">
+          Notificaciones
+        </span>
       </button>
 
       <button
@@ -300,7 +300,7 @@
                 <p class="card-description">
                   {{
                     t.description ||
-                      'Este asesor aún no ha añadido una descripción.'
+                    'Este asesor aún no ha añadido una descripción.'
                   }}
                 </p>
 
@@ -343,7 +343,7 @@
           </section>
         </div>
 
-        <!-- COLUMNA DERECHA: agenda y avisos -->
+        <!-- COLUMNA DERECHA: solo Agenda -->
         <aside class="content-aside">
           <!-- Calendario / Agenda -->
           <section class="calendar-card">
@@ -432,41 +432,6 @@
               </ul>
             </div>
           </section>
-
-          <!-- Avisos -->
-          <section class="notice-card">
-            <header class="notice-header">
-              <h2 class="notice-title">Avisos</h2>
-              <button
-                type="button"
-                class="notice-link"
-                (click)="onViewAllNotices()"
-              >
-                Ver todos
-              </button>
-            </header>
-
-            <ul class="notice-list">
-              <li
-                class="notice-item"
-                *ngFor="let n of notices"
-              >
-                <h3 class="notice-item-title">
-                  {{ n.title }}
-                </h3>
-                <p class="notice-item-text">
-                  {{ n.text }}
-                </p>
-                <button
-                  type="button"
-                  class="notice-item-link"
-                  (click)="onViewNotice(n.id)"
-                >
-                  Ver más
-                </button>
-              </li>
-            </ul>
-          </section>
         </aside>
       </section>
     </main>
@@ -484,8 +449,10 @@
   <app-notifications-modal
     [notifications]="notifications"
     [isOpen]="isNotificationsModalOpen"
+    [currentFilter]="currentNotificationFilter"
     (close)="closeNotifications()"
     (acceptRequest)="onAcceptRequest($event)"
     (rejectRequest)="onRejectRequest($event)"
+    (filterChange)="onNotificationFilterChange($event)"
   ></app-notifications-modal>
 </section>

@@ -1,37 +1,81 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {environment} from '@env/environment';
 import {Observable} from 'rxjs';
+import {environment} from '@env/environment';
 
-/**
- * DTO basado en lo que razonablemente debería devolver toStudentResponse().
- */
 export interface StudentClassResponse {
-  id: number;              // id de la clase
-  title: string;           // título de la clase
-  description?: string | null;
-  classDate: string;       // "YYYY-MM-DD" (viene de LocalDate)
-  tutorName: string;       // o "teacherName" / "adviserName" / como esté en tu mapper
-  specialtyName?: string | null; // opcional: nombre de la materia/área
-  modality?: string | null;      // si más adelante agregan modalidad
+  classId: number;
+  title: string;
+  description: string | null;
+  classDate: string;   // "YYYY-MM-DD"
+  status: string;      // lo que devuelva el backend (ej. "active", "enrolled", etc.)
+  tutorId: number;
+  specialtyId: number;
+}
+
+// Respuesta de una clase creada por el tutor (tiene más datos)
+export interface ClassResponse {
+  id: number;
+  title: string;
+  description: string | null;
+  classDate: string;
+  capacityPerSlot: number;
+  specialtyId: number;
+  isActive: boolean;
+}
+
+// Payload para crear una clase
+export interface CreateClassRequest {
+  title: string;
+  description?: string;
+  classDate: string;
+  capacityPerSlot: number;
+  specialtyId: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClassService {
-
-  private readonly baseUrl = environment.apiUrl;
+  private apiUrl = environment.apiUrl;
+  private readonly baseUrl = `${environment.apiUrl}${environment.endpoints.classes.enrolledMine}`;
 
   constructor(private http: HttpClient) {
   }
 
-  /**
-   * Clases en las que el usuario autenticado es ALUMNO.
-   * GET /api/v1/classes/enrolled/mine
-   */
   getMyEnrolledClasses(): Observable<StudentClassResponse[]> {
-    const url = `${this.baseUrl}${environment.endpoints.classes.enrolledMine}`;
-    return this.http.get<StudentClassResponse[]>(url);
+    return this.http.get<StudentClassResponse[]>(this.baseUrl);
+  }
+
+  /**
+   * Obtiene las clases creadas por el asesor logueado.
+   * GET /api/v1/classes/mine
+   */
+  getMyClassesTutor(): Observable<ClassResponse[]> {
+    const url = `${this.apiUrl}${environment.endpoints.classes.mine}`;
+    return this.http.get<ClassResponse[]>(url);
+  }
+
+  /**
+   * Crea una nueva clase.
+   * POST /api/v1/classes
+   */
+  createClass(data: CreateClassRequest): Observable<ClassResponse> {
+    const url = `${this.apiUrl}${environment.endpoints.classes.root}`;
+    return this.http.post<ClassResponse>(url, data);
+  }
+
+  /**
+   * Inscribe un alumno en una clase específica.
+   * POST /api/v1/classes/{id}/enrollments
+   */
+  enrollStudent(classId: number, studentId: number): Observable<any> {
+    // Aquí hacemos el reemplazo manual ya que environment usa strings estáticos
+    // '/classes/:id/enrollments' -> '/classes/15/enrollments'
+    const path = environment.endpoints.classes.enrollmentsByClass.replace(':id', classId.toString());
+    const url = `${this.apiUrl}${path}`;
+    
+    // El backend espera un body con el studentId (según tu EnrollStudentRequest)
+    return this.http.post(url, { studentId });
   }
 }

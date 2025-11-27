@@ -1,61 +1,158 @@
-<div class="notification-overlay" *ngIf="isOpen" (click)="closeModal()">
-  <div class="notification-dropdown" (click)="$event.stopPropagation()">
-    <!-- Header -->
-    <div class="notification-header">
-      <h3>Notificaciones</h3>
-      <button class="close-btn" (click)="closeModal()">✕</button>
+<!-- notifications-modal.html -->
+<div
+  class="notifications-backdrop"
+  *ngIf="isOpen"
+>
+  <div class="notifications-modal">
+    <!-- HEADER -->
+    <div class="notifications-header">
+      <h2 class="modal-title">Notificaciones</h2>
+
+      <button
+        type="button"
+        class="close-btn"
+        (click)="onClose()"
+        aria-label="Cerrar"
+      >
+        ×
+      </button>
     </div>
 
-    <!-- Notifications list -->
-    <div class="notifications-list">
-      <div *ngIf="notifications.length === 0" class="no-notifications">
-        <span class="bell-icon">🔔</span>
-        <p>No tienes notificaciones nuevas</p>
-      </div>
+    <!-- TABS DE FILTRO -->
+    <div class="notifications-tabs">
+      <button
+        type="button"
+        class="tab-button"
+        [class.is-active]="currentFilter === 'pending'"
+        (click)="onChangeFilter('pending')"
+      >
+        Solicitudes
+      </button>
 
-      <div *ngFor="let notification of notifications; trackBy: trackById" class="notification-item">
-        <!-- User info -->
-        <div class="notification-user">
-          <div class="user-avatar" [class.has-img]="notification.userPhoto">
-            <img *ngIf="notification.userPhoto" [src]="notification.userPhoto" [alt]="notification.userName" />
-            <span *ngIf="!notification.userPhoto" class="avatar-placeholder">👤</span>
-          </div>
-          <div class="user-info">
-            <strong>{{ notification.userName }}</strong>
-            <span class="timestamp">{{ getRelativeTime(notification.timestamp) }}</span>
-          </div>
-        </div>
+      <button
+        type="button"
+        class="tab-button"
+        [class.is-active]="currentFilter === 'all'"
+        (click)="onChangeFilter('all')"
+      >
+        Todas
+      </button>
 
-        <!-- Notification content based on type -->
-        <div class="notification-content">
-          <!-- Request notification -->
-          <div *ngIf="notification.type === NotificationType.REQUEST" class="notification-message">
-            <p>Te ha enviado una solicitud de asesoría</p>
-            <div class="notification-actions">
-              <button class="btn-accept" (click)="onAcceptRequest(notification.id)">
-                Aceptar
-              </button>
-              <button class="btn-reject" (click)="onRejectRequest(notification.id)">
-                Eliminar
-              </button>
+      <button
+        type="button"
+        class="tab-button"
+        [class.is-active]="currentFilter === 'read'"
+        (click)="onChangeFilter('read')"
+      >
+        Leídas
+      </button>
+    </div>
+
+    <!-- LISTA DE NOTIFICACIONES -->
+    <div class="notifications-body">
+      <p
+        class="empty-state"
+        *ngIf="!notifications || notifications.length === 0"
+      >
+        No tienes notificaciones para este filtro.
+      </p>
+
+      <ul
+        class="notifications-list"
+        *ngIf="notifications && notifications.length > 0"
+      >
+        <li
+          class="notification-item"
+          *ngFor="let n of notifications; trackBy: trackById"
+        >
+          <div class="notification-avatar" [class.has-image]="n.userPhoto">
+            <img
+              *ngIf="n.userPhoto"
+              [src]="n.userPhoto"
+              [alt]="n.userName"
+            />
+            <span *ngIf="!n.userPhoto">
+              {{ n.userName ? n.userName[0] : '?' }}
+            </span>
+          </div>
+
+          <div class="notification-main">
+            <!-- Título según tipo -->
+            <div class="notification-title">
+              <ng-container [ngSwitch]="n.type">
+                <span *ngSwitchCase="NotificationType.REQUEST">
+                  Solicitud de contacto
+                </span>
+                <span *ngSwitchCase="NotificationType.CLASS">
+                  Notificación de clase
+                </span>
+                <span *ngSwitchDefault>
+                  Notificación
+                </span>
+              </ng-container>
+            </div>
+
+            <!-- Descripción -->
+            <div class="notification-text">
+              <ng-container [ngSwitch]="n.type">
+                <span *ngSwitchCase="NotificationType.REQUEST">
+                  {{ n.userName }} quiere ponerse en contacto contigo.
+                </span>
+
+                <span *ngSwitchCase="NotificationType.CLASS">
+                  Te han inscrito o actualizado en una clase.
+                  <ng-container *ngIf="n.classDate">
+                    Fecha: {{ n.classDate }}
+                  </ng-container>
+                </span>
+
+                <span *ngSwitchDefault>
+                  Nueva notificación de {{ n.userName }}.
+                </span>
+              </ng-container>
+            </div>
+
+            <!-- Meta: tiempo relativo y estado -->
+            <div class="notification-meta">
+              <span class="meta-time">
+                {{ getRelativeTime(n.timestamp) }}
+              </span>
+
+              <span
+                *ngIf="n.status"
+                class="meta-badge"
+                [class.is-pending]="n.status === 'pending'"
+                [class.is-accepted]="n.status === 'accepted'"
+                [class.is-declined]="n.status === 'declined'"
+                [class.is-read]="n.status === 'read'"
+              >
+                {{ n.status }}
+              </span>
             </div>
           </div>
 
-          <!-- Review notification -->
-          <div *ngIf="notification.type === NotificationType.REVIEW" class="notification-message">
-            <p>{{ notification.userName }} te dejó una reseña</p>
+          <!-- Acciones SOLO para solicitudes pendientes -->
+          <div
+            class="notification-actions"
+            *ngIf="n.type === NotificationType.REQUEST && n.status === 'pending'"
+          >
+            <button
+              type="button"
+              class="btn-outline"
+              (click)="onRejectRequest(n.id)"
+            >
+              Rechazar
+            </button>
+            <button
+              type="button"
+              class="btn-primary"
+              (click)="onAcceptRequest(n.id)"
+            >
+              Aceptar
+            </button>
           </div>
-
-          <!-- Class notification -->
-          <div *ngIf="notification.type === NotificationType.CLASS" class="notification-message">
-            <p>Tienes una clase próxima</p>
-            <div class="class-details">
-              <span class="class-date">📅 {{ notification.classDate }}</span>
-              <span class="class-time">🕐 {{ notification.classTime }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
   </div>
 </div>

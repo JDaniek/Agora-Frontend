@@ -13,6 +13,16 @@ export interface ProfileResponse {
   specialties: { id: number; name: string }[];
 }
 
+// Lo que envías en el PUT (Coincide con UpdateProfileRequest de Kotlin)
+export interface UpdateProfileRequest {
+  description?: string;
+  photoUrl?: string;
+  city?: string;
+  stateCode: string;       // Obligatorio en tu backend
+  level: string;           // Obligatorio en tu backend
+  specialtyIds: number[];  // Obligatorio, lista de IDs
+}
+
 @Injectable({
   providedIn: 'root'
 })

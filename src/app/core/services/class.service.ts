@@ -1,37 +1,28 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {environment} from '@env/environment';
 import {Observable} from 'rxjs';
+import {environment} from '@env/environment';
 
-/**
- * DTO basado en lo que razonablemente debería devolver toStudentResponse().
- */
 export interface StudentClassResponse {
-  id: number;              // id de la clase
-  title: string;           // título de la clase
-  description?: string | null;
-  classDate: string;       // "YYYY-MM-DD" (viene de LocalDate)
-  tutorName: string;       // o "teacherName" / "adviserName" / como esté en tu mapper
-  specialtyName?: string | null; // opcional: nombre de la materia/área
-  modality?: string | null;      // si más adelante agregan modalidad
+  classId: number;
+  title: string;
+  description: string | null;
+  classDate: string;   // "YYYY-MM-DD"
+  status: string;      // lo que devuelva el backend (ej. "active", "enrolled", etc.)
+  tutorId: number;
+  specialtyId: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClassService {
-
-  private readonly baseUrl = environment.apiUrl;
+  private readonly baseUrl = `${environment.apiUrl}${environment.endpoints.classes.enrolledMine}`;
 
   constructor(private http: HttpClient) {
   }
 
-  /**
-   * Clases en las que el usuario autenticado es ALUMNO.
-   * GET /api/v1/classes/enrolled/mine
-   */
   getMyEnrolledClasses(): Observable<StudentClassResponse[]> {
-    const url = `${this.baseUrl}${environment.endpoints.classes.enrolledMine}`;
-    return this.http.get<StudentClassResponse[]>(url);
+    return this.http.get<StudentClassResponse[]>(this.baseUrl);
   }
 }

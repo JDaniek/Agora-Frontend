@@ -11,7 +11,6 @@ export class LandingPage {
 
   year = new Date().getFullYear();
 
-
   // Tus imágenes
   carouselImages = [
     '/Card1.png',

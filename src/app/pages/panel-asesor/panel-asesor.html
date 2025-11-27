@@ -1,0 +1,175 @@
+<!-- panel-asesor.component.html -->
+<section class="advisor-panel">
+  <header class="panel-header">
+    <div class="panel-header-title">
+      <h1>Panel del asesor</h1>
+      <p>Resumen de solicitudes, sesiones próximas y configuración básica de perfil.</p>
+    </div>
+  </header>
+
+  <div class="panel-grid">
+    <!-- Bloque 1: Solicitudes recibidas -->
+    <section class="block block-requests">
+      <div class="block-header">
+        <h2>Solicitudes recibidas</h2>
+        <p class="block-subtitle">
+          Gestiona las solicitudes que los estudiantes han enviado.
+        </p>
+      </div>
+
+      <div *ngIf="receivedRequests.length === 0" class="empty-state">
+        No hay solicitudes recibidas por el momento.
+      </div>
+
+      <div *ngIf="receivedRequests.length > 0" class="table-wrapper">
+        <table class="requests-table">
+          <thead>
+            <tr>
+              <th>Estudiante</th>
+              <th>Materia</th>
+              <th>Fecha</th>
+              <th>Mensaje</th>
+              <th>Estado</th>
+              <th class="col-actions">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let req of receivedRequests">
+              <td>{{ req.studentName }}</td>
+              <td>{{ req.subject }}</td>
+              <td>{{ req.requestDate }}</td>
+              <td class="cell-message">
+                {{ req.message }}
+              </td>
+              <td>
+                <span class="status-badge"
+                      [ngClass]="{
+                        'status-pending': req.status === 'PENDIENTE',
+                        'status-accepted': req.status === 'ACEPTADA',
+                        'status-rejected': req.status === 'RECHAZADA'
+                      }">
+                  {{ getStatusLabel(req.status) }}
+                </span>
+              </td>
+              <td class="col-actions">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  (click)="acceptRequest(req)"
+                  [disabled]="req.status === 'ACEPTADA'">
+                  Aceptar
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  (click)="rejectRequest(req)"
+                  [disabled]="req.status === 'RECHAZADA'">
+                  Rechazar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Bloque 2: Próximas sesiones -->
+    <section class="block block-sessions">
+      <div class="block-header">
+        <h2>Próximas sesiones</h2>
+        <p class="block-subtitle">
+          Consulta las sesiones programadas con tus estudiantes.
+        </p>
+      </div>
+
+      <div *ngIf="upcomingSessions.length === 0" class="empty-state">
+        No hay sesiones agendadas.
+      </div>
+
+      <div *ngIf="upcomingSessions.length > 0" class="table-wrapper">
+        <table class="sessions-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Materia</th>
+              <th>Estudiante</th>
+              <th>Modalidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of upcomingSessions">
+              <td>{{ s.date }}</td>
+              <td>{{ s.time }}</td>
+              <td>{{ s.subject }}</td>
+              <td>{{ s.studentName }}</td>
+              <td>{{ s.modality }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Bloque 3: Perfil del asesor -->
+    <section class="block block-profile">
+      <div class="block-header">
+        <h2>Perfil del asesor</h2>
+        <p class="block-subtitle">
+          Actualiza tu información básica para que los estudiantes te conozcan mejor.
+        </p>
+      </div>
+
+      <form class="profile-form" (ngSubmit)="saveProfile()" #profileForm="ngForm">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="name">Nombre</label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              [(ngModel)]="advisorProfile.name"
+              required
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="subjects">Materias que impartes</label>
+            <input
+              id="subjects"
+              type="text"
+              name="subjects"
+              [(ngModel)]="subjectsInput"
+              placeholder="Ejemplo: Cálculo, Álgebra, Programación"
+            />
+            <small class="field-hint">
+              Puedes separar varias materias con comas.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="availability">Disponibilidad</label>
+            <textarea
+              id="availability"
+              name="availability"
+              rows="3"
+              [(ngModel)]="advisorProfile.availability"
+              placeholder="Ejemplo: Lunes a jueves de 16:00 a 20:00"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid">
+            Guardar
+          </button>
+
+          <span *ngIf="profileSaved" class="save-message">
+            Cambios guardados localmente.
+          </span>
+        </div>
+      </form>
+    </section>
+  </div>
+</section>

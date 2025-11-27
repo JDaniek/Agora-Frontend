@@ -1,110 +1,194 @@
-/* Importar Lexend desde Google Fonts */
+/* Fuente base */
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&display=swap');
 
 :host {
-  position: fixed;
-  font-family: 'Lexend', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-  z-index: 9999;
+  display: block;
+  font-family: 'Lexend', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+/* Fondo general de la vista */
 .background {
   background-color: #224e91;
   background-image: url('/assets/crayons.png'), url('/assets/ruler.png');
   background-position: top left, bottom right;
   background-repeat: no-repeat;
   background-size: 180px, 150px;
-  min-height: 100vh;
+
+  min-height: 100vh;          /* Permite crecer y hacer scroll */
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 32px 16px;         /* margen interno para que respire */
+  box-sizing: border-box;
+  position: relative;
 }
 
+/* Botón de regreso (mejor que la flecha suelta) */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+  background: rgba(0, 0, 0, 0.18);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.back-btn__icon {
+  width: 8px;
+  height: 8px;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  transform: rotate(45deg); /* chevron hacia la izquierda */
+}
+
+.back-btn__label {
+  white-space: nowrap;
+}
+
+.back-btn:hover {
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Tarjeta del formulario */
 .container {
-  background-color: white;
-  padding: 2% 3%;
+  background-color: #ffffff;
+  padding: 32px 40px;
   border-radius: 12px;
   text-align: center;
-  width: 30%;
-  max-width: 600px;
-  height: 90%;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.16);
 }
 
 .container h1 {
   color: #1e3a8a;
-  font-size: 32px;
-  margin-bottom: 18px;
+  font-size: 28px;
+  margin-bottom: 8px;
 }
 
 .container p {
   color: #3c3c3c;
-  font-size: 18px;
-  margin-bottom: 25px;
+  font-size: 16px;
+  margin-bottom: 24px;
 }
 
 .input-group {
-  margin-bottom: 2vh;
+  margin-bottom: 16px;
+  text-align: left;
 }
 
 .input-group label {
-  text-align: start;
   display: block;
-  color: #000000;
-  margin-bottom: 8px;
+  color: #111827;
+  margin-bottom: 6px;
   font-size: 14px;
   font-weight: 600;
 }
 
 .input-group input {
   width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: 2px solid #f3ac12; 
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 2px solid #f3ac12;
   border-radius: 8px;
-  margin-top: 8px;
   box-sizing: border-box;
 }
 
 .input-group input:focus {
-  border: 2px solid #f3ac12; /* Contorno amarillo cuando el input está enfocado */
-  outline: none; /* Elimina el contorno por defecto */
+  border-color: #eab308;
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.25);
 }
 
-button {
-  color: white;
-  border: none;
-  padding: 14px 20px;
-  font-size: 16px;
-  font-family: 'Lexend', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  border-radius: 8px;
-  cursor: pointer;
+/* Botones genéricos */
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
   width: 100%;
-  margin-top: 15px;
+  padding: 12px 20px;
+  margin-top: 12px;
+
+  border-radius: 8px;
+  border: none;
+
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.12s ease,
+    box-shadow 0.12s ease;
 }
 
-
+/* Botón principal */
 .btn-login {
   background-color: #3c7fe3;
+  color: #ffffff;
 }
 
-.btn-login:hover {
-  background-color: #EAB308;
+.btn-login:hover:not(:disabled) {
+  background-color: #245fbc;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
 }
 
+.btn-login:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 
+/* Botón secundario (enlace a registro) */
 .btn-register {
+  background-color: #ffffff;
   color: #3c7fe3;
-  background-color: #ffffff; 
+  border: 1px solid #d1d5db;
 }
 
 .btn-register:hover {
-  background-color: #EAB308; 
-  color: #ffffff;
+  background-color: #f9fafb;
+  color: #245fbc;
 }
+
+/* ------------ Responsive ------------ */
+@media (max-width: 768px) {
+  .background {
+    align-items: flex-start;
+    padding-top: 72px;
+  }
+
+  .container {
+    padding: 24px 18px;
+  }
+
+  .back-btn {
+    top: 16px;
+    left: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container h1 {
+    font-size: 24px;
+  }
+  .container p {
+    font-size: 14px;
+  }
+}
+

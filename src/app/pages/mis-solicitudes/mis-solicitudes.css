@@ -1,0 +1,358 @@
+/* mis-solicitudes.component.scss */
+
+/* Paleta base inspirada en Agora */
+:root {
+  --agora-blue: #1e3a8a;
+  --agora-blue-soft: #e0ebff;
+  --bg-main: #f3f4f6;
+  --bg-panel: #ffffff;
+  --border-soft: #e5e7eb;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+  --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+/* Layout general */
+.requests-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--bg-main);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  box-sizing: border-box;
+}
+
+/* Encabezado */
+.requests-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.requests-title {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.requests-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* Cuerpo: listado + detalle */
+.requests-body {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
+  gap: 16px;
+}
+
+/* Panel listado */
+.requests-list {
+  background: var(--bg-panel);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+  padding: 16px 18px 18px;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Filtros por estado */
+.status-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.status-filter {
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-soft);
+  background: #f9fafb;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.status-filter.is-active {
+  border-color: var(--agora-blue);
+  background: var(--agora-blue-soft);
+  color: var(--agora-blue);
+}
+
+/* Tabla */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.requests-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.requests-table thead {
+  background: #f9fafb;
+}
+
+.requests-table th,
+.requests-table td {
+  padding: 10px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.requests-table th {
+  font-weight: 500;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.requests-table td {
+  color: var(--text-main);
+}
+
+.requests-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.requests-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.requests-table tbody tr.is-selected {
+  background: var(--agora-blue-soft);
+}
+
+.cell-main {
+  font-weight: 500;
+}
+
+.col-action {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Botón "Ver detalles" */
+.details-button {
+  border-radius: var(--radius-pill);
+  border: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  background: var(--agora-blue);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.details-button:hover {
+  background: #15316a;
+}
+
+/* Badges de estado */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Colores de estado */
+.status-pendiente {
+  background: #fef9c3;
+  color: #854d0e;
+  border: 1px solid #facc15;
+}
+
+.status-aceptada {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #22c55e;
+}
+
+.status-rechazada {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #f87171;
+}
+
+.status-finalizada {
+  background: #e5e7eb;
+  color: #374151;
+  border: 1px solid #9ca3af;
+}
+
+/* Estado vacío */
+.empty-state {
+  padding: 24px 8px;
+  text-align: center;
+}
+
+.empty-state h2 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  color: var(--text-main);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Panel de detalle */
+.request-detail {
+  background: var(--bg-panel);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+  padding: 16px 18px 18px;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detail-header h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  color: var(--text-main);
+}
+
+.detail-header p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.detail-section {
+  margin-top: 8px;
+}
+
+.detail-section h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 16px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.detail-value {
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.detail-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-main);
+  line-height: 1.45;
+}
+
+.detail-text-muted {
+  color: var(--text-muted);
+}
+
+/* Placeholder de detalle cuando no hay selección */
+.placeholder-detail {
+  margin-top: 16px;
+}
+
+.placeholder-detail h2 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  color: var(--text-main);
+}
+
+.placeholder-detail p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Responsivo */
+@media (max-width: 960px) {
+  .requests-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .request-detail {
+    order: -1;
+  }
+
+  .detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Tabla responsiva tipo "cards" en móviles pequeños */
+@media (max-width: 640px) {
+  .requests-layout {
+    padding: 16px;
+  }
+
+  .requests-table thead {
+    display: none;
+  }
+
+  .requests-table tbody,
+  .requests-table tr,
+  .requests-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .requests-table tr {
+    margin-bottom: 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-soft);
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .requests-table td {
+    border-bottom: none;
+    padding: 8px 12px;
+  }
+
+  .requests-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+
+  .col-action {
+    text-align: left;
+  }
+}

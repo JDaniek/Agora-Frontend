@@ -1,57 +1,106 @@
 import { Routes } from '@angular/router';
+import { LandingPage } from './pages/landing-page/landing.page';
+import { Signup } from './pages/signup/signup';
 
 export const routes: Routes = [
-  {
-    path: '',
-    loadComponent: () => import('./pages/landing-page/landing.page').then((m) => m.LandingPage),
-  },
-  { path: 'signup', loadComponent: () => import('./pages/signup/signup').then((m) => m.Signup) },
-  { path: 'login', loadComponent: () => import('./pages/login/login').then((m) => m.Login) },
-  {
-    path: 'register',
-    loadComponent: () => import('./pages/register/register').then((m) => m.Register),
-  },
-
-  // --- TUS RUTAS DE HOME (SE QUEDAN INTACTAS) ---
-  {
-    path: 'dashboard-asesor',
-    loadComponent: () =>
-      import('./pages/dashboard-asesor/dashboard-asesor').then((m) => m.DashboardAsesor),
-  },
-  {
-    path: 'student-home',
-    loadComponent: () => import('./pages/student-home/student-home').then((m) => m.StudentHome),
-  },
-  {
-    path: 'complete-profile',
-    loadComponent: () => import('./pages/complete-profile/complete-profile').then((m) => m. CompleteProfile),
-  },
-
-  // --- NUEVAS RUTAS DE CHAT (AÑADIDAS) ---
   {
-    path: 'chat-tutor', // Esta es la nueva URL
-    loadComponent: () => import('./pages/dashboard-asesor/dashboard-asesor').then(m => m.DashboardAsesor), // REUTILIZA el layout
-    children: [
-      {
-        path: '', // Carga el chat DENTRO del layout
-        loadComponent: () => import('./pages/chat/chat').then(m => m.ChatComponent)
-      }
-    ]
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () =>
+      import('./pages/landing-page/landing.page').then(m => m.LandingPage),
   },
   {
-    path: 'chat-alumno', // Esta es la nueva URL
-    loadComponent: () => import('./pages/student-home/student-home').then(m => m.StudentHome), // REUTILIZA el layout
-    children: [
-      {
-        path: '', // Carga el chat DENTRO del layout
-        loadComponent: () => import('./pages/chat/chat').then(m => m.ChatComponent)
-      }
-    ]
-  }
+    path: 'signup',
+    loadComponent: () =>
+      import('./pages/signup/signup').then(m => m.Signup),
+  },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./pages/login/login').then(m => m.Login),
+  },
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('./pages/register/register').then(m => m.Register),
+  },
+  {
+    path: 'dashboard-asesor',
+    loadComponent: () =>
+      import('./pages/dashboard-asesor/dashboard-asesor').then(
+        m => m.DashboardAsesor
+      ),
+  },
+  {
+    path: 'student-home',
+    loadComponent: () =>
+      import('./pages/student-home/student-home').then(
+        m => m.StudentHome
+      ),
+  },
+  {
+    path: 'complete-profile',
+    loadComponent: () =>
+      import('./pages/complete-profile/complete-profile').then(
+        m => m.CompleteProfile
+      ),
+  },
 
-  // --- (La ruta 'chat' individual se elimina si ya no la necesitas) ---
-  // {
-  //   path: 'chat',
-  //   loadComponent: () => import('./pages/chat/chat').then((m) => m.ChatComponent)
-  // }
+  /* NUEVA RUTA: Panel del Asesor */
+  {
+    path: 'panel-asesor',
+    loadComponent: () =>
+      import('./pages/panel-asesor/panel-asesor').then(
+        m => m.PanelAsesorComponent
+      ),
+  },
+
+  /* NUEVA RUTA: Mis solicitudes */
+  {
+    path: 'mis-solicitudes',
+    loadComponent: () =>
+      import('./pages/mis-solicitudes/mis-solicitudes').then(
+        m => m.MisSolicitudesComponent
+      ),
+  },
+
+  /* NUEVA RUTA: Sesiones agendadas */
+  {
+    path: 'sesiones-agendadas',
+    loadComponent: () =>
+      import('./pages/sesiones-agendadas/sesiones-agendadas').then(
+        m => m.SesionesAgendadasComponent
+      ),
+  },
+
+  /* NUEVA RUTA: Perfil del alumno */
+  {
+    path: 'perfil-alumno',
+    loadComponent: () =>
+      import('./pages/perfil-alumno/perfil-alumno').then(
+        m => m.PerfilAlumnoComponent
+      ),
+  },
+
+  /* NUEVA RUTA: Notificaciones */
+  {
+    path: 'notificaciones',
+    loadComponent: () =>
+      import('./pages/notificaciones/notificaciones').then(
+        m => m.NotificacionesComponent
+      ),
+  },
+
+  /* NUEVA RUTA: Detalle de asesor */
+  {
+    path: 'detail-asesor/:id',
+    loadComponent: () =>
+      import('./pages/detail-asesor/detail-asesor').then(
+        m => m.AsesorDetalleComponent
+      ),
+  },
+
+  // fallback
+  { path: '**', component:Signup },
 ];
+

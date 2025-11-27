@@ -95,36 +95,25 @@ export class PanelAsesorComponent implements OnInit {
 
   // 3. Guardar Perfil (PUT /profile)
   saveProfile(): void {
-    /* NOTA IMPORTANTE: 
-       El backend espera IDs de especialidades. 
-       Como el input es de texto libre, aquí hay un reto:
-       No podemos "inventar" IDs para texto nuevo sin un endpoint de 'crear especialidad'.
-       
-       Para que funcione AHORA sin romper nada: 
-       Enviaremos los mismos IDs que ya teníamos descargados.
-       (La edición real de especialidades requeriría un selector/dropdown de IDs).
-    */
-    
+    // Preparar el objeto EXACTO que pide el backend (UpdateProfileRequest)
     const payload: UpdateProfileRequest = {
-      description: this.advisorProfile.description,
-      level: this.advisorProfile.level,
-      stateCode: this.advisorProfile.stateCode,
-      // Mapeamos los objetos actuales a solo sus IDs
-      specialtyIds: this.advisorProfile.specialties.map(s => s.id) 
+      description: this.advisorProfile.description, // Ahora usamos description
+      level: this.advisorProfile.level || 'Universidad',
+      stateCode: this.advisorProfile.stateCode || 'MX',
+      // Convertimos los objetos de especialidades a solo sus IDs
+      specialtyIds: this.advisorProfile.specialties.map(s => s.id)
     };
 
     this.profileService.updateMyProfile(payload).subscribe({
       next: (updatedProfile) => {
         this.profileSaved = true;
-        // Actualizamos la vista con lo que confirmó el servidor
+        // Actualizamos la vista con la respuesta
         this.advisorProfile.description = updatedProfile.description || '';
-        
-        // Ocultar mensaje de "Guardado" después de 3 segundos
         setTimeout(() => this.profileSaved = false, 3000);
       },
       error: (err) => {
         console.error('Error guardando perfil', err);
-        alert('Error al guardar cambios');
+        alert('Error al guardar cambios. Revisa la consola.');
       }
     });
   }

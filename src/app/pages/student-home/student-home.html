@@ -450,7 +450,8 @@
     [notifications]="notifications"
     [isOpen]="isNotificationsModalOpen"
     [currentFilter]="currentNotificationFilter"
-    (close)="closeNotifications()"
+
+    [isLoading]="isLoadingNotifications" (close)="closeNotifications()"
     (acceptRequest)="onAcceptRequest($event)"
     (rejectRequest)="onRejectRequest($event)"
     (filterChange)="onNotificationFilterChange($event)"

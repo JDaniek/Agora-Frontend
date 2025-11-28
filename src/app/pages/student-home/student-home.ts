@@ -1,6 +1,7 @@
 import {
   Component,
   OnInit,
+  OnDestroy,
   ChangeDetectorRef
 } from '@angular/core';
 import {Router, RouterLink} from '@angular/router';
@@ -16,9 +17,11 @@ import {
   map,
   startWith,
   tap,
-  catchError
+  catchError,
+  switchMap,
+  takeUntil
 } from 'rxjs/operators';
-import {Observable, of} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 
 import {
   AdviserDetailModal,
@@ -87,7 +90,7 @@ interface Notice {
   templateUrl: './student-home.html',
   styleUrls: ['./student-home.css']
 })
-export class StudentHome implements OnInit {
+export class StudentHome implements OnInit, OnDestroy {
 
   /* Estado general de UI */
   topAvatarUrl: string | null = null;
@@ -122,7 +125,8 @@ export class StudentHome implements OnInit {
   isNotificationsModalOpen = false;
   notifications: Notification[] = [];
   unreadCount = 0;
-  currentNotificationFilter: NotificationStatusFilter = 'pending';
+  currentNotificationFilter: NotificationStatusFilter = 'all';
+  isLoadingNotifications = false;
 
   /* Agenda y calendario (basados en clases reales del backend) */
   weekDays: string[] = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
@@ -154,6 +158,10 @@ export class StudentHome implements OnInit {
     }
   ];
 
+  /* --- Flujo reactivo para notificaciones --- */
+  private notificationFilter$ = new Subject<NotificationStatusFilter>();
+  private destroy$ = new Subject<void>();
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -177,9 +185,6 @@ export class StudentHome implements OnInit {
     // Perfil
     this.loadMyProfile().subscribe();
 
-    // Notificaciones (iniciamos en 'pending')
-    this.loadNotificationsFromBackend('pending');
-
     // Asesores
     this.loadInitialAdvisers();
 
@@ -200,6 +205,17 @@ export class StudentHome implements OnInit {
     // Calendario base (aunque luego se recalcula con sesiones)
     this.buildCalendar();
     this.updateSelectedDaySessions();
+
+    // Configurar flujo reactivo de notificaciones
+    this.setupNotificationsStream();
+
+    // Disparar la carga inicial de notificaciones con el filtro por defecto
+    this.onNotificationFilterChange(this.currentNotificationFilter);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /* Perfil */
@@ -625,28 +641,38 @@ export class StudentHome implements OnInit {
     } as Notification;
   }
 
-  private loadNotificationsFromBackend(
-    status: NotificationStatusFilter = 'pending'
-  ): void {
-    const statusParam = status === 'all' ? undefined : status;
+  /* Flujo reactivo de notificaciones con switchMap */
 
-    this.notificationService.getMyNotifications(statusParam).subscribe({
-      next: (dtos: NotificationDto[]) => {
-        console.log('Notificaciones desde backend:', dtos);
+  private setupNotificationsStream(): void {
+    this.notificationFilter$
+      .pipe(
+        tap(() => {
+          this.isLoadingNotifications = true;
+          this.notifications = [];
+          this.unreadCount = 0;
+        }),
+        switchMap((filter) => {
+          const statusParam = filter === 'all' ? undefined : filter;
+          return this.notificationService.getMyNotifications(statusParam).pipe(
+            catchError(err => {
+              console.error('Error cargando notificaciones', err);
+              return of<NotificationDto[]>([]);
+            })
+          );
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((dtos: NotificationDto[]) => {
         this.notifications = dtos.map(dto => this.mapDtoToNotification(dto));
         this.unreadCount = this.notifications.length;
-      },
-      error: (err) => {
-        console.error('Error al cargar notificaciones', err);
-        this.notifications = [];
-        this.unreadCount = 0;
-      }
-    });
+        this.isLoadingNotifications = false;
+        console.log('Notificaciones cargadas:', this.notifications);
+      });
   }
 
   onNotificationFilterChange(filter: NotificationStatusFilter): void {
     this.currentNotificationFilter = filter;
-    this.loadNotificationsFromBackend(filter);
+    this.notificationFilter$.next(filter);
   }
 
   /* Avisos (handlers simples para no romper el HTML) */

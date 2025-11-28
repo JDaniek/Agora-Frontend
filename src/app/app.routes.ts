@@ -1,6 +1,6 @@
-import { Routes } from '@angular/router';
-import { LandingPage } from './pages/landing-page/landing.page';
-import { Signup } from './pages/signup/signup';
+import {Routes} from '@angular/router';
+import {LandingPage} from './pages/landing-page/landing.page';
+import {Signup} from './pages/signup/signup';
 
 export const routes: Routes = [
   {
@@ -51,7 +51,8 @@ export const routes: Routes = [
     path: 'panel-asesor',
     loadComponent: () =>
       import('./pages/panel-asesor/panel-asesor').then(
-        m => m.PanelAsesorComponent
+        // El nombre debe coincidir con: export class PanelAsesor
+        m => m.PanelAsesor
       ),
   },
 
@@ -101,6 +102,6 @@ export const routes: Routes = [
   },
 
   // fallback
-  { path: '**', component:Signup },
+  {path: '**', component: Signup},
 ];
 

@@ -50,7 +50,7 @@ export class Login {
         if (response.roleId === 1) {
           this.router.navigate(['/student-home']);
         } else if (response.roleId === 2) {
-          this.router.navigate(['/dashboard-asesor']);
+          this.router.navigate(['/panel-asesor']);
         } else {
           this.router.navigate(['/']);
         }

@@ -1,10 +1,5 @@
-<!-- notifications-modal.html -->
-<div
-  class="notifications-backdrop"
-  *ngIf="isOpen"
->
+<div class="notifications-backdrop" *ngIf="isOpen">
   <div class="notifications-modal">
-    <!-- HEADER -->
     <div class="notifications-header">
       <h2 class="modal-title">Notificaciones</h2>
 
@@ -18,7 +13,6 @@
       </button>
     </div>
 
-    <!-- TABS DE FILTRO -->
     <div class="notifications-tabs">
       <button
         type="button"
@@ -41,118 +35,132 @@
       <button
         type="button"
         class="tab-button"
-        [class.is-active]="currentFilter === 'read'"
-        (click)="onChangeFilter('read')"
+        [class.is-active]="currentFilter === 'accepted'"
+        (click)="onChangeFilter('accepted')"
       >
-        Leídas
+        Aceptadas
+      </button>
+
+      <button
+        type="button"
+        class="tab-button"
+        [class.is-active]="currentFilter === 'declined'"
+        (click)="onChangeFilter('declined')"
+      >
+        Declinadas
       </button>
     </div>
 
-    <!-- LISTA DE NOTIFICACIONES -->
     <div class="notifications-body">
-      <p
-        class="empty-state"
-        *ngIf="!notifications || notifications.length === 0"
-      >
-        No tienes notificaciones para este filtro.
-      </p>
 
-      <ul
-        class="notifications-list"
-        *ngIf="notifications && notifications.length > 0"
-      >
-        <li
-          class="notification-item"
-          *ngFor="let n of notifications; trackBy: trackById"
+      <div class="loading-state" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Cargando...</p>
+      </div>
+
+      <ng-container *ngIf="!isLoading">
+
+        <p
+          class="empty-state"
+          *ngIf="!notifications || notifications.length === 0"
         >
-          <div class="notification-avatar" [class.has-image]="n.userPhoto">
-            <img
-              *ngIf="n.userPhoto"
-              [src]="n.userPhoto"
-              [alt]="n.userName"
-            />
-            <span *ngIf="!n.userPhoto">
-              {{ n.userName ? n.userName[0] : '?' }}
-            </span>
-          </div>
+          No tienes notificaciones para este filtro.
+        </p>
 
-          <div class="notification-main">
-            <!-- Título según tipo -->
-            <div class="notification-title">
-              <ng-container [ngSwitch]="n.type">
-                <span *ngSwitchCase="NotificationType.REQUEST">
-                  Solicitud de contacto
-                </span>
-                <span *ngSwitchCase="NotificationType.CLASS">
-                  Notificación de clase
-                </span>
-                <span *ngSwitchDefault>
-                  Notificación
-                </span>
-              </ng-container>
-            </div>
-
-            <!-- Descripción -->
-            <div class="notification-text">
-              <ng-container [ngSwitch]="n.type">
-                <span *ngSwitchCase="NotificationType.REQUEST">
-                  {{ n.userName }} quiere ponerse en contacto contigo.
-                </span>
-
-                <span *ngSwitchCase="NotificationType.CLASS">
-                  Te han inscrito o actualizado en una clase.
-                  <ng-container *ngIf="n.classDate">
-                    Fecha: {{ n.classDate }}
-                  </ng-container>
-                </span>
-
-                <span *ngSwitchDefault>
-                  Nueva notificación de {{ n.userName }}.
-                </span>
-              </ng-container>
-            </div>
-
-            <!-- Meta: tiempo relativo y estado -->
-            <div class="notification-meta">
-              <span class="meta-time">
-                {{ getRelativeTime(n.timestamp) }}
-              </span>
-
-              <span
-                *ngIf="n.status"
-                class="meta-badge"
-                [class.is-pending]="n.status === 'pending'"
-                [class.is-accepted]="n.status === 'accepted'"
-                [class.is-declined]="n.status === 'declined'"
-                [class.is-read]="n.status === 'read'"
-              >
-                {{ n.status }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Acciones SOLO para solicitudes pendientes -->
-          <div
-            class="notification-actions"
-            *ngIf="n.type === NotificationType.REQUEST && n.status === 'pending'"
+        <ul
+          class="notifications-list"
+          *ngIf="notifications && notifications.length > 0"
+        >
+          <li
+            class="notification-item"
+            *ngFor="let n of notifications; trackBy: trackById"
           >
-            <button
-              type="button"
-              class="btn-outline"
-              (click)="onRejectRequest(n.id)"
+            <div class="notification-avatar" [class.has-image]="n.userPhoto">
+              <img
+                *ngIf="n.userPhoto"
+                [src]="n.userPhoto"
+                [alt]="n.userName"
+              />
+              <span *ngIf="!n.userPhoto">
+                {{ n.userName ? n.userName[0] : '?' }}
+              </span>
+            </div>
+
+            <div class="notification-main">
+              <div class="notification-title">
+                <ng-container [ngSwitch]="n.type">
+                  <span *ngSwitchCase="NotificationType.REQUEST">
+                    Solicitud de contacto
+                  </span>
+                  <span *ngSwitchCase="NotificationType.CLASS">
+                    Notificación de clase
+                  </span>
+                  <span *ngSwitchDefault>
+                    Notificación
+                  </span>
+                </ng-container>
+              </div>
+
+              <div class="notification-text">
+                <ng-container [ngSwitch]="n.type">
+                  <span *ngSwitchCase="NotificationType.REQUEST">
+                    {{ n.userName }} quiere ponerse en contacto contigo.
+                  </span>
+
+                  <span *ngSwitchCase="NotificationType.CLASS">
+                    Te han inscrito o actualizado en una clase.
+                    <ng-container *ngIf="n.classDate">
+                      Fecha: {{ n.classDate }}
+                    </ng-container>
+                  </span>
+
+                  <span *ngSwitchDefault>
+                    Nueva notificación de {{ n.userName }}.
+                  </span>
+                </ng-container>
+              </div>
+
+              <div class="notification-meta">
+                <span class="meta-time">
+                  {{ getRelativeTime(n.timestamp) }}
+                </span>
+
+                <span
+                  *ngIf="n.status"
+                  class="meta-badge"
+                  [class.is-pending]="n.status === 'pending'"
+                  [class.is-accepted]="n.status === 'accepted'"
+                  [class.is-declined]="n.status === 'declined'"
+                  [class.is-read]="n.status === 'read'"
+                >
+                  {{ n.status }}
+                </span>
+              </div>
+            </div>
+
+            <div
+              class="notification-actions"
+              *ngIf="n.type === NotificationType.REQUEST && n.status === 'pending'"
             >
-              Rechazar
-            </button>
-            <button
-              type="button"
-              class="btn-primary"
-              (click)="onAcceptRequest(n.id)"
-            >
-              Aceptar
-            </button>
-          </div>
-        </li>
-      </ul>
+              <button
+                type="button"
+                class="btn-outline"
+                (click)="onRejectRequest(n.id)"
+              >
+                Rechazar
+              </button>
+              <button
+                type="button"
+                class="btn-primary"
+                (click)="onAcceptRequest(n.id)"
+              >
+                Aceptar
+              </button>
+            </div>
+          </li>
+        </ul>
+      </ng-container>
+
     </div>
   </div>
 </div>

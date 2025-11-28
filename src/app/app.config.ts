@@ -1,9 +1,10 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import {provideHttpClient, HttpClientModule, withInterceptors} from '@angular/common/http';
-import { routes } from './app.routes';
-import {AuthInterceptor} from './auth.interceptor';
+import {ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection} from '@angular/core';
+import {provideRouter} from '@angular/router';
+// Nota: Quitamos HttpClientModule de aquí, no se necesita con provideHttpClient
+import {provideHttpClient, withInterceptors} from '@angular/common/http';
+import {routes} from './app.routes';
 
+import {authInterceptor} from './core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -11,7 +12,8 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideHttpClient(
-      withInterceptors([AuthInterceptor])
+      // CORRECCIÓN: Usar la variable con minúscula
+      withInterceptors([authInterceptor])
     )
   ]
 };

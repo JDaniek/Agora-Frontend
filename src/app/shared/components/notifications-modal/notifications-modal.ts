@@ -11,9 +11,6 @@ export type NotificationStatusFilter =
   | 'pending'
   | 'accepted'
   | 'declined'
-  | 'read'
-  | 'unread'
-  | 'archived'
   | 'all';
 
 export interface Notification {
@@ -38,14 +35,15 @@ export class NotificationsModal {
   @Input() notifications: Notification[] = [];
   @Input() isOpen = false;
 
-  // ⬇️ Filtro actual (para las pestañas)
+  // ⬇Filtro actual (para las pestañas)
   @Input() currentFilter: NotificationStatusFilter = 'pending';
-
+// Recibimos el estado de carga desde el padre
+  @Input() isLoading = false;
   @Output() close = new EventEmitter<void>();
   @Output() acceptRequest = new EventEmitter<number>();
   @Output() rejectRequest = new EventEmitter<number>();
 
-  // ⬇️ Emitimos cuando el usuario cambia de pestaña
+  //  Emitimos cuando el usuario cambia de pestaña
   @Output() filterChange = new EventEmitter<NotificationStatusFilter>();
 
   NotificationType = NotificationType;

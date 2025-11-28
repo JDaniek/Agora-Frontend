@@ -1,177 +1,205 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
-// Services
-import { ClassService, ClassResponse } from '../../core/services/class.service';
-import { NotificationService, NotificationDto } from '../../core/services/notification.service';
-import { ProfileService, ProfileResponse, UpdateProfileRequest } from '../../core/services/profile.service';
-
-// Interfaces Visuales
-interface ReceivedRequest {
-  id: number;
-  studentName: string;
-  subject: string;
-  requestDate: string;
-  message: string;
-  status: 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA';
-}
-
-interface AdvisorSession {
-  id: number;
-  studentName: string;
-  subject: string;
-  date: string;
-  time: string;
-  modality: string;
-}
-
+import {Component, OnInit, inject, ChangeDetectorRef} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Router} from '@angular/router';
+import {AdviserService} from '../../core/services/adviser.service';
+import {NotificationRequest} from '../../core/models/advisor.models';
+import {ClassResponse} from '../../core/services/adviser.service'; // Importar la nueva interfaz
+import {FormsModule} from '@angular/forms';
 @Component({
   selector: 'app-panel-asesor',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './panel-asesor.html',
-  styleUrls: ['./panel-asesor.css']
+  styleUrl: './panel-asesor.css'
 })
-export class PanelAsesorComponent implements OnInit {
+export class PanelAsesor implements OnInit {
+  private adviserService = inject(AdviserService);
+  private router = inject(Router);
+  private cd = inject(ChangeDetectorRef); // <--- INYECTARLO AQUÍ
+  // Control de vista
+  currentView: 'inicio' | 'clases' | 'chats' | 'resenas' = 'inicio';
+  isSidebarOpen = false;
+// --- VARIABLES PARA EDICIÓN ---
+  isEditModalOpen = false;
+  editingClass: Partial<ClassResponse> = {}; // Objeto temporal para el formulario
+  // Datos
+  solicitudes: NotificationRequest[] = [];
+  clases: ClassResponse[] = []; // <--- NUEVO ARRAY para clase
+  loading = false;
+  userName = 'Asesor';
 
-  // Datos del Panel
-  receivedRequests: ReceivedRequest[] = [];
-  upcomingSessions: AdvisorSession[] = [];
-
-  // Datos del Perfil (Conectados al Backend)
-  advisorProfile = {
-    name: '',       // Vendrá del LocalStorage
-    description: '', // Vendrá del backend (campo description)
-    level: '',      // Vendrá del backend
-    stateCode: '',  // Vendrá del backend
-    specialties: [] as { id: number, name: string }[] // Guardamos objetos completos
-  };
-
-  // Input para editar materias (separadas por comas)
-  subjectsInput: string = '';
-  
-  // Flag para feedback visual
-  profileSaved = false;
-
-  constructor(
-    private classService: ClassService,
-    private notificationService: NotificationService,
-    private profileService: ProfileService // Inyectamos el servicio
-  ) {}
-
-  ngOnInit(): void {
-    this.loadUserData();     // Cargar nombre
-    this.loadProfile();      // Cargar datos del perfil (API)
-    this.loadNotifications();
-    this.loadMyClasses();
-  }
-
-  // 1. Cargar nombre del usuario (LocalStorage)
-  loadUserData() {
-    const userJson = localStorage.getItem('user');
-    if (userJson) {
-      const user = JSON.parse(userJson);
-      // Asumimos que guardaste firstName/lastName al hacer login
-      this.advisorProfile.name = `${user.firstName} ${user.lastName || ''}`.trim();
+  ngOnInit() {
+    // Recuperar nombre del user para el saludo
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      this.userName = user.firstName || 'Asesor';
     }
+
+    this.setView('inicio');
   }
 
-  // 2. Cargar Perfil desde API (GET /profile)
-  loadProfile() {
-    this.profileService.getMyProfile().subscribe({
-      next: (profile: ProfileResponse) => {
-        this.advisorProfile.description = profile.description || '';
-        this.advisorProfile.level = profile.level || 'Universidad'; // Default si es null
-        this.advisorProfile.stateCode = profile.stateCode || 'MX';
-        this.advisorProfile.specialties = profile.specialties;
-
-        // Convertimos las especialidades a texto para el input visual
-        this.subjectsInput = profile.specialties.map(s => s.name).join(', ');
-      },
-      error: (err) => console.error('Error cargando perfil', err)
-    });
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
   }
 
-  // 3. Guardar Perfil (PUT /profile)
-  saveProfile(): void {
-    // Preparar el objeto EXACTO que pide el backend (UpdateProfileRequest)
-    const payload: UpdateProfileRequest = {
-      description: this.advisorProfile.description, // Ahora usamos description
-      level: this.advisorProfile.level || 'Universidad',
-      stateCode: this.advisorProfile.stateCode || 'MX',
-      // Convertimos los objetos de especialidades a solo sus IDs
-      specialtyIds: this.advisorProfile.specialties.map(s => s.id)
-    };
+  closeSidebar() {
+    this.isSidebarOpen = false;
+  }
 
-    this.profileService.updateMyProfile(payload).subscribe({
-      next: (updatedProfile) => {
-        this.profileSaved = true;
-        // Actualizamos la vista con la respuesta
-        this.advisorProfile.description = updatedProfile.description || '';
-        setTimeout(() => this.profileSaved = false, 3000);
+  setView(view: 'inicio' | 'clases' | 'chats' | 'resenas') {
+    this.currentView = view;
+
+    if (view === 'inicio') {
+      this.loadSolicitudes();
+    } else if (view === 'clases') {
+      this.loadClases(); //Cargamos las clases
+    }
+    // Aquí cargaríamos clases o chats cuando selecciones esas vistas
+  }
+
+//Funcion para cargar clases
+  loadClases() {
+    this.loading = true;
+    this.adviserService.getMyClasses().subscribe({
+      next: (data: any[]) => {
+        // Mapeo simple por si el backend devuelve nombres diferentes,
+        // o asignación directa si coinciden.
+        this.clases = data;
+        this.loading = false;
+        this.cd.detectChanges();
       },
       error: (err) => {
-        console.error('Error guardando perfil', err);
-        alert('Error al guardar cambios. Revisa la consola.');
+        console.error('Error cargando clases', err);
+        this.loading = false;
+        this.cd.detectChanges();
       }
     });
   }
 
-  // --- (El resto de tus métodos: loadNotifications, loadMyClasses, etc. siguen igual) ---
-  
-  loadNotifications() {
-    this.notificationService.getMyNotifications('pending').subscribe({
-      next: (dtos) => {
-        this.receivedRequests = dtos.map(dto => ({
-          id: dto.notificationId,
-          studentName: `${dto.senderFirstName || 'Usuario'} ${dto.senderLastName || ''}`.trim(),
-          subject: 'Solicitud de contacto',
-          requestDate: new Date(dto.createdAt).toLocaleDateString(),
-          message: 'Quiere contactar contigo',
-          status: 'PENDIENTE'
-        }));
-      },
-      error: (err) => console.error(err)
-    });
-  }
+//Funcion y logica para eliminar
+  // --- LÓGICA ELIMINAR ---
+  onDeleteClass(id: number) {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta clase? Esta acción no se puede deshacer.')) {
+      return;
+    }
 
-  loadMyClasses() {
-    this.classService.getMyClassesTutor().subscribe({
-      next: (classes) => {
-        this.upcomingSessions = classes.map(c => ({
-          id: c.id,
-          studentName: 'Ver inscritos',
-          subject: c.title,
-          date: c.classDate,
-          time: '10:00',
-          modality: 'En línea'
-        }));
-      },
-      error: (err) => console.error(err)
-    });
-  }
-
-  acceptRequest(request: ReceivedRequest): void {
-    if (request.status !== 'PENDIENTE') return;
-    this.notificationService.acceptRequest(request.id).subscribe({
+    this.loading = true;
+    this.adviserService.deleteClass(id).subscribe({
       next: () => {
-        request.status = 'ACEPTADA';
-        alert('Solicitud aceptada. Chat creado.');
+        alert('Clase eliminada correctamente');
+        this.loadClases(); // Recargar la lista
       },
-      error: () => alert('Error al aceptar')
+      error: (err) => {
+        console.error(err);
+        this.loading = false;
+        alert('Error al eliminar la clase');
+      }
     });
   }
 
-  rejectRequest(request: ReceivedRequest): void {
-    if (request.status !== 'PENDIENTE') return;
-    this.notificationService.declineRequest(request.id).subscribe({
-      next: () => request.status = 'RECHAZADA',
-      error: () => alert('Error al rechazar')
+//Funcion y logica para editar (Modal)
+  openEditModal(clase: ClassResponse) {
+    // Clonamos el objeto para no modificar la vista hasta guardar
+    // Y formateamos la fecha para que el input type="date" la lea (YYYY-MM-DD)
+    this.editingClass = {
+      ...clase,
+      classDate: clase.classDate ? clase.classDate.split('T')[0] : ''
+    };
+    this.isEditModalOpen = true;
+  }
+
+  closeEditModal() {
+    this.isEditModalOpen = false;
+    this.editingClass = {};
+  }
+
+  saveClassChanges() {
+    if (!this.editingClass.id) return;
+
+    this.loading = true;
+    // Llamamos al servicio
+    this.adviserService.updateClass(this.editingClass.id, this.editingClass).subscribe({
+      next: (updatedClass) => {
+        alert('Clase actualizada con éxito');
+        this.closeEditModal();
+        this.loadClases(); // Recargar lista
+      },
+      error: (err) => {
+        console.error('Error actualizando:', err);
+        this.loading = false;
+        alert('No se pudo actualizar la clase. Verifica los datos.');
+      }
     });
   }
 
-  getStatusLabel(status: string): string {
-    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+  //
+  loadSolicitudes() {
+    console.log('1. Iniciando carga de solicitudes...');
+    this.loading = true;
+
+    this.adviserService.getNotifications().subscribe({
+      next: (data) => {
+        console.log('2. Datos recibidos del servicio (ya mapeados):', data);
+
+        // Verificamos si data es null o undefined
+        if (!data) {
+          console.warn('Recibimos data vacía o nula');
+          this.solicitudes = [];
+        } else {
+          // Filtramos las pendientes
+          this.solicitudes = data.filter(n => {
+            // Ajusta esto si tu status es 'read' y quieres verlas
+            // Si el status es 'read', NO es 'declined' ni 'accepted', así que PASA el filtro.
+            return n.status !== 'declined' && n.status !== 'accepted';
+          });
+        }
+
+        console.log('3. Solicitudes filtradas para mostrar:', this.solicitudes);
+
+        this.loading = false;
+        this.cd.detectChanges(); // <--- FORZAMOS A ANGULAR A PINTAR (Si fuera race condition, esto lo arregla)
+      },
+      error: (err) => {
+        console.error('X. Error CRÍTICO en loadSolicitudes:', err);
+        this.loading = false; // Importante apagar el loading incluso si falla
+        this.cd.detectChanges(); // Forzar pintado del error o estado vacío
+      }
+    });
+  }
+
+  aceptarSolicitud(id: number) {
+    this.loading = true;
+    this.adviserService.respondToRequest(id, 'accepted').subscribe({
+      next: () => {
+        alert('¡Solicitud aceptada! Se ha creado un chat con el alumno.');
+        this.loadSolicitudes(); // Recargar la lista limpia
+      },
+      error: (err) => {
+        console.error(err);
+        this.loading = false;
+        alert('Error al aceptar la solicitud');
+      }
+    });
+  }
+
+  rechazarSolicitud(id: number) {
+    if (!confirm('¿Estás seguro de rechazar esta solicitud?')) return;
+
+    this.loading = true;
+    this.adviserService.respondToRequest(id, 'declined').subscribe({
+      next: () => {
+        this.loadSolicitudes();
+      },
+      error: (err) => {
+        console.error(err);
+        this.loading = false;
+      }
+    });
+  }
+
+  logout() {
+    this.adviserService.logout();
+    this.router.navigate(['/login']);
   }
 }

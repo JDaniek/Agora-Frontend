@@ -1,0 +1,64 @@
+<div class="chat-container">
+
+  <div class="chat-list-panel">
+    
+    <div class="chat-list-header">
+      <button class="menu-btn" (click)="toggleSidebar()">
+        <span class="material-icons">menu</span> 
+      </button>
+      <div class="search-bar">
+        <span class="material-icons">search</span>
+        <input type="text" placeholder="Buscar">
+      </div>
+    </div>
+
+    <div class="chat-list">
+      
+      <div 
+        *ngFor="let chat of chatList" 
+        class="chat-list-item" 
+        [class.active]="chat.active"
+        (click)="selectChat(chat.id)">
+
+        <img class="avatar" [src]="chat.avatar" alt="Avatar">
+        <div class="chat-info">
+          <strong class="username">{{ chat.username }}</strong>
+          <p class="message-snippet">{{ chat.messageSnippet }}</p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <div class="chat-window-panel">
+    
+    <div class="chat-window-header">
+      <img class="avatar" src="ruta/a/avatar_alejandra.png" alt="Avatar">
+      <strong class="username">Alejandra Hernandez</strong>
+    </div>
+
+    <div class="chat-messages">
+      
+      <div 
+        *ngFor="let msg of activeChatMessages" 
+        class="message-bubble"
+        [ngClass]="{ 'incoming': msg.type === 'incoming', 'outgoing': msg.type === 'outgoing' }">
+        
+        <p>{{ msg.text }}</p>
+      </div>
+
+    </div>
+
+    <div class="chat-input-box">
+      <input 
+        type="text" 
+        placeholder="Escribe un mensaje"
+        [(ngModel)]="newMessage"
+        (keyup.enter)="sendMessage()"> <button class="send-btn" (click)="sendMessage()">
+        <span class="material-icons">send</span>
+      </button>
+    </div>
+
+  </div>
+
+</div>

@@ -111,65 +111,92 @@
     </section>
 
     <!-- Bloque 3: Perfil del asesor -->
-    <section class="block block-profile">
-      <div class="block-header">
-        <h2>Perfil del asesor</h2>
-        <p class="block-subtitle">
-          Actualiza tu información básica para que los estudiantes te conozcan mejor.
-        </p>
+    <!-- Bloque 3: Perfil del asesor -->
+<section class="block block-profile">
+  <div class="block-header">
+    <h2>Perfil del asesor</h2>
+    <p class="block-subtitle">
+      Actualiza tu información básica para que los estudiantes te conozcan mejor.
+    </p>
+  </div>
+
+  <form class="profile-form" (ngSubmit)="saveProfile()" #profileForm="ngForm">
+    <div class="form-row">
+      <div class="form-field">
+        <label for="name">Nombre</label>
+        <input
+          id="name"
+          type="text"
+          name="name"
+          [(ngModel)]="advisorProfile.name"
+          disabled 
+          class="input-disabled"
+        />
+        <!-- (Le puse 'disabled' al nombre porque viene de la cuenta/login, usualmente se edita en otra pantalla, pero puedes quitarlo si quieres) -->
       </div>
 
-      <form class="profile-form" (ngSubmit)="saveProfile()" #profileForm="ngForm">
-        <div class="form-row">
-          <div class="form-field">
-            <label for="name">Nombre</label>
-            <input
-              id="name"
-              type="text"
-              name="name"
-              [(ngModel)]="advisorProfile.name"
-              required
-            />
-          </div>
+      <div class="form-field">
+        <label for="subjects">Materias que impartes</label>
+        <input
+          id="subjects"
+          type="text"
+          name="subjects"
+          [(ngModel)]="subjectsInput"
+          placeholder="Ejemplo: Cálculo, Álgebra, Programación"
+        />
+        <small class="field-hint">
+          (Solo visual por ahora) Tus especialidades reales se cargan desde la base de datos.
+        </small>
+      </div>
+    </div>
 
-          <div class="form-field">
-            <label for="subjects">Materias que impartes</label>
-            <input
-              id="subjects"
-              type="text"
-              name="subjects"
-              [(ngModel)]="subjectsInput"
-              placeholder="Ejemplo: Cálculo, Álgebra, Programación"
-            />
-            <small class="field-hint">
-              Puedes separar varias materias con comas.
-            </small>
-          </div>
-        </div>
+    <!-- AQUÍ ESTABA EL ERROR: Cambiamos 'availability' por 'description' -->
+    <div class="form-row">
+      <div class="form-field">
+        <label for="description">Descripción / Disponibilidad</label>
+        <textarea
+          id="description"
+          name="description"
+          rows="3"
+          [(ngModel)]="advisorProfile.description"
+          placeholder="Ejemplo: Soy experto en matemáticas con 5 años de experiencia. Disponible tardes."
+        ></textarea>
+      </div>
+    </div>
 
-        <div class="form-row">
-          <div class="form-field">
-            <label for="availability">Disponibilidad</label>
-            <textarea
-              id="availability"
-              name="availability"
-              rows="3"
-              [(ngModel)]="advisorProfile.availability"
-              placeholder="Ejemplo: Lunes a jueves de 16:00 a 20:00"
-            ></textarea>
-          </div>
-        </div>
+    <!-- Campos nuevos requeridos por tu Backend -->
+    <div class="form-row">
+      <div class="form-field">
+        <label for="level">Nivel Educativo</label>
+        <select id="level" name="level" [(ngModel)]="advisorProfile.level">
+          <option value="Universidad">Universidad</option>
+          <option value="Bachillerato">Bachillerato</option>
+          <option value="Secundaria">Secundaria</option>
+        </select>
+      </div>
+      
+      <div class="form-field">
+        <label for="stateCode">Estado</label>
+        <input 
+          id="stateCode" 
+          name="stateCode" 
+          type="text" 
+          [(ngModel)]="advisorProfile.stateCode" 
+          placeholder="Ej: CDMX"
+        />
+      </div>
+    </div>
 
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid">
-            Guardar
-          </button>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid">
+        Guardar Cambios
+      </button>
 
-          <span *ngIf="profileSaved" class="save-message">
-            Cambios guardados localmente.
-          </span>
-        </div>
-      </form>
-    </section>
+      <span *ngIf="profileSaved" class="save-message">
+        ¡Perfil actualizado correctamente!
+      </span>
+    </div>
+  </form>
+  </section>
   </div>
 </section>

@@ -1,18 +1,20 @@
-// panel-asesor.component.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-/* Estado de la solicitud recibida */
-type RequestStatus = 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA';
+// Services
+import { ClassService, ClassResponse } from '../../core/services/class.service';
+import { NotificationService, NotificationDto } from '../../core/services/notification.service';
+import { ProfileService, ProfileResponse, UpdateProfileRequest } from '../../core/services/profile.service';
 
+// Interfaces Visuales
 interface ReceivedRequest {
   id: number;
   studentName: string;
   subject: string;
   requestDate: string;
   message: string;
-  status: RequestStatus;
+  status: 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA';
 }
 
 interface AdvisorSession {
@@ -21,13 +23,7 @@ interface AdvisorSession {
   subject: string;
   date: string;
   time: string;
-  modality: 'En línea' | 'Presencial';
-}
-
-interface AdvisorProfile {
-  name: string;
-  subjects: string[];
-  availability: string;
+  modality: string;
 }
 
 @Component({
@@ -37,109 +33,145 @@ interface AdvisorProfile {
   templateUrl: './panel-asesor.html',
   styleUrls: ['./panel-asesor.css']
 })
-export class PanelAsesorComponent {
-  /* Solicitudes recibidas (datos mock) */
-  receivedRequests: ReceivedRequest[] = [
-    {
-      id: 1,
-      studentName: 'Juan Pérez',
-      subject: 'Cálculo diferencial',
-      requestDate: '2025-11-22',
-      message: 'Me gustaría repasar límites y derivadas antes del examen.',
-      status: 'PENDIENTE'
-    },
-    {
-      id: 2,
-      studentName: 'María López',
-      subject: 'Programación orientada a objetos',
-      requestDate: '2025-11-21',
-      message: 'Tengo dudas sobre herencia y polimorfismo en Java.',
-      status: 'ACEPTADA'
-    },
-    {
-      id: 3,
-      studentName: 'Carlos Sánchez',
-      subject: 'Inglés B2',
-      requestDate: '2025-11-20',
-      message: 'Quiero practicar comprensión lectora para un examen de certificación.',
-      status: 'RECHAZADA'
-    }
-  ];
+export class PanelAsesorComponent implements OnInit {
 
-  /* Próximas sesiones (datos mock) */
-  upcomingSessions: AdvisorSession[] = [
-    {
-      id: 1,
-      studentName: 'María López',
-      subject: 'Programación orientada a objetos',
-      date: '2025-11-24',
-      time: '16:00',
-      modality: 'En línea'
-    },
-    {
-      id: 2,
-      studentName: 'Juan Pérez',
-      subject: 'Cálculo diferencial',
-      date: '2025-11-25',
-      time: '10:30',
-      modality: 'Presencial'
-    }
-  ];
+  // Datos del Panel
+  receivedRequests: ReceivedRequest[] = [];
+  upcomingSessions: AdvisorSession[] = [];
 
-  /* Perfil del asesor (datos mock) */
-  advisorProfile: AdvisorProfile = {
-    name: 'Ana Rodríguez',
-    subjects: ['Cálculo diferencial', 'Álgebra lineal'],
-    availability: 'Lunes a jueves de 16:00 a 20:00, viernes de 15:00 a 18:00.'
+  // Datos del Perfil (Conectados al Backend)
+  advisorProfile = {
+    name: '',       // Vendrá del LocalStorage
+    description: '', // Vendrá del backend (campo description)
+    level: '',      // Vendrá del backend
+    stateCode: '',  // Vendrá del backend
+    specialties: [] as { id: number, name: string }[] // Guardamos objetos completos
   };
 
-  /* Campo auxiliar para edición de materias como texto */
-  subjectsInput: string = this.advisorProfile.subjects.join(', ');
-
-  /* Indicador de guardado local */
+  // Input para editar materias (separadas por comas)
+  subjectsInput: string = '';
+  
+  // Flag para feedback visual
   profileSaved = false;
 
-  /* Acciones sobre solicitudes */
+  constructor(
+    private classService: ClassService,
+    private notificationService: NotificationService,
+    private profileService: ProfileService // Inyectamos el servicio
+  ) {}
+
+  ngOnInit(): void {
+    this.loadUserData();     // Cargar nombre
+    this.loadProfile();      // Cargar datos del perfil (API)
+    this.loadNotifications();
+    this.loadMyClasses();
+  }
+
+  // 1. Cargar nombre del usuario (LocalStorage)
+  loadUserData() {
+    const userJson = localStorage.getItem('user');
+    if (userJson) {
+      const user = JSON.parse(userJson);
+      // Asumimos que guardaste firstName/lastName al hacer login
+      this.advisorProfile.name = `${user.firstName} ${user.lastName || ''}`.trim();
+    }
+  }
+
+  // 2. Cargar Perfil desde API (GET /profile)
+  loadProfile() {
+    this.profileService.getMyProfile().subscribe({
+      next: (profile: ProfileResponse) => {
+        this.advisorProfile.description = profile.description || '';
+        this.advisorProfile.level = profile.level || 'Universidad'; // Default si es null
+        this.advisorProfile.stateCode = profile.stateCode || 'MX';
+        this.advisorProfile.specialties = profile.specialties;
+
+        // Convertimos las especialidades a texto para el input visual
+        this.subjectsInput = profile.specialties.map(s => s.name).join(', ');
+      },
+      error: (err) => console.error('Error cargando perfil', err)
+    });
+  }
+
+  // 3. Guardar Perfil (PUT /profile)
+  saveProfile(): void {
+    // Preparar el objeto EXACTO que pide el backend (UpdateProfileRequest)
+    const payload: UpdateProfileRequest = {
+      description: this.advisorProfile.description, // Ahora usamos description
+      level: this.advisorProfile.level || 'Universidad',
+      stateCode: this.advisorProfile.stateCode || 'MX',
+      // Convertimos los objetos de especialidades a solo sus IDs
+      specialtyIds: this.advisorProfile.specialties.map(s => s.id)
+    };
+
+    this.profileService.updateMyProfile(payload).subscribe({
+      next: (updatedProfile) => {
+        this.profileSaved = true;
+        // Actualizamos la vista con la respuesta
+        this.advisorProfile.description = updatedProfile.description || '';
+        setTimeout(() => this.profileSaved = false, 3000);
+      },
+      error: (err) => {
+        console.error('Error guardando perfil', err);
+        alert('Error al guardar cambios. Revisa la consola.');
+      }
+    });
+  }
+
+  // --- (El resto de tus métodos: loadNotifications, loadMyClasses, etc. siguen igual) ---
+  
+  loadNotifications() {
+    this.notificationService.getMyNotifications('pending').subscribe({
+      next: (dtos) => {
+        this.receivedRequests = dtos.map(dto => ({
+          id: dto.notificationId,
+          studentName: `${dto.senderFirstName || 'Usuario'} ${dto.senderLastName || ''}`.trim(),
+          subject: 'Solicitud de contacto',
+          requestDate: new Date(dto.createdAt).toLocaleDateString(),
+          message: 'Quiere contactar contigo',
+          status: 'PENDIENTE'
+        }));
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  loadMyClasses() {
+    this.classService.getMyClassesTutor().subscribe({
+      next: (classes) => {
+        this.upcomingSessions = classes.map(c => ({
+          id: c.id,
+          studentName: 'Ver inscritos',
+          subject: c.title,
+          date: c.classDate,
+          time: '10:00',
+          modality: 'En línea'
+        }));
+      },
+      error: (err) => console.error(err)
+    });
+  }
 
   acceptRequest(request: ReceivedRequest): void {
-    if (request.status === 'ACEPTADA') {
-      return;
-    }
-    request.status = 'ACEPTADA';
+    if (request.status !== 'PENDIENTE') return;
+    this.notificationService.acceptRequest(request.id).subscribe({
+      next: () => {
+        request.status = 'ACEPTADA';
+        alert('Solicitud aceptada. Chat creado.');
+      },
+      error: () => alert('Error al aceptar')
+    });
   }
 
   rejectRequest(request: ReceivedRequest): void {
-    if (request.status === 'RECHAZADA') {
-      return;
-    }
-    request.status = 'RECHAZADA';
+    if (request.status !== 'PENDIENTE') return;
+    this.notificationService.declineRequest(request.id).subscribe({
+      next: () => request.status = 'RECHAZADA',
+      error: () => alert('Error al rechazar')
+    });
   }
 
-  getStatusLabel(status: RequestStatus): string {
-    switch (status) {
-      case 'PENDIENTE':
-        return 'Pendiente';
-      case 'ACEPTADA':
-        return 'Aceptada';
-      case 'RECHAZADA':
-        return 'Rechazada';
-      default:
-        return status;
-    }
-  }
-
-  /* Guardado de perfil (local) */
-
-  saveProfile(): void {
-    const normalized = this.subjectsInput
-      .split(',')
-      .map(s => s.trim())
-      .filter(s => s.length > 0);
-
-    this.advisorProfile.subjects = normalized;
-    this.profileSaved = true;
-
-    console.log('Perfil de asesor guardado localmente:', this.advisorProfile);
+  getStatusLabel(status: string): string {
+    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
   }
 }
-

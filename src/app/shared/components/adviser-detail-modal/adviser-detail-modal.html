@@ -1,71 +1,131 @@
-<div class="modal-overlay" *ngIf="isOpen" (click)="closeModal()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
-    <!-- Close button -->
-    <button class="close-btn" (click)="closeModal()">✕</button>
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="onClose()">×</button>
 
-    <!-- Modal content -->
-    <div class="modal-content" *ngIf="adviser">
-      <!-- Main section with scrollbar -->
-      <div class="modal-main">
-        <!-- Avatar -->
-        <div class="avatar-large" [class.has-img]="adviser.avatarUrl">
-          <img *ngIf="adviser.avatarUrl" [src]="adviser.avatarUrl" [alt]="adviser.name" />
-          <span *ngIf="!adviser.avatarUrl" class="avatar-placeholder">👤</span>
+    <div class="modal-header-profile">
+      <div class="avatar-large">
+        <img *ngIf="adviser?.avatarUrl" [src]="adviser?.avatarUrl" alt="Avatar del profesor"/>
+        <span *ngIf="!adviser?.avatarUrl">🎓</span>
+      </div>
+
+      <div class="header-info">
+        <h2>{{ adviser?.name || 'Profesor' }}</h2>
+        <div class="rating-badge">
+          ⭐ {{ summary.averageRating | number: '1.1-1' }} ({{ summary.totalReviews }} reseñas)
         </div>
+      </div>
 
-        <!-- Name and level -->
-        <h2 class="adviser-name">{{ adviser.name }}</h2>
-        <span class="level-badge" *ngIf="adviser.nivel">{{ adviser.nivel }}</span>
+      <button
+        class="btn-contact"
+        [disabled]="loadingContact"
+        (click)="solicitarContacto()"
+      >
+        {{ loadingContact ? 'Enviando...' : '📩 Contactar' }}
+      </button>
+    </div>
 
-        <!-- Specialties chips -->
-        <div class="tags-row">
-          <span class="tag-chip" *ngFor="let tag of adviser.tags; trackBy: trackByIndex">
-            {{ tag }}
+    <div class="tabs">
+      <button
+        [class.active]="currentTab === 'perfil'"
+        (click)="setTab('perfil')"
+      >
+        Perfil
+      </button>
+      <button
+        [class.active]="currentTab === 'clases'"
+        (click)="setTab('clases')"
+      >
+        Clases Disponibles
+      </button>
+      <button
+        [class.active]="currentTab === 'resenas'"
+        (click)="setTab('resenas')"
+      >
+        Reseñas
+      </button>
+    </div>
+
+    <div class="tab-content">
+      <!-- PERFIL -->
+      <div *ngIf="currentTab === 'perfil'">
+        <p class="bio">
+          {{ adviser?.description || 'Sin descripción disponible.' }}
+        </p>
+        <div class="tags-list">
+          <span
+            *ngFor="let t of adviser?.tags"
+            class="tag"
+          >
+            {{ t }}
           </span>
         </div>
+      </div>
 
-        <!-- Description -->
-        <div class="description-section">
-          <h3>Acerca de mí</h3>
-          <p>{{ adviser.description || 'Sin descripción disponible.' }}</p>
+      <!-- CLASES -->
+      <div *ngIf="currentTab === 'clases'">
+        <div *ngIf="classes.length === 0" class="empty-msg">
+          No tiene clases activas.
         </div>
 
-        <!-- Rating -->
-        <div class="rating-section">
-          <div class="stars">
-            <span *ngFor="let filled of getStarsArray(); trackBy: trackByIndex" 
-                  [class.filled]="filled">
-              ★
+        <div
+          *ngFor="let cls of classes"
+          class="class-item"
+        >
+          <strong>{{ cls.title }}</strong>
+          <br/>
+          <small>
+            {{ cls.classDate | date }} - Cupo: {{ cls.capacityPerSlot }}
+          </small>
+        </div>
+      </div>
+
+      <!-- RESEÑAS -->
+      <div *ngIf="currentTab === 'resenas'">
+        <div class="review-form">
+          <h4>Deja tu opinión</h4>
+          <div class="rating-select">
+            <label>Calificación:</label>
+            <select [(ngModel)]="newReview.rating">
+              <option [value]="5">⭐⭐⭐⭐⭐ Excelente</option>
+              <option [value]="4">⭐⭐⭐⭐ Muy bueno</option>
+              <option [value]="3">⭐⭐⭐ Regular</option>
+              <option [value]="2">⭐⭐ Malo</option>
+              <option [value]="1">⭐ Terrible</option>
+            </select>
+          </div>
+          <textarea
+            [(ngModel)]="newReview.comment"
+            placeholder="Escribe tu experiencia..."
+          ></textarea>
+          <button
+            (click)="submitReview()"
+            [disabled]="isSubmittingReview"
+          >
+            Publicar
+          </button>
+        </div>
+
+        <hr/>
+
+        <div class="reviews-list">
+          <div *ngIf="reviews.length === 0" class="empty-msg">
+            Aún no hay reseñas. ¡Sé el primero!
+          </div>
+
+          <div
+            *ngFor="let r of reviews"
+            class="review-item"
+          >
+            <div class="review-header">
+              <span class="author">{{ r.studentName }}</span>
+              <span class="stars">{{ '⭐'.repeat(r.rating) }}</span>
+            </div>
+            <p class="comment">{{ r.comment }}</p>
+            <span class="date">
+              {{ r.createdAt | date: 'mediumDate' }}
             </span>
           </div>
-          <span class="rating-text">{{ adviser.rating }} / 5.0 ({{ adviser.reviews.length }} reseñas)</span>
         </div>
-
-        <!-- Reviews -->
-        <div class="reviews-section">
-          <h3>Reseñas</h3>
-          <div class="reviews-list">
-            <div class="review-item" *ngFor="let review of adviser.reviews; trackBy: trackByIndex">
-              <div class="review-avatar" [class.has-img]="review.userPhoto">
-                <img *ngIf="review.userPhoto" [src]="review.userPhoto" [alt]="review.userName" />
-                <span *ngIf="!review.userPhoto" class="avatar-placeholder">👤</span>
-              </div>
-              <div class="review-content">
-                <strong>{{ review.userName }}</strong>
-                <p>{{ review.text }}</p>
-              </div>
-            </div>
-            <div *ngIf="adviser.reviews.length === 0" class="no-reviews">
-              Aún no hay reseñas para este asesor.
-            </div>
-          </div>
-        </div>
-
-        <!-- Write button (bottom right) -->
-        <button class="write-btn" (click)="onWriteMessage()">
-          <span class="icon">✉️</span>
-          Escribir
-        </button>
       </div>
     </div>
   </div>

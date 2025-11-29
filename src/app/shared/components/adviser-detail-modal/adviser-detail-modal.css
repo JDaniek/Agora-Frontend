@@ -1,39 +1,62 @@
-/* Modal overlay */
-.modal-overlay {
+/* ===========================
+   VARIABLES (pueden ya existir en global)
+   =========================== */
+:root {
+  --accent: #2563eb;
+  --accent-soft: #dbeafe;
+  --accent-dark: #1d4ed8;
+  --text-main: #0f172a;
+  --text-muted: #6b7280;
+  --border-subtle: #e5e7eb;
+  --bg-soft: #f9fafb;
+}
+
+/* ===========================
+   BACKDROP
+   =========================== */
+
+.modal-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.55);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 10000;
-  animation: fadeIn 0.2s ease;
+  animation: modalFadeIn 0.2s ease-out;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* Modal container */
-.modal-container {
-  position: relative;
-  background-color: white;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 700px;
-  max-height: 85vh;
-  overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
+@keyframes modalFadeIn {
   from {
-    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ===========================
+   CONTENEDOR DEL MODAL
+   =========================== */
+
+.modal-content {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 720px;
+  max-height: 85vh;
+  padding: 22px 24px 20px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.35);
+  display: flex;
+  flex-direction: column;
+  animation: modalSlideUp 0.25s ease-out;
+  overflow: hidden;
+}
+
+@keyframes modalSlideUp {
+  from {
+    transform: translateY(20px);
     opacity: 0;
   }
   to {
@@ -42,309 +65,288 @@
   }
 }
 
-/* Close button */
+/* ===========================
+   BOTÓN CERRAR
+   =========================== */
+
 .close-btn {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  background: rgba(0, 0, 0, 0.1);
+  top: 12px;
+  right: 12px;
+  background: rgba(148, 163, 184, 0.15);
   border: none;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
   font-size: 20px;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
-  z-index: 10;
+  color: #475569;
+  transition: background 0.15s ease, transform 0.1s ease;
+  z-index: 5;
 }
 
 .close-btn:hover {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(148, 163, 184, 0.28);
+  transform: translateY(-1px);
 }
 
-/* Modal content */
-.modal-content {
+/* ===========================
+   HEADER DEL MODAL
+   =========================== */
+
+.modal-header-profile {
   display: flex;
-  height: 85vh;
-  max-height: 600px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-right: 32px; /* deja espacio para la X */
 }
 
-/* Main section with scroll */
-.modal-main {
-  position: relative;
+.modal-header-profile h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* BOTÓN CONTACTAR */
+
+.btn-contact {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.btn-contact:hover:not(:disabled) {
+  background: var(--accent-dark);
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-contact:disabled {
+  opacity: 0.7;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* ===========================
+   TABS
+   =========================== */
+
+.tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 12px;
+}
+
+.tabs button {
   flex: 1;
-  padding: 40px;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  border-radius: 10px 10px 0 0;
+}
+
+.tabs button:hover {
+  background: #f3f4f6;
+}
+
+.tabs button.active {
+  color: var(--accent-dark);
+  border-bottom-color: var(--accent-dark);
+  background: #eff6ff;
+}
+
+/* ===========================
+   CONTENIDO DE TABS
+   =========================== */
+
+.tab-content {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-main);
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f1f5f9;
+  /* altura máxima relativa al contenedor, deja espacio para header y tabs */
+  max-height: calc(85vh - 120px);
+  padding-right: 4px;
 }
 
-.modal-main::-webkit-scrollbar {
-  width: 8px;
+/* Scroll fino dentro del contenido */
+
+.tab-content::-webkit-scrollbar {
+  width: 6px;
 }
 
-.modal-main::-webkit-scrollbar-track {
+.tab-content::-webkit-scrollbar-track {
   background: #f1f5f9;
 }
 
-.modal-main::-webkit-scrollbar-thumb {
+.tab-content::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 4px;
+  border-radius: 999px;
 }
 
-.modal-main::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+/* ===========================
+   TAB "PERFIL"
+   =========================== */
+
+.tab-content p {
+  margin: 0 0 8px;
+  color: var(--text-muted);
 }
 
-/* Avatar */
-.avatar-large {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-  border: 4px solid #f3ac12;
-}
+/* Aquí después puedes meter más estilos si agregas más info de perfil */
 
-.avatar-large.has-img {
-  background: none;
-}
+/* ===========================
+   TAB "CLASES"
+   =========================== */
 
-.avatar-large img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.avatar-placeholder {
-  font-size: 48px;
-  color: white;
-}
-
-/* Name and level */
-.adviser-name {
-  text-align: center;
-  font-size: 28px;
-  font-weight: 600;
-  color: #1e3a8a;
-  margin: 0 0 8px 0;
-}
-
-.level-badge {
-  display: inline-block;
-  background: #eab308;
-  color: white;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0 auto 20px;
-  display: block;
-  width: fit-content;
-  text-align: center;
-}
-
-/* Tags */
-.tags-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-
-.tag-chip {
-  background: #dbeafe;
-  color: #1e40af;
-  padding: 6px 14px;
-  border-radius: 16px;
-  font-size: 13px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-/* Description */
-.description-section {
-  margin-bottom: 24px;
-}
-
-.description-section h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1e3a8a;
+.class-item {
+  padding: 10px 12px;
   margin-bottom: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle);
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
-.description-section p {
-  font-size: 15px;
-  line-height: 1.6;
-  color: #475569;
-}
-
-/* Rating */
-.rating-section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.stars {
-  display: flex;
-  gap: 4px;
-}
-
-.stars span {
-  font-size: 24px;
-  color: #cbd5e1;
-}
-
-.stars span.filled {
-  color: #f59e0b;
-}
-
-.rating-text {
-  font-size: 14px;
-  color: #64748b;
-}
-
-/* Reviews */
-.reviews-section h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1e3a8a;
-  margin-bottom: 16px;
-}
-
-.reviews-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 80px; /* Space for the button */
-}
-
-.review-item {
-  display: flex;
-  gap: 12px;
-  padding: 12px;
-  background: #f8fafc;
-  border-radius: 8px;
-}
-
-.review-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.review-avatar.has-img {
-  background: none;
-}
-
-.review-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.review-avatar .avatar-placeholder {
-  font-size: 20px;
-  color: white;
-}
-
-.review-content {
-  flex: 1;
-}
-
-.review-content strong {
+.class-item strong {
   display: block;
   font-size: 14px;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 4px;
+  color: var(--text-main);
+  margin-bottom: 2px;
 }
 
-.review-content p {
+.class-item small {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Mensaje cuando no hay clases */
+
+.tab-content > div:first-child {
+  /* el <div *ngIf="classes.length === 0">... */
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    max-height: 90vh;
+    padding: 18px 16px 16px;
+  }
+
+  .modal-header-profile {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-right: 28px;
+  }
+
+  .modal-header-profile h2 {
+    font-size: 16px;
+  }
+
+  .btn-contact {
+    align-self: flex-start;
+    padding: 7px 14px;
+    font-size: 13px;
+  }
+
+  .tab-content {
+    max-height: calc(90vh - 130px);
+  }
+}
+
+.rating-badge {
+  background: #fffbeb;
+  color: #b45309;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+/* Formulario Reseña */
+.review-form {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.review-form textarea {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+  resize: vertical;
+}
+
+.review-form button {
+  margin-top: 10px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Lista Reseñas */
+.review-item {
+  border-bottom: 1px solid #f3f4f6;
+  padding: 15px 0;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.author {
+  font-weight: 600;
   font-size: 14px;
-  line-height: 1.5;
-  color: #64748b;
+}
+
+.comment {
+  font-size: 13px;
+  color: #4b5563;
   margin: 0;
 }
 
-.no-reviews {
-  text-align: center;
-  padding: 24px;
-  color: #94a3b8;
-  font-size: 14px;
-}
-
-/* Write button (fixed bottom right) */
-.write-btn {
-  position: fixed;
-  bottom: 40px;
-  right: 40px;
-  background: #3c7fe3;
-  color: white;
-  border: none;
-  padding: 14px 24px;
-  border-radius: 50px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 12px rgba(60, 127, 227, 0.4);
-  transition: all 0.2s;
-  z-index: 11;
-}
-
-.write-btn:hover {
-  background: #2c5fa8;
-  box-shadow: 0 6px 16px rgba(60, 127, 227, 0.5);
-  transform: translateY(-2px);
-}
-
-.write-btn .icon {
-  font-size: 20px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .modal-container {
-    max-height: 95vh;
-  }
-
-  .modal-main {
-    padding: 30px 20px;
-  }
-
-  .avatar-large {
-    width: 100px;
-    height: 100px;
-  }
-
-  .adviser-name {
-    font-size: 24px;
-  }
-
-  .write-btn {
-    bottom: 20px;
-    right: 20px;
-    padding: 12px 20px;
-    font-size: 14px;
-  }
+.date {
+  font-size: 11px;
+  color: #9ca3af;
+  display: block;
+  margin-top: 4px;
 }

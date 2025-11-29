@@ -21,7 +21,7 @@ export interface NotificationDto {
 })
 export class NotificationService {
 
-  private readonly baseUrl = `${environment.apiUrl}${environment.endpoints.notifications.mine}`; // 👈 bien
+  private readonly baseUrl = `${environment.apiUrl}${environment.endpoints.notifications.mine}`;
 
   constructor(private http: HttpClient) {
   }

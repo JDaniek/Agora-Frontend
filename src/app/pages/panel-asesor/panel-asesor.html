@@ -1,50 +1,130 @@
-<div class="asesor-layout">
+<div class="asesor-layout" [class.sidebar-collapsed]="isSidebarCollapsed">
 
+  <!-- HEADER MÓVIL -->
   <header class="mobile-header">
-    <button class="hamburger-btn" (click)="toggleSidebar()">☰</button>
+    <!-- Botón hamburguesa -->
+    <button class="hamburger-btn" type="button" (click)="toggleMobileSidebar()">
+      <lucide-icon name="menu"></lucide-icon>
+    </button>
     <span class="mobile-title">Agora Asesor</span>
   </header>
 
-  <nav class="sidebar-menu" [class.open]="isSidebarOpen">
+  <!-- SIDEBAR -->
+  <nav class="sidebar-menu"
+       [class.is-collapsed]="isSidebarCollapsed"
+       [class.is-mobile-open]="isMobileSidebarOpen">
+
     <div class="sidebar-brand">
-      <h2>AGORA</h2>
+      <div class="brand-top">
+        <h2 class="brand-title">AGORA</h2>
+        <button
+          type="button"
+          class="sidebar-toggle"
+          (click)="toggleSidebarCollapse()"
+          title="Colapsar barra lateral">
+  <span class="material-icons">
+    {{ isSidebarCollapsed ? 'chevron_right' : 'chevron_left' }}
+  </span>
+        </button>
+      </div>
       <p class="role-badge">Panel Asesor</p>
     </div>
 
     <div class="menu-list">
-      <a class="menu-item" [class.active]="currentView === 'inicio'" (click)="setView('inicio'); closeSidebar()">
-        <span class="icon">🏠</span> Solicitudes
-      </a>
-      <a class="menu-item" [class.active]="currentView === 'clases'" (click)="setView('clases'); closeSidebar()">
-        <span class="icon">📚</span> Mis Clases
-      </a>
-      <a class="menu-item" [class.active]="currentView === 'chats'" (click)="setView('chats'); closeSidebar()">
-        <span class="icon">💬</span> Chats
-      </a>
-      <a class="menu-item" [class.active]="currentView === 'resenas'" (click)="setView('resenas'); closeSidebar()">
-        <span class="icon">⭐</span> Reseñas
-      </a>
+      <!-- Item: Solicitudes -->
+      <button
+        type="button"
+        class="menu-item"
+        [class.active]="currentView === 'inicio'"
+        (click)="setView('inicio'); closeMobileSidebar()">
+  <span class="icon">
+    <lucide-icon name="inbox"></lucide-icon>
+  </span>
+        <span class="menu-label">Solicitudes</span>
+      </button>
+
+      <!-- Item: Mis Clases -->
+      <button
+        type="button"
+        class="menu-item"
+        [class.active]="currentView === 'clases'"
+        (click)="setView('clases'); closeMobileSidebar()">
+  <span class="icon">
+    <lucide-icon name="graduation-cap"></lucide-icon>
+  </span>
+        <span class="menu-label">Mis Clases</span>
+      </button>
+
+
+      <!-- Item: Chats -->
+      <button
+        type="button"
+        class="menu-item"
+        [class.active]="currentView === 'chats'"
+        (click)="setView('chats'); closeMobileSidebar()">
+  <span class="icon">
+    <lucide-icon name="messages-square"></lucide-icon>
+  </span>
+        <span class="menu-label">Chats</span>
+      </button>
+
+      <!-- Item: Reseñas -->
+      <button
+        type="button"
+        class="menu-item"
+        [class.active]="currentView === 'resenas'"
+        (click)="setView('resenas'); closeMobileSidebar()">
+  <span class="icon">
+    <lucide-icon name="star"></lucide-icon>
+  </span>
+        <span class="menu-label">Reseñas</span>
+      </button>
     </div>
 
     <div class="sidebar-footer">
-      <button class="logout-btn" (click)="logout()">
-        <span class="icon">🚪</span> Cerrar sesión
+      <!-- Logout -->
+      <button type="button" class="logout-btn" (click)="logout()">
+  <span class="icon">
+    <lucide-icon name="log-out"></lucide-icon>
+  </span>
+        <span class="menu-label">Cerrar sesión</span>
       </button>
     </div>
   </nav>
 
-  <div class="overlay" *ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
+  <!-- OVERLAY MÓVIL -->
+  <div class="overlay" *ngIf="isMobileSidebarOpen" (click)="closeMobileSidebar()"></div>
 
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="main-content">
 
+    <!-- VISTA INICIO (SOLICITUDES) -->
     <section *ngIf="currentView === 'inicio'" class="view-section">
       <header class="section-header">
         <div class="welcome-text">
           <h1>Hola, {{ userName }}</h1>
           <p>Gestiona tus solicitudes de contacto pendientes</p>
         </div>
+
         <div class="header-tools">
-          <div class="avatar-mini">{{ userName.charAt(0) }}</div>
+          <button
+            type="button"
+            class="avatar-button"
+            (click)="onEditProfile()"
+            title="Ver/editar mi perfil">
+
+            <img
+              *ngIf="topAvatarUrl; else avatarFallback"
+              [src]="topAvatarUrl"
+              alt="Foto de perfil"
+              class="avatar-img"/>
+
+            <ng-template #avatarFallback>
+              <div class="avatar-mini">
+                {{ (userName || 'A').charAt(0) }}
+              </div>
+            </ng-template>
+          </button>
         </div>
       </header>
 
@@ -59,14 +139,23 @@
 
           <div class="card-header-row">
             <div class="card-avatar">
-              <img *ngIf="sol.sender?.avatarUrl" [src]="sol.sender?.avatarUrl" alt="Avatar">
-              <div *ngIf="!sol.sender?.avatarUrl" class="avatar-placeholder">
-                {{ sol.sender?.fullName?.charAt(0) || '?' }}
+              <img
+                *ngIf="sol.sender?.avatarUrl"
+                [src]="sol.sender?.avatarUrl"
+                alt="Avatar"/>
+              <div
+                *ngIf="!sol.sender?.avatarUrl"
+                class="avatar-placeholder">
+                {{ (sol.sender?.fullName || '?').charAt(0) }}
               </div>
             </div>
             <div class="card-meta">
-              <h3 class="student-name">{{ sol.sender?.fullName || sol.title }}</h3>
-              <span class="notification-date">{{ sol.createdAt | date:'shortDate' }}</span>
+              <h3 class="student-name">
+                {{ sol.sender?.fullName || sol.title }}
+              </h3>
+              <span class="notification-date">
+                {{ sol.createdAt | date:'shortDate' }}
+              </span>
             </div>
           </div>
 
@@ -75,8 +164,18 @@
           </div>
 
           <div class="card-actions">
-            <button class="btn-action reject" (click)="rechazarSolicitud(sol.id)">Rechazar</button>
-            <button class="btn-action accept" (click)="aceptarSolicitud(sol.id)">Aceptar</button>
+            <button
+              type="button"
+              class="btn-action reject"
+              (click)="rechazarSolicitud(sol.id)">
+              Rechazar
+            </button>
+            <button
+              type="button"
+              class="btn-action accept"
+              (click)="aceptarSolicitud(sol.id)">
+              Aceptar
+            </button>
           </div>
         </article>
 
@@ -86,17 +185,17 @@
       </div>
     </section>
 
+    <!-- MIS CLASES -->
     <app-mis-clases *ngIf="currentView === 'clases'"></app-mis-clases>
 
-
+    <!-- CHATS -->
     <div *ngIf="currentView === 'chats'" class="h-full-container">
       <app-mis-chats></app-mis-chats>
     </div>
 
-    <section *ngIf="currentView === 'resenas'" class="view-section">
-      <h1>Reseñas</h1>
-      <p>Próximamente...</p>
-    </section>
-
+    <!-- RESEÑAS -->
+    <div *ngIf="currentView === 'resenas'">
+      <app-mis-resenas></app-mis-resenas>
+    </div>
   </main>
 </div>

@@ -1,4 +1,13 @@
-import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  ViewChild,
+  ElementRef,
+  AfterViewChecked,
+  ChangeDetectorRef
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService, ChatMessage, ChatConversation } from '../../../../core/services/chat.service';
@@ -13,9 +22,8 @@ import { Subscription } from 'rxjs';
 })
 export class MisChatsComponent implements OnInit, OnDestroy, AfterViewChecked {
   private chatService = inject(ChatService);
-  private cd = inject(ChangeDetectorRef); // <--- INYECTAR ChangeDetectorRef
+  private cd = inject(ChangeDetectorRef);
 
-  // Referencia al contenedor de mensajes para hacer scroll automático
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
   // Estado
@@ -34,17 +42,18 @@ export class MisChatsComponent implements OnInit, OnDestroy, AfterViewChecked {
     const userStr = localStorage.getItem('user');
     if (userStr) this.myUserId = JSON.parse(userStr).id;
 
-    // 2. Cargar lista de chats (Mock por ahora, hasta tener endpoint GET /chats)
-    this.loadMyChatsMock();
+    // 2. Cargar lista de chats (REAL)
+    this.loadMyChats();
 
     // 3. Suscribirse a mensajes entrantes del socket
     this.msgSubscription = this.chatService.messagesSubject.subscribe(msg => {
       // Solo agregamos si pertenece al chat abierto
       if (this.selectedChatId === msg.chatId) {
         this.messages.push(msg);
-        this.cd.detectChanges(); // <--- Forzar actualización al recibir mensaje
+        this.cd.detectChanges();
         this.scrollToBottom();
       }
+      // Aquí podrías actualizar lastMessage/unreadCount en this.chatsList si quieres
     });
   }
 
@@ -58,13 +67,16 @@ export class MisChatsComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.msgSubscription) this.msgSubscription.unsubscribe();
   }
 
-  // Carga simulada de conversaciones (Izquierda)
-  loadMyChatsMock() {
-    // TODO: Reemplazar con endpoint real GET /chats
-    this.chatsList = [
-      { id: 2, studentName: 'Juan Alumno', lastMessage: 'Hola profe', unreadCount: 1 },
-      { id: 99, studentName: 'Maria Perez', lastMessage: 'Gracias', unreadCount: 0 }
-    ];
+  // Cargar conversaciones reales desde el backend
+  loadMyChats() {
+    this.chatService.getMyChats().subscribe({
+      next: (chats) => {
+        console.log('✅ Chats cargados:', chats);
+        this.chatsList = chats;
+        this.cd.detectChanges();
+      },
+      error: (err) => console.error('Error cargando lista de chats', err)
+    });
   }
 
   selectChat(chat: ChatConversation) {
@@ -77,9 +89,9 @@ export class MisChatsComponent implements OnInit, OnDestroy, AfterViewChecked {
     // 1. Cargar historial HTTP
     this.chatService.getChatMessages(chat.id).subscribe({
       next: (historial) => {
-        console.log('📥 Historial recibido (RAW):', historial); // Log crítico
+        console.log('📥 Historial recibido (RAW):', historial);
         this.messages = historial;
-        this.cd.detectChanges(); // <--- Forzar actualización tras carga HTTP
+        this.cd.detectChanges();
         this.scrollToBottom();
       },
       error: (err) => console.error(err)
@@ -92,16 +104,14 @@ export class MisChatsComponent implements OnInit, OnDestroy, AfterViewChecked {
   sendMessage() {
     if (!this.newMessageText.trim() || !this.selectedChatId) return;
 
-    // Enviamos por WS
     this.chatService.sendMessage(this.newMessageText, this.selectedChatId, this.myUserId);
-
-    // Limpia el input
     this.newMessageText = '';
   }
 
   private scrollToBottom(): void {
     try {
-      this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
-    } catch (err) { }
+      this.scrollContainer.nativeElement.scrollTop =
+        this.scrollContainer.nativeElement.scrollHeight;
+    } catch (err) {}
   }
 }

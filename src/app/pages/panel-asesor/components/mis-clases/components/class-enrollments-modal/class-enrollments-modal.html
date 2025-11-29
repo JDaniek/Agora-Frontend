@@ -1,0 +1,63 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3>Alumnos: {{ classTitle }}</h3>
+      <button class="close-btn" (click)="onClose()">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div *ngIf="loading" class="loading-state">Cargando alumnos...</div>
+
+      <div *ngIf="!loading && students.length === 0" class="empty-state">
+        No hay alumnos inscritos en esta clase aún.
+      </div>
+
+      <div *ngIf="!loading" class="students-list">
+
+        <div *ngFor="let student of students" class="student-item">
+
+          <div class="student-row">
+            <div class="student-info">
+              <div class="avatar-circle">
+                <img *ngIf="student.photoUrl" [src]="student.photoUrl">
+                <span *ngIf="!student.photoUrl">👤</span>
+              </div>
+              <div>
+                <div class="student-name">{{ student.studentName || student.firstName + ' ' + student.lastName }}</div>
+                <div class="student-status">{{ student.status || 'Inscrito' }}</div>
+              </div>
+            </div>
+
+            <button class="btn-rate" (click)="toggleRateForm(student.studentId || student.id)">
+              {{ expandedStudentId === (student.studentId || student.id) ? 'Cancelar' : '⭐ Calificar' }}
+            </button>
+          </div>
+
+          <div class="rate-form" *ngIf="expandedStudentId === (student.studentId || student.id)">
+            <div class="rating-select">
+              <label>Puntaje:</label>
+              <select [(ngModel)]="reviewForm.rating">
+                <option [value]="5">5 - Excelente</option>
+                <option [value]="4">4 - Muy bueno</option>
+                <option [value]="3">3 - Bueno</option>
+                <option [value]="2">2 - Regular</option>
+                <option [value]="1">1 - Malo</option>
+              </select>
+            </div>
+
+            <textarea [(ngModel)]="reviewForm.comment" placeholder="Comentario sobre el desempeño..."></textarea>
+
+            <button class="btn-submit" [disabled]="isSubmitting" (click)="submitReview(student.studentId || student.id)">
+              {{ isSubmitting ? 'Enviando...' : 'Enviar Reseña' }}
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import {Injectable, inject} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '@env/environment';
 import {Observable, Subject} from 'rxjs';
@@ -16,8 +16,8 @@ export interface ChatMessage {
 
 export interface ChatConversation {
   id: number;
-  studentName: string;
-  studentAvatar?: string;
+  studentName: string;              // Nombre del otro participante
+  studentAvatar?: string | null;    // Avatar del otro participante
   lastMessage?: string;
   unreadCount?: number;
 }
@@ -26,12 +26,35 @@ export interface ChatConversation {
   providedIn: 'root'
 })
 export class ChatService {
-  private http = inject(HttpClient);
-  private apiUrl = environment.apiUrl;
+  private readonly apiUrl = environment.apiUrl;
 
   // Guardamos la conexión activa
   private socket$!: WebSocketSubject<any>;
   public messagesSubject = new Subject<ChatMessage>();
+
+  constructor(private http: HttpClient) {
+  }
+
+  /**
+   * 0. Obtener lista de mis chats (REAL)
+   * GET /api/v1/chats/mine
+   */
+  getMyChats(): Observable<ChatConversation[]> {
+    const url = `${this.apiUrl}${environment.endpoints.chat.mine}`;
+
+    return this.http.get<any[]>(url).pipe(
+      map(response =>
+        response.map(chat => ({
+          id: chat.chatId,
+          // Mapeamos lo que viene del backend a lo que espera tu vista
+          studentName: chat.otherParticipantName || 'Usuario',
+          studentAvatar: chat.otherParticipantPhoto ?? null,
+          lastMessage: chat.lastMessage || 'Nuevo chat',
+          unreadCount: chat.unreadCount || 0
+        }) as ChatConversation)
+      )
+    );
+  }
 
   // 1. Obtener historial de mensajes (HTTP)
   getChatMessages(chatId: number): Observable<ChatMessage[]> {
@@ -44,6 +67,7 @@ export class ChatService {
             id: m.id ?? m.messageId ?? 0,
             chatId: m.chatId,
             senderId: m.senderId,
+            // Intentamos leer 'content', si no existe, 'body', si no, 'message'
             content: m.content || m.body || m.message || '',
             timestamp: m.timestamp || m.sentAt || new Date().toISOString(),
             isMine: this.isMessageMine(m.senderId)
@@ -58,9 +82,7 @@ export class ChatService {
     // Recuperamos el token para enviarlo (Manual, ya que no hay interceptor en WS)
     const token = localStorage.getItem('token');
 
-    // Suponiendo que 'token' es solo el hash (eyJh...):
     const wsBaseUrl = this.apiUrl.replace('http', 'ws');
-    // Importante: Enviamos el parametro 'token' que Ktor ahora sabe leer
     const url = `${wsBaseUrl}/ws/chat/${chatId}?token=${token}`;
 
     console.log('🔌 Conectando WS a:', url);
@@ -75,10 +97,13 @@ export class ChatService {
     this.socket$.subscribe({
       next: (msg) => {
         console.log('📩 Mensaje recibido WS:', msg);
-        // Normalizamos el contenido igual que en HTTP
+        // Normalizamos igual que en HTTP
         const parsedMsg: ChatMessage = {
-          ...msg,
+          id: msg.id ?? msg.messageId ?? 0,
+          chatId: msg.chatId,
+          senderId: msg.senderId,
           content: msg.content || msg.body || msg.message || '',
+          timestamp: msg.timestamp || msg.sentAt || new Date().toISOString(),
           isMine: this.isMessageMine(msg.senderId)
         };
         this.messagesSubject.next(parsedMsg);
@@ -91,10 +116,7 @@ export class ChatService {
   // 3. Enviar mensaje
   sendMessage(content: string, chatId: number, senderId: number) {
     if (this.socket$) {
-
-      // 1. Payload para el Servidor (Lo que Ktor espera)
-      // Ktor es estricto: Solo enviamos 'body'.
-      // El senderId lo saca del Token y el chatId de la URL.
+      // Payload para el servidor (Ktor espera solo 'body')
       const serverPayload = {
         body: content
       };
@@ -102,14 +124,12 @@ export class ChatService {
       console.log('📤 Enviando WS:', serverPayload);
       this.socket$.next(serverPayload);
 
-      // 2. (Opcional) Actualización Optimista Local
-      // Como quitamos los datos del payload, si quieres ver el mensaje
-      // inmediatamente en tu pantalla antes de que el servidor responda:
+      // (Opcional) actualización optimista -> comentada por ahora
       /*
       const localMessage: ChatMessage = {
-        chatId: chatId,
-        senderId: senderId,
-        content: content,
+        chatId,
+        senderId,
+        content,
         timestamp: new Date().toISOString(),
         isMine: true
       };

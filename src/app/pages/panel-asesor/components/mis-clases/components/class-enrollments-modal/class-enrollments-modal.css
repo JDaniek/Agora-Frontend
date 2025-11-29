@@ -1,0 +1,100 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 12px;
+  padding: 20px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.close-btn {
+  background: none; border: none; font-size: 24px; cursor: pointer;
+}
+
+/* Lista */
+.student-item {
+  border-bottom: 1px solid #f3f4f6;
+  padding: 10px 0;
+}
+
+.student-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.student-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar-circle {
+  width: 40px; height: 40px;
+  background: #e0f2fe;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+.student-name { font-weight: 600; font-size: 14px; }
+.student-status { font-size: 12px; color: #6b7280; }
+
+.btn-rate {
+  background: white;
+  border: 1px solid #fbbf24;
+  color: #b45309;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.btn-rate:hover { background: #fffbeb; }
+
+/* Formulario */
+.rate-form {
+  margin-top: 10px;
+  background: #f9fafb;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.rating-select select {
+  width: 100%; padding: 8px; margin-bottom: 8px; border-radius: 6px; border: 1px solid #ddd;
+}
+
+.rate-form textarea {
+  width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ddd;
+}
+
+.btn-submit {
+  margin-top: 8px;
+  width: 100%;
+  background: #2563eb;
+  color: white;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

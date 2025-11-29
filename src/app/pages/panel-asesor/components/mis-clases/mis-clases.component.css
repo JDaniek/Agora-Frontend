@@ -250,21 +250,26 @@
 .btn-action {
   flex: 1;
   border: none;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 9px 10px;
+  border-radius: 999px;
   font-weight: 600;
   cursor: pointer;
   font-size: 13px;
-  transition: filter 0.2s;
+  transition: filter 0.2s, transform 0.1s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .btn-action:hover {
-  filter: brightness(0.95);
+  filter: brightness(0.96);
+  transform: translateY(-1px);
 }
 
 .btn-action.accept {
   background-color: var(--accent);
-  color: white;
+  color: black;
 }
 
 .btn-action.reject {
@@ -341,15 +346,19 @@
   color: black;
   border: none;
   padding: 10px 20px;
-  border-radius: 99px;
+  border-radius: 999px;
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .btn-create:hover {
   transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
   background-color: #1d4ed8;
 }
 
@@ -361,13 +370,13 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-  transition: transform 0.2s;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .class-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
 }
 
 .class-header {
@@ -381,8 +390,12 @@
   color: var(--accent);
   font-weight: 600;
   background: #eff6ff;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
 }
 
 .class-badge {
@@ -428,7 +441,7 @@
 /* Reutilizamos .btn-action pero agregamos variantes */
 .btn-action.primary {
   background-color: var(--accent);
-  color: white;
+  color: black;
 }
 
 .btn-action.secondary {
@@ -436,6 +449,7 @@
   border: 1px solid #d1d5db;
   color: var(--text-main);
 }
+
 
 .btn-action.secondary:hover {
   background-color: #f9fafb;
@@ -505,9 +519,17 @@
 .close-btn {
   background: transparent;
   border: none;
-  font-size: 24px;
   cursor: pointer;
   color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.close-btn lucide-icon {
+  width: 18px;
+  height: 18px;
 }
 
 /* Formularios */
@@ -599,3 +621,22 @@
 }
 
 
+/* Íconos Lucide en Mis Clases */
+.btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.icon-inline {
+  width: 16px;
+  height: 16px;
+}
+
+.class-date lucide-icon {
+  color: var(--accent);
+}
+
+.btn-action lucide-icon,
+.btn-create lucide-icon {
+  color: inherit; /* hereda color del botón */
+}

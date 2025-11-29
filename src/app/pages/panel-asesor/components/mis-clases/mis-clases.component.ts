@@ -1,33 +1,45 @@
-import {Component, OnInit, inject, ChangeDetectorRef} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {AdviserService, ClassResponse} from '../../../../core/services/adviser.service';
-import {Specialty} from '../../../../core/services/adviser.service'; // Importar la interfaz
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AdviserService, ClassResponse, Specialty } from '../../../../core/services/adviser.service';
+
+// Modal
+import { ClassEnrollmentsModalComponent } from './components/class-enrollments-modal/class-enrollments-modal';
+import { LucideAngularModule } from 'lucide-angular';
+
 @Component({
   selector: 'app-mis-clases',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ClassEnrollmentsModalComponent,
+    LucideAngularModule,
+  ],
   templateUrl: './mis-clases.component.html',
-  styleUrls: ['./mis-clases.component.css']
+  styleUrls: ['./mis-clases.component.css'],
 })
 export class MisClasesComponent implements OnInit {
   private adviserService = inject(AdviserService);
   private cd = inject(ChangeDetectorRef);
+
   clases: ClassResponse[] = [];
   loading = false;
-// Variable para guardar la lista
+
   specialtiesList: Specialty[] = [];
-  // Variables para el Modal
+
   isEditModalOpen = false;
   editingClass: Partial<ClassResponse> = {};
 
+  isEnrollmentsModalOpen = false;
+  selectedClassIdForEnrollment: number | null = null;
+  selectedClassTitle: string = '';
+
   ngOnInit() {
     this.loadClases();
-    this.loadSpecialties(); // <--- Llamada a la carga
+    this.loadSpecialties();
   }
 
-
-//Peticion de catalogo
   loadSpecialties() {
     this.adviserService.getSpecialties().subscribe(data => {
       this.specialtiesList = data;
@@ -40,17 +52,16 @@ export class MisClasesComponent implements OnInit {
       next: (data) => {
         this.clases = data;
         this.loading = false;
-        this.cd.detectChanges(); // <--- 3. OBLIGAR A PINTAR
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error(err);
         this.loading = false;
-        this.cd.detectChanges(); // <--- 3. OBLIGAR A PINTAR
+        this.cd.detectChanges();
       }
     });
   }
 
-  // --- Lógica del Modal ---
   openCreateModal() {
     this.editingClass = {
       title: '',
@@ -58,7 +69,7 @@ export class MisClasesComponent implements OnInit {
       classDate: '',
       capacityPerSlot: 5,
       isActive: true,
-      specialtyId: undefined
+      specialtyId: undefined,
     };
     this.isEditModalOpen = true;
   }
@@ -66,8 +77,7 @@ export class MisClasesComponent implements OnInit {
   openEditModal(clase: ClassResponse) {
     this.editingClass = {
       ...clase,
-      // Ajuste de fecha para input type="date"
-      classDate: clase.classDate ? String(clase.classDate).split('T')[0] : ''
+      classDate: clase.classDate ? String(clase.classDate).split('T')[0] : '',
     };
     this.isEditModalOpen = true;
   }
@@ -78,7 +88,6 @@ export class MisClasesComponent implements OnInit {
   }
 
   saveClassChanges() {
-    // Validación rápida de ID de especialidad
     if (!this.editingClass.id && !this.editingClass.specialtyId) {
       alert('Debes ingresar el ID de la materia (Specialty ID).');
       return;
@@ -87,7 +96,6 @@ export class MisClasesComponent implements OnInit {
     this.loading = true;
 
     if (this.editingClass.id) {
-      // EDICIÓN
       this.adviserService.updateClass(this.editingClass.id, this.editingClass).subscribe({
         next: () => {
           alert('Clase actualizada');
@@ -100,7 +108,6 @@ export class MisClasesComponent implements OnInit {
         }
       });
     } else {
-      // CREACIÓN
       this.adviserService.createClass(this.editingClass).subscribe({
         next: () => {
           alert('Clase creada');
@@ -128,5 +135,17 @@ export class MisClasesComponent implements OnInit {
         alert('Error al eliminar');
       }
     });
+  }
+
+  openEnrollments(clase: ClassResponse) {
+    this.selectedClassIdForEnrollment = clase.id;
+    this.selectedClassTitle = clase.title;
+    this.isEnrollmentsModalOpen = true;
+  }
+
+  closeEnrollments() {
+    this.isEnrollmentsModalOpen = false;
+    this.selectedClassIdForEnrollment = null;
+    this.selectedClassTitle = '';
   }
 }

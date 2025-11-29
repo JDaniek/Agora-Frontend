@@ -1,4 +1,13 @@
-import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  ViewChild,
+  ElementRef,
+  AfterViewChecked,
+  ChangeDetectorRef
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService, ChatMessage, ChatConversation } from '../../../../core/services/chat.service';
@@ -17,7 +26,7 @@ export class StudentChatsComponent implements OnInit, OnDestroy, AfterViewChecke
 
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
-  // Lista de chats (Aquí serán los asesores)
+  // Lista de chats (asesores con los que el alumno tiene chat)
   chatsList: ChatConversation[] = [];
   selectedChatId: number | null = null;
   selectedChatName: string = '';
@@ -32,8 +41,8 @@ export class StudentChatsComponent implements OnInit, OnDestroy, AfterViewChecke
     const userStr = localStorage.getItem('user');
     if (userStr) this.myUserId = JSON.parse(userStr).id;
 
-    // 1. Cargar MOCK de asesores con los que tengo chat
-    this.loadAdvisorsMock();
+    // 1. Cargar lista real de chats del alumno
+    this.loadMyChats();
 
     // 2. Suscribirse al canal global de mensajes
     this.msgSubscription = this.chatService.messagesSubject.subscribe(msg => {
@@ -54,13 +63,16 @@ export class StudentChatsComponent implements OnInit, OnDestroy, AfterViewChecke
     if (this.msgSubscription) this.msgSubscription.unsubscribe();
   }
 
-  loadAdvisorsMock() {
-    // TODO: En el futuro esto vendrá de GET /api/v1/chats/mine
-    // Nótese que aquí ponemos nombres de ASESORES
-    this.chatsList = [
-      { id: 2, studentName: 'Profe Pedro (Matemáticas)', lastMessage: 'Nos vemos en clase', unreadCount: 0 },
-      { id: 5, studentName: 'Dra. Ana (Física)', lastMessage: 'Hola', unreadCount: 2 }
-    ];
+  // 🚀 Nuevo: cargar chats reales del backend
+  loadMyChats() {
+    this.chatService.getMyChats().subscribe({
+      next: (chats) => {
+        console.log('✅ [Alumno] Chats cargados:', chats);
+        this.chatsList = chats;
+        this.cd.detectChanges();
+      },
+      error: (err) => console.error('Error cargando chats del alumno', err)
+    });
   }
 
   selectChat(chat: ChatConversation) {
@@ -94,7 +106,8 @@ export class StudentChatsComponent implements OnInit, OnDestroy, AfterViewChecke
 
   private scrollToBottom(): void {
     try {
-      this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
-    } catch(err) { }
+      this.scrollContainer.nativeElement.scrollTop =
+        this.scrollContainer.nativeElement.scrollHeight;
+    } catch (err) {}
   }
 }

@@ -1,0 +1,63 @@
+<div class="chat-layout">
+
+  <aside class="chat-sidebar">
+    <div class="sidebar-header">
+      <h2>Mis Asesores</h2>
+    </div>
+
+    <div class="conversations-list">
+      <div
+        *ngFor="let chat of chatsList"
+        class="chat-item"
+        [class.active]="selectedChatId === chat.id"
+        (click)="selectChat(chat)">
+
+        <div class="chat-avatar student-theme">
+          {{ chat.studentName.charAt(0) }}
+        </div>
+
+        <div class="chat-info">
+          <div class="chat-name">{{ chat.studentName }}</div>
+          <div class="chat-preview">{{ chat.lastMessage }}</div>
+        </div>
+
+        <div *ngIf="chat.unreadCount" class="badge">{{ chat.unreadCount }}</div>
+      </div>
+    </div>
+  </aside>
+
+  <section class="chat-area">
+
+    <div *ngIf="selectedChatId" class="chat-header">
+      <div class="header-avatar student-theme">{{ selectedChatName.charAt(0) }}</div>
+      <h3>{{ selectedChatName }}</h3>
+    </div>
+
+    <div #scrollContainer class="messages-container" *ngIf="selectedChatId; else emptyState">
+      <div *ngFor="let msg of messages" class="message-bubble" [class.mine]="msg.isMine">
+        <div class="bubble-content">
+          {{ msg.content }}
+        </div>
+        <span class="msg-time">{{ msg.timestamp | date:'shortTime' }}</span>
+      </div>
+    </div>
+
+    <div *ngIf="selectedChatId" class="input-area">
+      <input
+        type="text"
+        [(ngModel)]="newMessageText"
+        (keyup.enter)="sendMessage()"
+        placeholder="Escribe tu duda..."
+      >
+      <button class="send-btn student-theme" (click)="sendMessage()">➤</button>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="empty-chat-state">
+        <div class="empty-icon">🎓</div>
+        <p>Selecciona un asesor para consultar tus dudas.</p>
+      </div>
+    </ng-template>
+
+  </section>
+</div>

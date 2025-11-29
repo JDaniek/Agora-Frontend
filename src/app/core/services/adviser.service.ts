@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '@env/environment';
-import {Observable, map} from 'rxjs';
+import {Observable, map, of} from 'rxjs';
 
 // --- INTERFACES ---
 
@@ -46,6 +46,11 @@ export interface ClassResponse {
   isActive?: boolean;
 }
 
+//Datos para las especialidades
+export interface Specialty {
+  id: number;
+  name: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -178,6 +183,31 @@ export class AdviserService {
   updateClass(classId: number, data: Partial<ClassResponse>): Observable<ClassResponse> {
     const url = `${this.apiUrl}${environment.endpoints.classes.byId.replace(':id', classId.toString())}`;
     return this.http.patch<ClassResponse>(url, data);
+  }
+
+
+  /**
+   * Obtener lista de especialidades (Catálogo)
+   */
+  getSpecialties(): Observable<Specialty[]> {
+    // Aquí podrías hacer: return this.http.get<Specialty[]>(`${this.apiUrl}/catalogs/specialties`);
+    // Pero usaremos tus datos de la DB directamente:
+    const dbSpecialties = [
+      {id: 1, name: 'Ciencias exactas'},
+      {id: 2, name: 'Ciencias Naturales'},
+      {id: 3, name: 'Ciencias Sociales'},
+      {id: 4, name: 'Idiomas'},
+      {id: 5, name: 'Artes'},
+      {id: 6, name: 'Humanidades'},
+      {id: 7, name: 'Comunicación'},
+      {id: 8, name: 'Artes y Creatividad'},
+      {id: 9, name: 'Negocios'},
+      {id: 10, name: 'Economía'},
+      {id: 11, name: 'Soft Skills'},
+      {id: 12, name: 'Salud'},
+      {id: 13, name: 'Bienestar'}
+    ];
+    return of(dbSpecialties);
   }
 
 

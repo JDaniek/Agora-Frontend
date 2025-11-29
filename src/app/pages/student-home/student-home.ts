@@ -44,6 +44,8 @@ import {
   NotificationDto
 } from '../../core/services/notification.service';
 
+import { StudentChatsComponent } from './components/student-chats/student-chats.component';
+
 /* Modelo para la tarjeta del asesor en la UI */
 interface AdviserCardView {
   id: number;
@@ -86,7 +88,14 @@ interface Notice {
 @Component({
   selector: 'app-student-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, AdviserDetailModal, NotificationsModal],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink,
+    AdviserDetailModal,
+    NotificationsModal,
+    StudentChatsComponent   // ⬅️ agregado
+  ],
   templateUrl: './student-home.html',
   styleUrls: ['./student-home.css']
 })
@@ -101,6 +110,12 @@ export class StudentHome implements OnInit, OnDestroy {
   isSidebarCollapsed = false;
   isMobileSidebarOpen = false;
   activeSection = 'inicio';
+
+  /* Control de Vistas (traído del Archivo 1) */
+  currentView: 'home' | 'chats' | 'favoritos' = 'home';
+
+  /* Datos usuario (para mostrar nombre en la UI, como en Archivo 1) */
+  userName = 'Estudiante';
 
   /* Catálogos y filtros (de momento estáticos) */
   lugares: string[] = ['CHIS', 'JAL', 'CDMX', 'NL'];
@@ -182,6 +197,13 @@ export class StudentHome implements OnInit, OnDestroy {
   /* Ciclo de vida */
 
   ngOnInit(): void {
+    // 🧑‍🎓 Nombre del alumno desde localStorage (igual que en Archivo 1)
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const parsed = JSON.parse(userStr);
+      this.userName = parsed.firstName ?? this.userName;
+    }
+
     // Perfil
     this.loadMyProfile().subscribe();
 
@@ -505,6 +527,12 @@ export class StudentHome implements OnInit, OnDestroy {
     this.router.navigate(['/complete-profile']);
   }
 
+  /* Control de vista (traído del Archivo 1) */
+
+  setView(view: 'home' | 'chats' | 'favoritos'): void {
+    this.currentView = view;
+  }
+
   /* Utilidades */
 
   trackByStr(_: number, value: string): string {
@@ -526,7 +554,9 @@ export class StudentHome implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    localStorage.clear();
+    // Versión del Archivo 1: limpiar solo token y user
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.router.navigate(['/login']);
   }
 

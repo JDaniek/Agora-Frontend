@@ -33,11 +33,12 @@
     </div>
 
     <nav class="sidebar-nav" aria-label="Navegación principal">
+      <!-- Inicio -> pone la vista en 'home' -->
       <button
         type="button"
         class="nav-item"
         [class.active]="activeSection === 'inicio'"
-        (click)="onNavigate('inicio')"
+        (click)="onNavigate('inicio'); setView('home')"
       >
         <span class="nav-icon">IN</span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Inicio</span>
@@ -67,11 +68,22 @@
         </span>
       </button>
 
+      <!-- Nuevo botón: Chats (usa currentView) -->
+      <button
+        type="button"
+        class="nav-item"
+        [class.active]="currentView === 'chats'"
+        (click)="setView('chats')"
+      >
+        <span class="nav-icon">CH</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">Chats</span>
+      </button>
+
       <button
         type="button"
         class="nav-item"
         [class.active]="activeSection === 'favoritos'"
-        (click)="onNavigate('favoritos')"
+        (click)="onNavigate('favoritos'); setView('favoritos')"
       >
         <span class="nav-icon">FV</span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Favoritos</span>
@@ -131,6 +143,11 @@
         >
           ☰
         </button>
+
+        <!-- (Opcional) saludo al alumno, usando userName del TS -->
+        <div class="header-greeting">
+          Hola, {{ userName }}
+        </div>
 
         <div class="search-area">
           <div class="search-box">
@@ -242,7 +259,12 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main class="main-content">
-      <section class="content-grid">
+
+      <!-- VISTA HOME (asesores + agenda) -->
+      <section
+        class="content-grid"
+        *ngIf="currentView === 'home'"
+      >
         <!-- COLUMNA IZQUIERDA -->
         <div class="content-main">
           <!-- Listado de asesores -->
@@ -343,7 +365,7 @@
           </section>
         </div>
 
-        <!-- COLUMNA DERECHA: solo Agenda -->
+        <!-- COLUMNA DERECHA: Agenda -->
         <aside class="content-aside">
           <!-- Calendario / Agenda -->
           <section class="calendar-card">
@@ -434,6 +456,22 @@
           </section>
         </aside>
       </section>
+
+      <!-- VISTA CHATS -->
+      <section
+        *ngIf="currentView === 'chats'"
+        style="height: calc(100vh - 140px);"
+      >
+        <app-student-chats></app-student-chats>
+      </section>
+
+      <!-- VISTA FAVORITOS (placeholder básico) -->
+      <section *ngIf="currentView === 'favoritos'" class="content-grid">
+        <div class="content-main">
+          <h2>Favoritos</h2>
+          <p>Aquí podrás ver tus asesores marcados como favoritos.</p>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -450,8 +488,8 @@
     [notifications]="notifications"
     [isOpen]="isNotificationsModalOpen"
     [currentFilter]="currentNotificationFilter"
-
-    [isLoading]="isLoadingNotifications" (close)="closeNotifications()"
+    [isLoading]="isLoadingNotifications"
+    (close)="closeNotifications()"
     (acceptRequest)="onAcceptRequest($event)"
     (rejectRequest)="onRejectRequest($event)"
     (filterChange)="onNotificationFilterChange($event)"

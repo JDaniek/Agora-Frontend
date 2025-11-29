@@ -6,7 +6,6 @@
   </header>
 
   <nav class="sidebar-menu" [class.open]="isSidebarOpen">
-
     <div class="sidebar-brand">
       <h2>AGORA</h2>
       <p class="role-badge">Panel Asesor</p>
@@ -14,30 +13,22 @@
 
     <div class="menu-list">
       <a class="menu-item" [class.active]="currentView === 'inicio'" (click)="setView('inicio'); closeSidebar()">
-        <span class="icon">🏠</span>
-        Solicitudes
+        <span class="icon">🏠</span> Solicitudes
       </a>
-
       <a class="menu-item" [class.active]="currentView === 'clases'" (click)="setView('clases'); closeSidebar()">
-        <span class="icon">📚</span>
-        Mis Clases
+        <span class="icon">📚</span> Mis Clases
       </a>
-
       <a class="menu-item" [class.active]="currentView === 'chats'" (click)="setView('chats'); closeSidebar()">
-        <span class="icon">💬</span>
-        Chats
+        <span class="icon">💬</span> Chats
       </a>
-
       <a class="menu-item" [class.active]="currentView === 'resenas'" (click)="setView('resenas'); closeSidebar()">
-        <span class="icon">⭐</span>
-        Reseñas
+        <span class="icon">⭐</span> Reseñas
       </a>
     </div>
 
     <div class="sidebar-footer">
       <button class="logout-btn" (click)="logout()">
-        <span class="icon">🚪</span>
-        Cerrar sesión
+        <span class="icon">🚪</span> Cerrar sesión
       </button>
     </div>
   </nav>
@@ -59,13 +50,13 @@
 
       <div *ngIf="loading" class="loading-state">
         <div class="spinner"></div>
-        <p>Cargando información...</p>
+        <p>Cargando solicitudes...</p>
       </div>
 
       <div *ngIf="!loading" class="cards-grid">
-
         <article *ngFor="let sol of solicitudes" class="request-card">
           <div class="card-status-line"></div>
+
           <div class="card-header-row">
             <div class="card-avatar">
               <img *ngIf="sol.sender?.avatarUrl" [src]="sol.sender?.avatarUrl" alt="Avatar">
@@ -80,9 +71,7 @@
           </div>
 
           <div class="card-body">
-            <p class="request-desc">
-              {{ sol.message }}
-            </p>
+            <p class="request-desc">{{ sol.message }}</p>
           </div>
 
           <div class="card-actions">
@@ -94,126 +83,20 @@
         <div *ngIf="!loading && solicitudes.length === 0" class="empty-state">
           <p>🎉 ¡Estás al día! No hay solicitudes pendientes.</p>
         </div>
-
       </div>
     </section>
 
-    <section *ngIf="currentView === 'clases'" class="view-section">
-      <header class="section-header">
-        <div class="welcome-text">
-          <h1>Mis Clases</h1>
-          <p>Gestiona tus sesiones y horarios programados</p>
-        </div>
-        <button class="btn-create">+ Nueva Clase</button>
-      </header>
+    <app-mis-clases *ngIf="currentView === 'clases'"></app-mis-clases>
 
-      <div *ngIf="loading" class="loading-state">
-        <div class="spinner"></div>
-        <p>Cargando tus clases...</p>
-      </div>
 
-      <div *ngIf="!loading" class="cards-grid">
-
-        <article *ngFor="let clase of clases" class="class-card">
-          <div class="class-header">
-            <span class="class-date">
-              📅 {{ clase.classDate | date:'mediumDate' }}
-            </span>
-            <span class="class-badge" [class.active]="clase.isActive !== false">
-              {{ clase.isActive !== false ? 'Activa' : 'Cancelada' }}
-            </span>
-          </div>
-
-          <h3 class="class-title">{{ clase.title }}</h3>
-          <p class="class-desc">{{ clase.description }}</p>
-
-          <div class="class-stats">
-            <div class="stat-item">
-              <span class="icon">👥</span>
-              <span>Cupo: {{ clase.capacityPerSlot }}</span>
-            </div>
-          </div>
-
-          <div class="card-actions">
-            <button class="btn-action secondary" (click)="openEditModal(clase)">
-              ✏️ Editar
-            </button>
-
-            <button class="btn-action delete" (click)="onDeleteClass(clase.id)">
-              🗑️ Eliminar
-            </button>
-
-            <button class="btn-action primary">Ver Alumnos</button>
-          </div>
-        </article>
-
-        <div *ngIf="!loading && clases.length === 0" class="empty-state">
-          <p>No tienes clases programadas. ¡Crea la primera!</p>
-        </div>
-
-      </div>
-    </section>
-
-    <section *ngIf="currentView === 'chats'" class="view-section">
-      <h1>Mis Chats</h1>
-      <p>Aquí se cargará el componente de chats...</p>
-    </section>
+    <div *ngIf="currentView === 'chats'" class="h-full-container">
+      <app-mis-chats></app-mis-chats>
+    </div>
 
     <section *ngIf="currentView === 'resenas'" class="view-section">
       <h1>Reseñas</h1>
-      <p>Aquí se cargará el componente de reseñas...</p>
+      <p>Próximamente...</p>
     </section>
 
   </main>
-
-  <div class="modal-overlay" *ngIf="isEditModalOpen">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2>Editar Clase</h2>
-        <button class="close-btn" (click)="closeEditModal()">×</button>
-      </div>
-
-      <div class="modal-body">
-        <form (ngSubmit)="saveClassChanges()">
-
-          <div class="form-group">
-            <label>Título</label>
-            <input type="text" [(ngModel)]="editingClass.title" name="title" required>
-          </div>
-
-          <div class="form-group">
-            <label>Descripción</label>
-            <textarea [(ngModel)]="editingClass.description" name="description" rows="3"></textarea>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Fecha</label>
-              <input type="date" [(ngModel)]="editingClass.classDate" name="classDate" required>
-            </div>
-
-            <div class="form-group">
-              <label>Cupo</label>
-              <input type="number" [(ngModel)]="editingClass.capacityPerSlot" name="capacity" required>
-            </div>
-          </div>
-
-          <div class="form-group checkbox">
-            <label>
-              <input type="checkbox" [(ngModel)]="editingClass.isActive" name="isActive">
-              Clase Activa (Visible para alumnos)
-            </label>
-          </div>
-
-          <div class="modal-actions">
-            <button type="button" class="btn-cancel" (click)="closeEditModal()">Cancelar</button>
-            <button type="submit" class="btn-save">Guardar Cambios</button>
-          </div>
-
-        </form>
-      </div>
-    </div>
-  </div>
-
-
 </div>

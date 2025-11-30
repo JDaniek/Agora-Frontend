@@ -1,5 +1,5 @@
 /* ===========================
-   VARIABLES (pueden ya existir en global)
+   VARIABLES
    =========================== */
 :root {
   --accent: #2563eb;
@@ -14,7 +14,6 @@
 /* ===========================
    BACKDROP
    =========================== */
-
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -38,11 +37,10 @@
 /* ===========================
    CONTENEDOR DEL MODAL
    =========================== */
-
 .modal-content {
   position: relative;
   background-color: #ffffff;
-  border-radius: 18px;
+  border-radius: 22px;
   width: 90%;
   max-width: 720px;
   max-height: 85vh;
@@ -68,24 +66,24 @@
 /* ===========================
    BOTÓN CERRAR
    =========================== */
-
 .close-btn {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: rgba(148, 163, 184, 0.15);
-  border: none;
-  border-radius: 999px;
-  width: 32px;
-  height: 32px;
-  font-size: 20px;
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #475569;
-  transition: background 0.15s ease, transform 0.1s ease;
-  z-index: 5;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: none;
+  background: #f3f4f6;
+  cursor: pointer;
+}
+
+.close-btn lucide-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .close-btn:hover {
@@ -94,26 +92,113 @@
 }
 
 /* ===========================
-   HEADER DEL MODAL
+   HEADER
    =========================== */
-
 .modal-header-profile {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 16px;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding-right: 32px; /* deja espacio para la X */
+  margin-bottom: 32px;
 }
 
-.modal-header-profile h2 {
+.avatar-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.avatar-large {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  border: 3px solid #ffffff;
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.25);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+}
+
+.avatar-fallback lucide-icon {
+  width: 36px;
+  height: 36px;
+}
+
+.header-info h2 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
   color: var(--text-main);
 }
 
-/* BOTÓN CONTACTAR */
+/* Chips (nivel + especialidades) */
+
+.chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.chip {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.chip-level {
+  background: #facc15;
+  color: #713f12;
+}
+
+.chip-tag {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+/* Rating badge */
+
+.rating-badge {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fffbeb;
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Ícono de estrella en el resumen */
+.rating-icon {
+  width: 18px;
+  height: 18px;
+}
+
+
+.rating-badge .rating-value {
+  margin-right: 2px;
+}
+
+/* Botón Contactar */
 
 .btn-contact {
   border: none;
@@ -126,9 +211,14 @@
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
   transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.btn-contact lucide-icon {
+  width: 16px;
+  height: 16px;
 }
 
 .btn-contact:hover:not(:disabled) {
@@ -146,12 +236,11 @@
 /* ===========================
    TABS
    =========================== */
-
 .tabs {
   display: flex;
   gap: 6px;
   border-bottom: 1px solid var(--border-subtle);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .tabs button {
@@ -159,13 +248,22 @@
   padding: 8px 0;
   border: none;
   background: transparent;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-muted);
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
   border-radius: 10px 10px 0 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.tabs button lucide-icon {
+  width: 14px;
+  height: 14px;
 }
 
 .tabs button:hover {
@@ -179,20 +277,16 @@
 }
 
 /* ===========================
-   CONTENIDO DE TABS
+   CONTENIDO
    =========================== */
-
 .tab-content {
-  margin-top: 8px;
+  margin-top: 6px;
   font-size: 14px;
   color: var(--text-main);
   overflow-y: auto;
-  /* altura máxima relativa al contenedor, deja espacio para header y tabs */
-  max-height: calc(85vh - 120px);
+  max-height: calc(85vh - 140px);
   padding-right: 4px;
 }
-
-/* Scroll fino dentro del contenido */
 
 .tab-content::-webkit-scrollbar {
   width: 6px;
@@ -207,99 +301,119 @@
   border-radius: 999px;
 }
 
-/* ===========================
-   TAB "PERFIL"
-   =========================== */
-
-.tab-content p {
-  margin: 0 0 8px;
+/* PERFIL */
+.bio {
+  margin: 0;
   color: var(--text-muted);
+  line-height: 1.6;
 }
 
-/* Aquí después puedes meter más estilos si agregas más info de perfil */
-
-/* ===========================
-   TAB "CLASES"
-   =========================== */
-
+/* CLASES */
 .class-item {
   padding: 10px 12px;
   margin-bottom: 8px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid var(--border-subtle);
   background: #ffffff;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
-.class-item strong {
-  display: block;
-  font-size: 14px;
-  color: var(--text-main);
-  margin-bottom: 2px;
+.class-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
 }
 
-.class-item small {
+.class-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 12px;
   color: var(--text-muted);
+  margin-top: 2px;
 }
 
-/* Mensaje cuando no hay clases */
+.icon-inline {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
 
-.tab-content > div:first-child {
-  /* el <div *ngIf="classes.length === 0">... */
+.dot-separator {
+  margin: 0 2px;
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.class-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.class-badge-active {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.empty-msg {
   font-size: 13px;
   color: var(--text-muted);
+  padding: 8px 0;
 }
 
 /* ===========================
-   RESPONSIVE
+   RESEÑAS
    =========================== */
-
-@media (max-width: 768px) {
-  .modal-content {
-    width: 95%;
-    max-height: 90vh;
-    padding: 18px 16px 16px;
-  }
-
-  .modal-header-profile {
-    flex-direction: column;
-    align-items: flex-start;
-    padding-right: 28px;
-  }
-
-  .modal-header-profile h2 {
-    font-size: 16px;
-  }
-
-  .btn-contact {
-    align-self: flex-start;
-    padding: 7px 14px;
-    font-size: 13px;
-  }
-
-  .tab-content {
-    max-height: calc(90vh - 130px);
-  }
-}
-
-.rating-badge {
-  background: #fffbeb;
-  color: #b45309;
-  padding: 4px 10px;
-  border-radius: 99px;
-  font-size: 13px;
-  font-weight: 600;
-  display: inline-block;
-  margin-top: 5px;
-}
-
-/* Formulario Reseña */
 .review-form {
+  width: 90%;
   background: #f9fafb;
   padding: 15px;
   border-radius: 12px;
   margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.review-form-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.review-form-header h4 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.review-form .icon-inline {
+  width: 16px;
+  height: 16px;
+}
+
+.rating-select {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.rating-select label {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.rating-select select {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 6px 8px;
+  font-size: 13px;
 }
 
 .review-form textarea {
@@ -307,8 +421,11 @@
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 10px;
-  margin-top: 10px;
+  margin-top: 8px;
   resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  font-size: 13px;
 }
 
 .review-form button {
@@ -317,36 +434,153 @@
   color: white;
   border: none;
   padding: 8px 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-/* Lista Reseñas */
+.review-form button:disabled {
+  opacity: 0.75;
+  cursor: default;
+}
+
+/* Lista reseñas */
+.reviews-list {
+  margin-top: 8px;
+}
+
 .review-item {
   border-bottom: 1px solid #f3f4f6;
-  padding: 15px 0;
+  padding: 12px 0;
 }
 
 .review-header {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
   margin-bottom: 6px;
 }
 
-.author {
-  font-weight: 600;
+.review-author-block {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.review-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0369a1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 14px;
+  font-weight: 600;
+}
+
+.author {
+  display: block;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.date {
+  display: block;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.review-rating {
+  display: flex;
+  gap: 2px;
+}
+
+/* Estrellas de la lista de reseñas */
+.star-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.4;
+}
+
+/* Estrella "rellena" cuando la calificación es mayor o igual */
+.star-icon.is-filled {
+  opacity: 1;
 }
 
 .comment {
   font-size: 13px;
   color: #4b5563;
   margin: 0;
+  line-height: 1.5;
 }
 
-.date {
-  font-size: 11px;
-  color: #9ca3af;
-  display: block;
-  margin-top: 4px;
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    max-height: 90vh;
+    padding: 18px 16px 16px;
+  }
+
+  .modal-header-profile {
+    grid-template-columns: 1fr;
+    justify-items: flex-start;
+    align-items: flex-start;
+    padding-right: 28px;
+  }
+
+  .btn-contact {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tab-content {
+    max-height: calc(90vh - 150px);
+  }
+}
+
+
+/* Tamaño base para todos los íconos dentro del modal */
+.modal-content lucide-icon {
+  display: inline-flex; /* para centrar el SVG */
+  align-items: center;
+  justify-content: center;
+  width: 20px; /* tamaño base */
+  height: 20px;
+  flex-shrink: 0; /* que no se aplasten en flex */
+}
+
+/* Asegurar que el SVG se ajuste al <lucide-icon> */
+.modal-content lucide-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+
+.tabs button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tabs button lucide-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Botón "Contactar" */
+.btn-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-contact lucide-icon {
+  width: 18px;
+  height: 18px;
 }

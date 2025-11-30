@@ -1,8 +1,10 @@
-import {Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, OnDestroy, ChangeDetectorRef, inject} from '@angular/core'; // inject añadido
 import {Router} from '@angular/router';
 import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 import {Subject, of} from 'rxjs';
 import {takeUntil, switchMap, tap, catchError} from 'rxjs/operators';
+import {LucideAngularModule} from 'lucide-angular';
 
 // Componentes Hijos
 import {AdvisorListComponent} from './components/advisor-list/advisor-list.component';
@@ -18,9 +20,15 @@ import {
 import {ProfileService} from '../../core/services/profile.service';
 import {ClassService} from '../../core/services/class.service';
 import {NotificationService, NotificationDto} from '../../core/services/notification.service';
-import {LucideAngularModule} from 'lucide-angular';
+import {AdviserService, Specialty} from '../../core/services/adviser.service'; // Importar AdviserService y Specialty
 
-/* Interfaces Locales */
+// Interfaces auxiliares para catálogos
+interface Opcion {
+  value: string;
+  label: string;
+}
+
+// Interfaces Locales (Calendario)
 interface Session {
   id: number;
   date: string;
@@ -38,17 +46,12 @@ interface CalendarDay {
   hasSessions: boolean;
 }
 
-interface Notice {
-  id: string;
-  title: string;
-  text: string;
-}
-
 @Component({
   selector: 'app-student-home',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     NotificationsModal,
     AdvisorListComponent,
     StudentChatsComponent,
@@ -58,6 +61,57 @@ interface Notice {
   styleUrls: ['./student-home.css']
 })
 export class StudentHome implements OnInit, OnDestroy {
+  // Servicios inyectados
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+  private profileService = inject(ProfileService);
+  private classService = inject(ClassService);
+  private notificationService = inject(NotificationService);
+  private adviserService = inject(AdviserService); // Inyectamos AdviserService para las materias
+
+  /* --- 1. VARIABLES PARA FILTROS (Vinculadas al HTML) --- */
+  searchTerm: string = '';
+  filterLugar: string = '';
+  filterNivel: string = '';
+  filterMateria: string = '';
+
+  /* --- 2. CATÁLOGOS REALES --- */
+  estadosMx: Opcion[] = [
+    {value: 'AGS', label: 'Aguascalientes'}, {value: 'BC', label: 'Baja California'},
+    {value: 'BCS', label: 'Baja California Sur'}, {value: 'CAMP', label: 'Campeche'},
+    {value: 'CHIS', label: 'Chiapas'}, {value: 'CHIH', label: 'Chihuahua'},
+    {value: 'CDMX', label: 'Ciudad de México'}, {value: 'COAH', label: 'Coahuila'},
+    {value: 'COL', label: 'Colima'}, {value: 'DGO', label: 'Durango'},
+    {value: 'GTO', label: 'Guanajuato'}, {value: 'GRO', label: 'Guerrero'},
+    {value: 'HGO', label: 'Hidalgo'}, {value: 'JAL', label: 'Jalisco'},
+    {value: 'MEX', label: 'Estado de México'}, {value: 'MICH', label: 'Michoacán'},
+    {value: 'MOR', label: 'Morelos'}, {value: 'NAY', label: 'Nayarit'},
+    {value: 'NL', label: 'Nuevo León'}, {value: 'OAX', label: 'Oaxaca'},
+    {value: 'PUE', label: 'Puebla'}, {value: 'QRO', label: 'Querétaro'},
+    {value: 'QROO', label: 'Quintana Roo'}, {value: 'SLP', label: 'San Luis Potosí'},
+    {value: 'SIN', label: 'Sinaloa'}, {value: 'SON', label: 'Sonora'},
+    {value: 'TAB', label: 'Tabasco'}, {value: 'TAM', label: 'Tamaulipas'},
+    {value: 'TLAX', label: 'Tlaxcala'}, {value: 'VER', label: 'Veracruz'},
+    {value: 'YUC', label: 'Yucatán'}, {value: 'ZAC', label: 'Zacatecas'},
+  ];
+
+  niveles: Opcion[] = [
+    {value: 'Primaria', label: 'Primaria'},
+    {value: 'Secundaria', label: 'Secundaria'},
+    {value: 'Preparatoria', label: 'Preparatoria'},
+    {value: 'Universidad', label: 'Universidad'},
+    {value: 'Licenciatura', label: 'Licenciatura'},
+    {value: 'Maestría', label: 'Maestría'},
+    {value: 'Doctorado', label: 'Doctorado'},
+    {value: 'Técnico', label: 'Técnico'},
+    {value: 'Diplomado', label: 'Diplomado'},
+    {value: 'Curso', label: 'Curso'},
+    {value: 'Taller', label: 'Taller'},
+    {value: 'Seminario', label: 'Seminario'},
+    {value: 'Otro', label: 'Otro'},
+  ];
+
+  tagsDisponibles: Specialty[] = []; // Se llenará desde la DB
 
   /* Estado general */
   topAvatarUrl: string | null = null;
@@ -86,22 +140,9 @@ export class StudentHome implements OnInit, OnDestroy {
   currentMonth = this.currentDate.getMonth();
   selectedDateKey: string = '';
   selectedDaySessions: Session[] = [];
-
   weekDays: string[] = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
-  /* Avisos */
-  notices: Notice[] = [
-    {id: '1', title: 'Nueva solicitud aceptada', text: 'Un asesor aceptó tu solicitud.'},
-    {id: '2', title: 'Recordatorio', text: 'Mañana tienes sesión.'}
-  ];
-
-  constructor(
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-    private profileService: ProfileService,
-    private classService: ClassService,
-    private notificationService: NotificationService
-  ) {
+  constructor() {
     this.selectedDateKey = this.buildDateKey(this.currentDate);
   }
 
@@ -111,6 +152,7 @@ export class StudentHome implements OnInit, OnDestroy {
 
     this.loadMyProfile();
     this.loadSessionsFromBackend();
+    this.loadSpecialties(); // <--- CARGAMOS LAS MATERIAS REALES
     this.setupNotificationsStream();
     this.onNotificationFilterChange('all');
   }
@@ -120,6 +162,15 @@ export class StudentHome implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  // --- Carga de Especialidades (Materias) ---
+  private loadSpecialties() {
+    this.adviserService.getSpecialties().subscribe({
+      next: (data) => this.tagsDisponibles = data,
+      error: (err) => console.error('Error cargando materias', err)
+    });
+  }
+
+  // --- Perfil ---
   private loadMyProfile(): void {
     this.isLoadingProfile = true;
     this.profileService.getMyProfile().subscribe({
@@ -131,13 +182,13 @@ export class StudentHome implements OnInit, OnDestroy {
     });
   }
 
-  /* --- MÉTODOS DE NAVEGACIÓN --- */
+  // --- Navegación ---
   setView(view: 'home' | 'chats' | 'favoritos'): void {
     this.currentView = view;
   }
 
   onNavigate(section: string): void {
-    console.log('Navegando a sección:', section);
+    console.log('Nav:', section);
     this.isMobileSidebarOpen = false;
   }
 
@@ -163,12 +214,9 @@ export class StudentHome implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
-  /* --- MÉTODOS DE CALENDARIO --- */
+  // --- Calendario ---
   private buildDateKey(date: Date): string {
-    const y = date.getFullYear();
-    const m = (date.getMonth() + 1).toString().padStart(2, '0');
-    const d = date.getDate().toString().padStart(2, '0');
-    return `${y}-${m}-${d}`;
+    return date.toISOString().split('T')[0];
   }
 
   private loadSessionsFromBackend(): void {
@@ -176,7 +224,7 @@ export class StudentHome implements OnInit, OnDestroy {
       next: (classes) => {
         this.upcomingSessions = classes.map(c => ({
           id: c.classId,
-          date: c.classDate, // Asegúrate que el backend mande YYYY-MM-DD
+          date: c.classDate,
           time: 'Sin horario',
           subject: c.title,
           advisor: `Tutor #${c.tutorId}`
@@ -244,7 +292,7 @@ export class StudentHome implements OnInit, OnDestroy {
     this.buildCalendar();
   }
 
-  /* --- MÉTODOS DE NOTIFICACIONES --- */
+  // --- Notificaciones ---
   toggleNotificationsPanel(): void {
     this.isNotificationsModalOpen = !this.isNotificationsModalOpen;
   }
@@ -260,24 +308,29 @@ export class StudentHome implements OnInit, OnDestroy {
 
   private setupNotificationsStream(): void {
     this.notificationFilter$.pipe(
-      tap(() => this.isLoadingNotifications = true),
+      tap(() => setTimeout(() => {
+        this.isLoadingNotifications = true;
+        this.notifications = [];
+        this.unreadCount = 0;
+      })),
       switchMap(filter => {
         const status = filter === 'all' ? undefined : filter;
         return this.notificationService.getMyNotifications(status).pipe(catchError(() => of([])));
       }),
       takeUntil(this.destroy$)
     ).subscribe(dtos => {
-      // Mapeo básico
-      this.notifications = dtos.map(d => ({
-        id: d.notificationId,
-        type: NotificationType.CLASS, // Ajusta según tu lógica real
-        userPhoto: d.senderPhotoUrl || null,
-        userName: `${d.senderFirstName} ${d.senderLastName}`,
-        timestamp: new Date(d.createdAt),
-        status: d.status
-      }));
-      this.unreadCount = this.notifications.length;
-      this.isLoadingNotifications = false;
+      setTimeout(() => {
+        this.notifications = dtos.map(d => ({
+          id: d.notificationId,
+          type: NotificationType.CLASS,
+          userPhoto: d.senderPhotoUrl || null,
+          userName: `${d.senderFirstName} ${d.senderLastName}`,
+          timestamp: new Date(d.createdAt),
+          status: d.status
+        }));
+        this.unreadCount = this.notifications.length;
+        this.isLoadingNotifications = false;
+      });
     });
   }
 

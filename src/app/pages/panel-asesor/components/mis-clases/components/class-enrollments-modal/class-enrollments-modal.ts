@@ -1,10 +1,8 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {Component, Input, Output, EventEmitter, OnInit, inject, ChangeDetectorRef} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 
-// CORRECCIÓN 1: La ruta necesita subir 6 niveles para llegar a 'app' y luego entrar a 'core'
-// Basado en tu árbol: pages -> panel-asesor -> components -> mis-clases -> components -> class-enrollments-modal
-import { AdviserService } from '../../../../../../core/services/adviser.service';
+import {AdviserService} from '../../../../../../core/services/adviser.service';
 
 @Component({
   selector: 'app-class-enrollments-modal',
@@ -19,35 +17,43 @@ export class ClassEnrollmentsModalComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
 
   private adviserService = inject(AdviserService);
+  private cd = inject(ChangeDetectorRef);
 
   students: any[] = [];
   loading = true;
 
   // Control del formulario de reseña
   expandedStudentId: number | null = null;
-  reviewForm = { rating: 5, comment: '' };
+  reviewForm = {rating: 5, comment: ''};
   isSubmitting = false;
 
   ngOnInit() {
     if (this.classId) {
       this.loadEnrollments();
+    } else {
+      this.loading = false;
     }
   }
 
   loadEnrollments() {
+    if (!this.classId) {
+      this.loading = false;
+      this.cd.detectChanges();
+      return;
+    }
+
     this.loading = true;
-    if (!this.classId) return;
 
     this.adviserService.getClassEnrollments(this.classId).subscribe({
-      // CORRECCIÓN 2: Tipado explícito (data: any[])
       next: (data: any[]) => {
         this.students = data;
         this.loading = false;
+        this.cd.detectChanges();   // Forzamos que la vista se actualice
       },
-      // CORRECCIÓN 2: Tipado explícito (err: any)
       error: (err: any) => {
         console.error(err);
         this.loading = false;
+        this.cd.detectChanges();   // También en error
       }
     });
   }
@@ -57,7 +63,7 @@ export class ClassEnrollmentsModalComponent implements OnInit {
       this.expandedStudentId = null;
     } else {
       this.expandedStudentId = studentId;
-      this.reviewForm = { rating: 5, comment: '' };
+      this.reviewForm = {rating: 5, comment: ''};
     }
   }
 
@@ -68,13 +74,18 @@ export class ClassEnrollmentsModalComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    this.adviserService.createStudentReview(studentId, this.reviewForm.rating, this.reviewForm.comment).subscribe({
+
+    this.adviserService.createStudentReview(
+      studentId,
+      this.reviewForm.rating,
+      this.reviewForm.comment
+    ).subscribe({
       next: () => {
         alert('Reseña enviada correctamente.');
         this.isSubmitting = false;
         this.expandedStudentId = null;
+        this.cd.detectChanges();
       },
-      // CORRECCIÓN 2: Tipado explícito (err: any)
       error: (err: any) => {
         this.isSubmitting = false;
         console.error(err);
@@ -83,6 +94,7 @@ export class ClassEnrollmentsModalComponent implements OnInit {
         } else {
           alert('Error al enviar la calificación.');
         }
+        this.cd.detectChanges();
       }
     });
   }

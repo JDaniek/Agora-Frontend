@@ -1,8 +1,19 @@
-<section class="student-layout" [class.sidebar-collapsed]="isSidebarCollapsed">
-
-  <aside class="sidebar" [class.is-collapsed]="isSidebarCollapsed" [class.is-mobile-open]="isMobileSidebarOpen">
+<section
+  class="student-layout"
+  [class.sidebar-collapsed]="isSidebarCollapsed"
+>
+  <!-- SIDEBAR -->
+  <aside
+    class="sidebar"
+    [class.is-collapsed]="isSidebarCollapsed"
+    [class.is-mobile-open]="isMobileSidebarOpen"
+  >
     <div class="sidebar-header">
-      <button type="button" class="sidebar-toggle" (click)="toggleSidebarCollapse()">
+      <button
+        type="button"
+        class="sidebar-toggle"
+        (click)="toggleSidebarCollapse()"
+      >
         <lucide-icon name="menu"></lucide-icon>
       </button>
 
@@ -15,38 +26,56 @@
     </div>
 
     <nav class="sidebar-nav">
-      <button class="nav-item" [class.active]="currentView === 'home'" (click)="setView('home'); onNavigate('inicio')">
-      <span class="nav-icon">
-        <lucide-icon name="home"></lucide-icon>
-      </span>
+      <button
+        class="nav-item"
+        [class.active]="currentView === 'home'"
+        (click)="setView('home'); onNavigate('inicio')"
+      >
+        <span class="nav-icon">
+          <lucide-icon name="home"></lucide-icon>
+        </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Inicio</span>
       </button>
 
-      <button class="nav-item" [class.active]="currentView === 'chats'" (click)="setView('chats'); onNavigate('chats')">
-      <span class="nav-icon">
-        <lucide-icon name="messages-square"></lucide-icon>
-      </span>
+      <button
+        class="nav-item"
+        [class.active]="currentView === 'chats'"
+        (click)="setView('chats'); onNavigate('chats')"
+      >
+        <span class="nav-icon">
+          <lucide-icon name="messages-square"></lucide-icon>
+        </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Chats</span>
       </button>
 
-      <button class="nav-item" [class.active]="currentView === 'favoritos'"
-              (click)="setView('favoritos'); onNavigate('favoritos')">
-      <span class="nav-icon">
-        <lucide-icon name="star"></lucide-icon>
-      </span>
+      <button
+        class="nav-item"
+        [class.active]="currentView === 'favoritos'"
+        (click)="setView('favoritos'); onNavigate('favoritos')"
+      >
+        <span class="nav-icon">
+          <lucide-icon name="star"></lucide-icon>
+        </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Favoritos</span>
       </button>
     </nav>
 
     <div class="sidebar-footer">
-      <button type="button" class="logout-btn" (click)="logout()">Cerrar sesión</button>
+      <button type="button" class="logout-btn" (click)="logout()">
+        Cerrar sesión
+      </button>
     </div>
   </aside>
 
-  <div class="sidebar-backdrop" *ngIf="isMobileSidebarOpen" (click)="closeMobileSidebar()"></div>
+  <div
+    class="sidebar-backdrop"
+    *ngIf="isMobileSidebarOpen"
+    (click)="closeMobileSidebar()"
+  ></div>
 
+  <!-- ZONA PRINCIPAL -->
   <div class="main-area">
-
+    <!-- HEADER / NAV COMPLETO -->
     <header class="main-header">
       <div class="header-left">
         <button class="hamburger-btn" (click)="toggleMobileSidebar()">
@@ -55,31 +84,88 @@
         <div class="header-greeting">Hola, {{ userName }}</div>
       </div>
 
-      <div class="header-right">
-        <div class="header-actions">
-          <button type="button" class="icon-button" (click)="toggleNotificationsPanel()">
-            <lucide-icon name="bell"></lucide-icon>
-            <span
-              *ngIf="unreadCount > 0"
-              class="notif-dot">
-        </span>
-          </button>
+      <div class="header-center">
+        <div class="search-bar">
+          <lucide-icon name="search" class="search-icon"></lucide-icon>
+          <input
+            type="text"
+            placeholder="Buscar asesor por nombre o materia"
+            [(ngModel)]="searchTerm"
+          />
+        </div>
 
-          <button type="button" class="avatar-button" (click)="onEditProfile()">
-            <img *ngIf="topAvatarUrl" [src]="topAvatarUrl" alt="Perfil"/>
-            <span *ngIf="!topAvatarUrl" class="avatar-placeholder"></span>
-          </button>
+        <div class="filters-row">
+          <div class="filter-group">
+            <label>Lugar</label>
+            <select [(ngModel)]="filterLugar">
+              <option value="">Todos</option>
+              <option *ngFor="let estado of estadosMx" [value]="estado.value">
+                {{ estado.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Nivel</label>
+            <select [(ngModel)]="filterNivel">
+              <option value="">Todos</option>
+              <option *ngFor="let nivel of niveles" [value]="nivel.value">
+                {{ nivel.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Materia</label>
+            <select [(ngModel)]="filterMateria">
+              <option value="">Todas</option>
+              <option *ngFor="let tag of tagsDisponibles" [value]="tag.name">
+                {{ tag.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="header-actions">
+            <button
+              type="button"
+              class="icon-button"
+              (click)="toggleNotificationsPanel()"
+            >
+              <lucide-icon name="bell"></lucide-icon>
+              <span *ngIf="unreadCount > 0" class="notif-dot"></span>
+            </button>
+
+            <button
+              type="button"
+              class="avatar-button"
+              (click)="onEditProfile()"
+            >
+              <img
+                *ngIf="topAvatarUrl"
+                [src]="topAvatarUrl"
+                alt="Perfil"
+              />
+              <span *ngIf="!topAvatarUrl" class="avatar-placeholder"></span>
+            </button>
+          </div>
         </div>
       </div>
     </header>
 
-
+    <!-- CONTENIDO -->
     <main class="main-content">
-
+      <!-- HOME -->
       <div class="content-grid" *ngIf="currentView === 'home'">
-
         <div class="content-main">
-          <app-advisor-list></app-advisor-list>
+          <!-- Advisor list recibe filtros -->
+          <app-advisor-list
+            [searchTerm]="searchTerm"
+            [filterLugar]="filterLugar"
+            [filterNivel]="filterNivel"
+            [filterMateria]="filterMateria"
+          ></app-advisor-list>
         </div>
 
         <aside class="content-aside">
@@ -97,7 +183,12 @@
             </header>
 
             <div class="calendar-grid">
-              <div class="calendar-weekday" *ngFor="let w of weekDays">{{ w }}</div>
+              <div
+                class="calendar-weekday"
+                *ngFor="let w of weekDays"
+              >
+                {{ w }}
+              </div>
               <button
                 type="button"
                 class="calendar-day"
@@ -112,51 +203,58 @@
             </div>
 
             <div class="calendar-sessions">
-              <h3 class="calendar-sessions-title">Sesiones para {{ selectedDateLabel }}</h3>
+              <h3 class="calendar-sessions-title">
+                Sesiones para {{ selectedDateLabel }}
+              </h3>
 
-              <p class="calendar-empty" *ngIf="selectedDaySessions.length === 0">
+              <p
+                class="calendar-empty"
+                *ngIf="selectedDaySessions.length === 0"
+              >
                 No tienes sesiones para este día.
               </p>
 
-              <ul class="calendar-session-list" *ngIf="selectedDaySessions.length > 0">
-                <li class="calendar-session-item" *ngFor="let s of selectedDaySessions">
+              <ul
+                class="calendar-session-list"
+                *ngIf="selectedDaySessions.length > 0"
+              >
+                <li
+                  class="calendar-session-item"
+                  *ngFor="let s of selectedDaySessions | slice:0:5"
+                >
                   <div class="session-time">{{ s.time }}</div>
                   <div class="session-main">
-                    <div class="session-subject">{{ s.subject }}</div>
-                    <div class="session-advisor">con {{ s.advisor }}</div>
+                    <div class="session-subject">
+                      {{ s.subject }}
+                    </div>
+                    <div class="session-advisor">
+                      con {{ s.advisor }}
+                    </div>
                   </div>
                 </li>
               </ul>
             </div>
           </section>
-
-          <section class="notice-card" style="margin-top: 20px;">
-            <div class="notice-header">
-              <h3 class="notice-title">Avisos</h3>
-            </div>
-            <ul class="notice-list">
-              <li *ngFor="let n of notices" style="margin-bottom: 8px;">
-                <div style="font-weight: 600; font-size: 13px;">{{ n.title }}</div>
-                <div style="font-size: 12px; color: #666;">{{ n.text }}</div>
-              </li>
-            </ul>
-          </section>
-
         </aside>
       </div>
 
-      <div *ngIf="currentView === 'chats'" style="height: calc(100vh - 100px); width: 100%;">
+      <!-- CHATS -->
+      <div
+        *ngIf="currentView === 'chats'"
+        style="height: calc(100vh - 100px); width: 100%;"
+      >
         <app-student-chats></app-student-chats>
       </div>
 
+      <!-- FAVORITOS -->
       <div *ngIf="currentView === 'favoritos'" class="content-grid">
         <h2>Mis Favoritos</h2>
         <p>Próximamente...</p>
       </div>
-
     </main>
   </div>
 
+  <!-- MODAL DE NOTIFICACIONES -->
   <app-notifications-modal
     [notifications]="notifications"
     [isOpen]="isNotificationsModalOpen"
@@ -167,5 +265,4 @@
     (rejectRequest)="onRejectRequest($event)"
     (filterChange)="onNotificationFilterChange($event)"
   ></app-notifications-modal>
-
 </section>

@@ -1,7 +1,10 @@
 .modal-backdrop {
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -28,7 +31,10 @@
 }
 
 .close-btn {
-  background: none; border: none; font-size: 24px; cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
 }
 
 /* Lista */
@@ -50,16 +56,31 @@
 }
 
 .avatar-circle {
-  width: 40px; height: 40px;
+  width: 40px;
+  height: 40px;
   background: #e0f2fe;
   border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
 }
-.avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
 
-.student-name { font-weight: 600; font-size: 14px; }
-.student-status { font-size: 12px; color: #6b7280; }
+.avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.student-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.student-status {
+  font-size: 12px;
+  color: #6b7280;
+}
 
 .btn-rate {
   background: white;
@@ -70,7 +91,10 @@
   font-size: 12px;
   cursor: pointer;
 }
-.btn-rate:hover { background: #fffbeb; }
+
+.btn-rate:hover {
+  background: #fffbeb;
+}
 
 /* Formulario */
 .rate-form {
@@ -81,11 +105,18 @@
 }
 
 .rating-select select {
-  width: 100%; padding: 8px; margin-bottom: 8px; border-radius: 6px; border: 1px solid #ddd;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
 }
 
 .rate-form textarea {
-  width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ddd;
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
 }
 
 .btn-submit {
@@ -97,4 +128,25 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* sube esto también */
+}
+
+.modal-content {
+  background: #ffffff;
+  color: #111827; /* texto legible sí o sí */
+  width: 90%;
+  max-width: 500px;
+  border-radius: 12px;
+  padding: 20px;
+  max-height: 80vh;
+  overflow-y: auto;
 }

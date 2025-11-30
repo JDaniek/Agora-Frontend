@@ -1,27 +1,20 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  startWith,
-  map,
-  tap,
-  catchError
-} from 'rxjs/operators';
-import { of } from 'rxjs';
+import {Component, OnInit, OnChanges, SimpleChanges, Input, inject, ChangeDetectorRef} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ReactiveFormsModule, FormBuilder, FormGroup} from '@angular/forms';
+import {map, catchError} from 'rxjs/operators';
+import {of} from 'rxjs';
 
 // Servicios
-import { AdviserService, AdviserCardResponse } from '../../../../core/services/adviser.service';
+import {AdviserService, AdviserCardResponse} from '../../../../core/services/adviser.service';
 
-// Componentes Compartidos
+// Importar el Modal (Corregido)
 import {
   AdviserDetailModalComponent,
   AdviserDetail,
   Review
 } from '../../../../shared/components/adviser-detail-modal/adviser-detail-modal';
 
-/* Interfaces Locales (Movidas desde student-home) */
+// Interfaz para la vista
 export interface AdviserCardView {
   id: number;
   name: string;
@@ -37,34 +30,37 @@ export interface AdviserCardView {
 @Component({
   selector: 'app-advisor-list',
   standalone: true,
-  // ⬇️ usar AdviserDetailModalComponent aquí
+  // Importamos el componente del modal para usarlo en el HTML
   imports: [CommonModule, ReactiveFormsModule, AdviserDetailModalComponent],
   templateUrl: './advisor-list.component.html',
   styleUrls: ['./advisor-list.component.css']
 })
-export class AdvisorListComponent implements OnInit {
+export class AdvisorListComponent implements OnInit, OnChanges {
   private fb = inject(FormBuilder);
   private adviserService = inject(AdviserService);
   private cdr = inject(ChangeDetectorRef);
 
-  // Estados
+  // --- 1. INPUTS DESDE EL PADRE (STUDENT-HOME) ---
+  @Input() searchTerm: string = '';
+  @Input() filterLugar: string = '';
+  @Input() filterNivel: string = '';
+  @Input() filterMateria: string = '';
+
+  // Estados internos
   isLoadingAdvisers = false;
-  allAdvisers: AdviserCardView[] = [];
-  advisers: AdviserCardView[] = [];
+  allAdvisers: AdviserCardView[] = []; // Copia completa para filtrar localmente
+  advisers: AdviserCardView[] = [];    // Lista filtrada que se muestra
 
-  // Filtros
-  filtros: FormGroup;
-  lugares: string[] = ['CHIS', 'JAL', 'CDMX', 'NL'];
-  niveles: string[] = ['Bachillerato', 'Universidad', 'Maestría'];
-  materias: { id: number; name: string }[] = [
-    { id: 1, name: 'Ciencias Naturales' },
-    { id: 2, name: 'Idiomas' },
-    { id: 3, name: 'Artes' }
-  ];
+  filtros: FormGroup; // Se mantiene para compatibilidad con el HTML existente
 
-  // Modal Detalle
+  // Modal
   isModalOpen = false;
   selectedAdviser: AdviserDetail | null = null;
+
+  // Catálogos locales (usados por el HTML interno si se usa, aunque ahora mandan los inputs)
+  lugares: string[] = []; // Se llenarán si es necesario, pero el filtro viene de fuera
+  niveles: string[] = [];
+  materias: { id: number; name: string }[] = [];
 
   constructor() {
     this.filtros = this.fb.group({
@@ -77,36 +73,85 @@ export class AdvisorListComponent implements OnInit {
 
   ngOnInit() {
     this.loadInitialAdvisers();
-    this.setupFilters();
   }
 
-  // --- LÓGICA DE CARGA ---
+  // --- 2. REACCIONAR A CAMBIOS DEL PADRE ---
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      (changes['searchTerm'] ||
+        changes['filterLugar'] ||
+        changes['filterNivel'] ||
+        changes['filterMateria']) &&
+      this.allAdvisers.length > 0
+    ) {
+      this.applyFilters({
+        search: this.searchTerm,
+        lugar: this.filterLugar,
+        nivel: this.filterNivel,
+        materia: this.filterMateria
+      });
+    }
+  }
+
   private loadInitialAdvisers(): void {
     this.isLoadingAdvisers = true;
-    this.adviserService
-      .getAdvisers()
-      .pipe(
-        map((response: AdviserCardResponse[]) =>
-          response.map(a => this.mapApiToView(a))
-        ),
-        catchError(err => {
-          console.error('Error al obtener asesores', err);
-          return of<AdviserCardView[]>([]);
-        })
-      )
-      .subscribe(data => {
-        this.allAdvisers = data;
-        this.applyFilters(); // Aplicar filtros iniciales
-        this.isLoadingAdvisers = false;
-        this.cdr.detectChanges();
+    this.adviserService.getAdvisers().pipe(
+      map((response: AdviserCardResponse[]) => response.map(a => this.mapApiToView(a))),
+      catchError(err => {
+        console.error('Error cargando asesores', err);
+        return of<AdviserCardView[]>([]);
+      })
+    ).subscribe(data => {
+      this.allAdvisers = data;
+      // Aplicar filtros iniciales (por si el padre ya mandó algo)
+      this.applyFilters({
+        search: this.searchTerm,
+        lugar: this.filterLugar,
+        nivel: this.filterNivel,
+        materia: this.filterMateria
       });
+      this.isLoadingAdvisers = false;
+      this.cdr.detectChanges();
+    });
   }
 
+  // --- 3. LÓGICA DE FILTRADO ---
+  private applyFilters(overrides?: { search?: string; lugar?: string; nivel?: string; materia?: string }): void {
+    // Prioridad: Overrides (Inputs) > Formulario interno
+    const search = overrides?.search ?? this.filtros.value.search;
+    const lugar = overrides?.lugar ?? this.filtros.value.lugar;
+    const nivel = overrides?.nivel ?? this.filtros.value.nivel;
+    const materia = overrides?.materia ?? this.filtros.value.materia;
+
+    const term = (search || '').toLowerCase().trim();
+
+    this.advisers = this.allAdvisers.filter(adviser => {
+      const matchesSearch = !term || [
+        adviser.name,
+        adviser.description,
+        adviser.subject,
+        (adviser.tags || []).join(' ')
+      ].join(' ').toLowerCase().includes(term);
+
+      const matchesLugar = !lugar || adviser.location === lugar;
+      const matchesNivel = !nivel || adviser.nivel === nivel;
+      // Filtro de materia: busca si alguno de los tags coincide
+      const matchesMateria = !materia || (adviser.tags || []).some(t => t.toLowerCase().includes(String(materia).toLowerCase()));
+
+      return matchesSearch && matchesLugar && matchesNivel && matchesMateria;
+    });
+  }
+
+  // Funciones para el formulario interno (si se usa desde el HTML del hijo)
+  clearFilters(): void {
+    this.filtros.reset({search: '', lugar: '', nivel: '', materia: ''});
+    // Si limpias desde aquí, idealmente deberías avisar al padre, pero por ahora filtra local
+    this.applyFilters();
+  }
+
+  // Mapeo de respuesta API a Vista
   private mapApiToView(adviser: AdviserCardResponse): AdviserCardView {
-    const subject =
-      adviser.specialties && adviser.specialties.length
-        ? adviser.specialties[0]
-        : null;
+    const subject = adviser.specialties && adviser.specialties.length ? adviser.specialties[0] : null;
     return {
       id: adviser.userId,
       name: `${adviser.firstName} ${adviser.lastName}`,
@@ -120,68 +165,15 @@ export class AdvisorListComponent implements OnInit {
     };
   }
 
-  // --- LÓGICA DE FILTROS ---
-  private setupFilters() {
-    this.filtros.valueChanges
-      .pipe(
-        startWith(this.filtros.value),
-        debounceTime(200),
-        distinctUntilChanged(
-          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
-        )
-      )
-      .subscribe(() => this.applyFilters());
-  }
-
-  private applyFilters(): void {
-    const { search, lugar, nivel, materia } = this.filtros.value;
-    const searchTerm = (search || '').toLowerCase().trim();
-
-    this.advisers = this.allAdvisers.filter(adviser => {
-      const matchesSearch =
-        !searchTerm ||
-        [
-          adviser.name,
-          adviser.description,
-          adviser.subject,
-          (adviser.tags || []).join(' ')
-        ]
-          .join(' ')
-          .toLowerCase()
-          .includes(searchTerm);
-
-      const matchesLugar = !lugar || adviser.location === lugar;
-      const matchesNivel = !nivel || adviser.nivel === nivel;
-      const matchesMateria =
-        !materia ||
-        (adviser.tags || []).some(t =>
-          t.toLowerCase().includes(String(materia).toLowerCase())
-        );
-
-      return matchesSearch && matchesLugar && matchesNivel && matchesMateria;
-    });
-  }
-
-  clearFilters(): void {
-    this.filtros.reset({ search: '', lugar: '', nivel: '', materia: '' });
-  }
-
   // --- LÓGICA DEL MODAL ---
   openAdviserDetail(adviser: AdviserCardView): void {
-    const mockReviews: Review[] = [
-      {
-        userPhoto: null,
-        userName: 'Juan Pérez',
-        text: 'Excelente asesor.',
-        rating: 5
-      }
-    ];
-
-    this.selectedAdviser = {
+    // Mapeamos AdviserCardView a AdviserDetail (son compatibles casi al 100%)
+    const detail: AdviserDetail = {
       ...adviser,
-      rating: 4.5,
-      reviews: mockReviews
+      rating: 0, // Se cargará en el modal
+      reviews: [] // Se cargarán en el modal
     };
+    this.selectedAdviser = detail;
     this.isModalOpen = true;
   }
 

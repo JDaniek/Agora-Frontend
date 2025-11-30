@@ -29,6 +29,12 @@ import {
   Home,
   Bell,
   Search,
+  SquarePen,
+  Mail,
+  User,
+  UserRound,
+  CalendarDays,
+  MessageCircle,
 } from 'lucide-angular';
 
 export const appConfig: ApplicationConfig = {
@@ -36,9 +42,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideHttpClient(
-      withInterceptors([authInterceptor])
-    ),
+    provideHttpClient(withInterceptors([authInterceptor])),
     importProvidersFrom(
       LucideAngularModule.pick({
         Menu,
@@ -58,6 +62,12 @@ export const appConfig: ApplicationConfig = {
         Home,
         Bell,
         Search,
+        SquarePen,
+        Mail,
+        User,
+        UserRound,
+        CalendarDays,
+        MessageCircle,
       })
     ),
   ],

@@ -77,7 +77,8 @@ export class AdviserService {
   // Endpoint específico para búsqueda (legacy code)
   private readonly searchUrl = `${environment.apiUrl}${environment.endpoints.advisers.list}`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   // ==========================================
   //  1. FUNCIONALIDAD ESTUDIANTE (Buscar Asesores)
@@ -125,7 +126,7 @@ export class AdviserService {
       map(response => {
         console.log('0. Respuesta RAW del Backend:', response);
 
-        let items = [];
+        let items: any[] = [];
         if (Array.isArray(response)) {
           items = response;
         } else if (response && typeof response === 'object') {
@@ -144,7 +145,7 @@ export class AdviserService {
           createdAt: item.createdAt,
           sender: {
             id: 0,
-            fullName: `${item.senderFirstName || 'Usuario'} ${item.senderLastName || ''}`,
+            fullName: `${item.senderFirstName || 'Usuario'} ${item.senderLastName || ''}`.trim(),
             avatarUrl: item.senderPhotoUrl,
             level: 'Estudiante'
           }
@@ -163,7 +164,7 @@ export class AdviserService {
     status: 'accepted' | 'declined' | 'read'
   ): Observable<any> {
     const url = `${this.apiUrl}/notifications/${notificationId}`;
-    const body = { status };
+    const body = {status};
     console.log(`📡 Enviando PATCH a: ${url}`, body);
     return this.http.patch(url, body);
   }
@@ -182,6 +183,7 @@ export class AdviserService {
   // ==========================================
 
   /**
+   * 1. Vista Pública (Cuando un alumno ve al profe)
    * Obtener lista de reseñas de un profesor
    * GET /api/v1/reviews/teachers/{teacherId}
    */
@@ -191,7 +193,10 @@ export class AdviserService {
       map(data =>
         data.map(r => ({
           reviewId: r.id || r.reviewId,
-          studentName: r.studentName || 'Anónimo',
+
+          // El backend manda 'studentFullName', lo asignamos a nuestra propiedad 'studentName'
+          studentName: r.studentFullName || r.studentName || 'Anónimo',
+
           rating: r.rating,
           comment: r.comment,
           createdAt: r.createdAt,
@@ -216,7 +221,7 @@ export class AdviserService {
    */
   createTeacherReview(teacherId: number, rating: number, comment: string): Observable<any> {
     const url = `${this.apiUrl}/reviews/teachers/${teacherId}`;
-    return this.http.post(url, { rating, comment });
+    return this.http.post(url, {rating, comment});
   }
 
   // ==========================================
@@ -238,7 +243,7 @@ export class AdviserService {
    */
   createStudentReview(studentId: number, rating: number, comment: string): Observable<any> {
     const url = `${this.apiUrl}/reviews/students/${studentId}`;
-    return this.http.post(url, { rating, comment });
+    return this.http.post(url, {rating, comment});
   }
 
   // ==========================================
@@ -302,6 +307,7 @@ export class AdviserService {
   }
 
   /**
+   * 2. Vista Privada (Cuando el asesor ve SUS reseñas)
    * Obtener mis reseñas (Como Asesor)
    * GET /api/v1/reviews/mine
    */
@@ -311,7 +317,10 @@ export class AdviserService {
       map(data =>
         data.map(r => ({
           reviewId: r.id || r.reviewId,
-          studentName: r.studentName || 'Anónimo',
+
+          // El backend manda 'studentFullName', lo asignamos a nuestra propiedad 'studentName'
+          studentName: r.studentFullName || r.studentName || 'Anónimo',
+
           rating: r.rating,
           comment: r.comment,
           createdAt: r.createdAt,

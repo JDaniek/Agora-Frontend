@@ -65,20 +65,100 @@
       <p>No tienes clases registradas.</p>
     </div>
   </div>
-
   <!-- MODAL: Crear / Editar clase -->
   <div class="modal-overlay" *ngIf="isEditModalOpen">
     <div class="modal-box">
 
       <div class="modal-header">
-        <h2>{{ editingClass.id ? 'Editar Clase #' + editingClass.id : 'Nueva Clase' }}</h2>
+        <h2>
+          {{ editingClass.id ? ('Editar Clase #' + editingClass.id) : 'Nueva Clase' }}
+        </h2>
         <button class="close-btn" (click)="closeEditModal()">
           <lucide-icon name="x"></lucide-icon>
         </button>
       </div>
 
       <div class="modal-body">
-        <!-- ... formulario igual ... -->
+        <!-- TÍTULO -->
+        <div class="form-group">
+          <label for="classTitle">Título de la clase</label>
+          <input
+            id="classTitle"
+            name="classTitle"
+            type="text"
+            [(ngModel)]="editingClass.title"
+            placeholder="Ej. Cálculo Diferencial – Sesión 1"/>
+        </div>
+
+        <!-- DESCRIPCIÓN -->
+        <div class="form-group">
+          <label for="classDescription">Descripción</label>
+          <textarea
+            id="classDescription"
+            name="classDescription"
+            rows="3"
+            [(ngModel)]="editingClass.description"
+            placeholder="Ej. Límites e introducción..."></textarea>
+        </div>
+
+        <!-- FECHA + CUPO -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="classDate">Fecha</label>
+            <input
+              id="classDate"
+              name="classDate"
+              type="date"
+              [(ngModel)]="editingClass.classDate"/>
+          </div>
+
+          <div class="form-group">
+            <label for="capacityPerSlot">Cupo por sesión</label>
+            <input
+              id="capacityPerSlot"
+              name="capacityPerSlot"
+              type="number"
+              min="1"
+              [(ngModel)]="editingClass.capacityPerSlot"/>
+          </div>
+        </div>
+
+        <!-- SPECIALTY ID (select) -->
+        <div class="form-group">
+          <label for="specialtyId">Materia / Especialidad</label>
+          <select
+            id="specialtyId"
+            name="specialtyId"
+            [(ngModel)]="editingClass.specialtyId">
+            <option [ngValue]="null">Selecciona una especialidad</option>
+            <option
+              *ngFor="let sp of specialtiesList"
+              [ngValue]="sp.id">
+              {{ sp.name }} (ID: {{ sp.id }})
+            </option>
+          </select>
+        </div>
+
+        <!-- ACTIVA / INACTIVA -->
+        <div class="form-group checkbox">
+          <label>
+            <input
+              type="checkbox"
+              name="isActive"
+              [(ngModel)]="editingClass.isActive"/>
+            Clase activa
+          </label>
+        </div>
+
+        <!-- ACCIONES -->
+        <div class="modal-actions">
+          <button class="btn-cancel" type="button" (click)="closeEditModal()">
+            Cancelar
+          </button>
+          <button class="btn-save" type="button" (click)="saveClassChanges()">
+            {{ editingClass.id ? 'Guardar cambios' : 'Crear clase' }}
+          </button>
+        </div>
       </div>
 
     </div>

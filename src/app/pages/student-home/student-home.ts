@@ -1,18 +1,24 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { Subject, of } from 'rxjs';
-import { takeUntil, switchMap, tap, catchError } from 'rxjs/operators';
+import {Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
+import {Router} from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {Subject, of} from 'rxjs';
+import {takeUntil, switchMap, tap, catchError} from 'rxjs/operators';
 
 // Componentes Hijos
-import { AdvisorListComponent } from './components/advisor-list/advisor-list.component';
-import { StudentChatsComponent } from './components/student-chats/student-chats.component';
+import {AdvisorListComponent} from './components/advisor-list/advisor-list.component';
+import {StudentChatsComponent} from './components/student-chats/student-chats.component';
 
 // Modales y Servicios
-import { NotificationsModal, Notification, NotificationType, NotificationStatusFilter } from '../../shared/components/notifications-modal/notifications-modal';
-import { ProfileService } from '../../core/services/profile.service';
-import { ClassService } from '../../core/services/class.service';
-import { NotificationService, NotificationDto } from '../../core/services/notification.service';
+import {
+  NotificationsModal,
+  Notification,
+  NotificationType,
+  NotificationStatusFilter
+} from '../../shared/components/notifications-modal/notifications-modal';
+import {ProfileService} from '../../core/services/profile.service';
+import {ClassService} from '../../core/services/class.service';
+import {NotificationService, NotificationDto} from '../../core/services/notification.service';
+import {LucideAngularModule} from 'lucide-angular';
 
 /* Interfaces Locales */
 interface Session {
@@ -45,7 +51,8 @@ interface Notice {
     CommonModule,
     NotificationsModal,
     AdvisorListComponent,
-    StudentChatsComponent
+    StudentChatsComponent,
+    LucideAngularModule
   ],
   templateUrl: './student-home.html',
   styleUrls: ['./student-home.css']
@@ -84,8 +91,8 @@ export class StudentHome implements OnInit, OnDestroy {
 
   /* Avisos */
   notices: Notice[] = [
-    { id: '1', title: 'Nueva solicitud aceptada', text: 'Un asesor aceptó tu solicitud.' },
-    { id: '2', title: 'Recordatorio', text: 'Mañana tienes sesión.' }
+    {id: '1', title: 'Nueva solicitud aceptada', text: 'Un asesor aceptó tu solicitud.'},
+    {id: '2', title: 'Recordatorio', text: 'Mañana tienes sesión.'}
   ];
 
   constructor(
@@ -138,9 +145,17 @@ export class StudentHome implements OnInit, OnDestroy {
     this.router.navigate(['/complete-profile']);
   }
 
-  toggleSidebarCollapse(): void { this.isSidebarCollapsed = !this.isSidebarCollapsed; }
-  toggleMobileSidebar(): void { this.isMobileSidebarOpen = !this.isMobileSidebarOpen; }
-  closeMobileSidebar(): void { this.isMobileSidebarOpen = false; }
+  toggleSidebarCollapse(): void {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
+
+  toggleMobileSidebar(): void {
+    this.isMobileSidebarOpen = !this.isMobileSidebarOpen;
+  }
+
+  closeMobileSidebar(): void {
+    this.isMobileSidebarOpen = false;
+  }
 
   logout(): void {
     localStorage.removeItem('token');
@@ -206,21 +221,37 @@ export class StudentHome implements OnInit, OnDestroy {
   get selectedDateLabel(): string {
     const [year, month, day] = this.selectedDateKey.split('-').map(Number);
     const date = new Date(year, month - 1, day);
-    return date.toLocaleDateString('es-MX', { day: '2-digit', month: 'short' });
+    return date.toLocaleDateString('es-MX', {day: '2-digit', month: 'short'});
   }
 
   goToPreviousMonth(): void {
-    if (this.currentMonth === 0) { this.currentMonth = 11; this.currentYear--; } else { this.currentMonth--; }
+    if (this.currentMonth === 0) {
+      this.currentMonth = 11;
+      this.currentYear--;
+    } else {
+      this.currentMonth--;
+    }
     this.buildCalendar();
   }
+
   goToNextMonth(): void {
-    if (this.currentMonth === 11) { this.currentMonth = 0; this.currentYear++; } else { this.currentMonth++; }
+    if (this.currentMonth === 11) {
+      this.currentMonth = 0;
+      this.currentYear++;
+    } else {
+      this.currentMonth++;
+    }
     this.buildCalendar();
   }
 
   /* --- MÉTODOS DE NOTIFICACIONES --- */
-  toggleNotificationsPanel(): void { this.isNotificationsModalOpen = !this.isNotificationsModalOpen; }
-  closeNotifications(): void { this.isNotificationsModalOpen = false; }
+  toggleNotificationsPanel(): void {
+    this.isNotificationsModalOpen = !this.isNotificationsModalOpen;
+  }
+
+  closeNotifications(): void {
+    this.isNotificationsModalOpen = false;
+  }
 
   onNotificationFilterChange(filter: NotificationStatusFilter): void {
     this.currentNotificationFilter = filter;
@@ -250,6 +281,11 @@ export class StudentHome implements OnInit, OnDestroy {
     });
   }
 
-  onAcceptRequest(id: number) { this.notificationService.acceptRequest(id).subscribe(() => this.onNotificationFilterChange('all')); }
-  onRejectRequest(id: number) { this.notificationService.declineRequest(id).subscribe(() => this.onNotificationFilterChange('all')); }
+  onAcceptRequest(id: number) {
+    this.notificationService.acceptRequest(id).subscribe(() => this.onNotificationFilterChange('all'));
+  }
+
+  onRejectRequest(id: number) {
+    this.notificationService.declineRequest(id).subscribe(() => this.onNotificationFilterChange('all'));
+  }
 }

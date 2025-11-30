@@ -2,7 +2,7 @@
    VARIABLES DE DISEÑO
    =========================== */
 :root {
-  --sidebar-bg: #1e3a8a;
+  --sidebar-bg: #1d4ed8; /* azul tipo Figma */
   --sidebar-bg-soft: #1b4580;
   --sidebar-text: #f9fafb;
   --main-bg: #f3f4f6;
@@ -37,7 +37,7 @@
    =========================== */
 
 .sidebar {
-  background: linear-gradient(180deg, var(--sidebar-bg), var(--sidebar-bg-soft));
+  background: var(--sidebar-bg);
   color: var(--sidebar-text);
   display: flex;
   flex-direction: column;
@@ -134,9 +134,16 @@
 
 .nav-icon {
   width: 24px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 600;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-item lucide-icon {
+  width: 18px;
+  height: 18px;
+  color: inherit; /* hereda color del item */
 }
 
 .nav-label {
@@ -211,14 +218,22 @@
 }
 
 .hamburger-btn {
-  display: none; /* Solo visible en móvil */
+  display: none; /* visible sólo en móvil */
   background: #e5e7eb;
   border: none;
   width: 32px;
   height: 32px;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 0; /* ocultar el texto, sólo icono */
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburger-btn lucide-icon {
+  width: 18px;
+  height: 18px;
+  color: #374151;
 }
 
 .header-greeting {
@@ -251,6 +266,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.icon-button lucide-icon {
+  width: 18px;
+  height: 18px;
+  color: #4b5563;
 }
 
 .icon-button:hover {
@@ -501,6 +522,16 @@
 /* ===========================
    AVISOS (notice-card)
    =========================== */
+.notif-dot {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #ef4444;
+  box-shadow: 0 0 0 2px #ffffff;
+}
 
 .notice-card {
   background: #ffffff;
@@ -604,4 +635,10 @@
   .header-actions {
     gap: 10px;
   }
+}
+
+/*Regla genérica Lucide*/
+.student-layout lucide-icon {
+  display: inline-flex;
+  vertical-align: middle;
 }

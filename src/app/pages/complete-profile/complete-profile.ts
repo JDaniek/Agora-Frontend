@@ -1,16 +1,16 @@
-// Ruta sugerida: src/app/pages/complete-profile/complete-profile.ts
-import { Component, signal, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {Component, signal, OnInit, inject} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {
   ReactiveFormsModule,
   Validators,
   FormControl,
   FormGroup,
 } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { finalize, switchMap, catchError } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {Router} from '@angular/router';
+import {finalize, switchMap, catchError} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {AdviserService, Specialty} from '../../core/services/adviser.service';
 
 type Opcion = { value: string; label: string };
 
@@ -52,65 +52,78 @@ export class CompleteProfile implements OnInit {
   // Endpoint para subir imagen y a la vez adjuntar
   private uploadApiUrl = 'http://localhost:8080/api/v1/media/upload-and-attach';
 
+  private adviserService = inject(AdviserService);
+
   /** ====== Catálogos ====== */
-  //Estados de la republica
+    // Estados de la república
   estadosMx: Opcion[] = [
-  { value: 'AGS', label: 'Aguascalientes' },
-  { value: 'BC',  label: 'Baja California' },
-  { value: 'BCS', label: 'Baja California Sur' },
-  { value: 'CAMP', label: 'Campeche' },
-  { value: 'CHIS', label: 'Chiapas' },
-  { value: 'CHIH', label: 'Chihuahua' },
-  { value: 'CDMX', label: 'Ciudad de México' },
-  { value: 'COAH', label: 'Coahuila' },
-  { value: 'COL', label: 'Colima' },
-  { value: 'DGO', label: 'Durango' },
-  { value: 'GTO', label: 'Guanajuato' },
-  { value: 'GRO', label: 'Guerrero' },
-  { value: 'HGO', label: 'Hidalgo' },
-  { value: 'JAL', label: 'Jalisco' },
-  { value: 'MEX', label: 'Estado de México' },
-  { value: 'MICH', label: 'Michoacán' },
-  { value: 'MOR', label: 'Morelos' },
-  { value: 'NAY', label: 'Nayarit' },
-  { value: 'NL',  label: 'Nuevo León' },
-  { value: 'OAX', label: 'Oaxaca' },
-  { value: 'PUE', label: 'Puebla' },
-  { value: 'QRO', label: 'Querétaro' },
-  { value: 'QROO', label: 'Quintana Roo' },
-  { value: 'SLP', label: 'San Luis Potosí' },
-  { value: 'SIN', label: 'Sinaloa' },
-  { value: 'SON', label: 'Sonora' },
-  { value: 'TAB', label: 'Tabasco' },
-  { value: 'TAM', label: 'Tamaulipas' },
-  { value: 'TLAX', label: 'Tlaxcala' },
-  { value: 'VER', label: 'Veracruz' },
-  { value: 'YUC', label: 'Yucatán' },
-  { value: 'ZAC', label: 'Zacatecas' }
-  ];
-  //Niveles
-  niveles: Opcion[] = [  { value: 'Universidad', label: 'Universidad' },
-  { value: 'Primaria', label: 'Primaria' },
-  { value: 'Secundaria', label: 'Secundaria' },
-  { value: 'Preparatoria', label: 'Preparatoria' },
-  { value: 'Licenciatura', label: 'Licenciatura' },
-  { value: 'Posgrado', label: 'Posgrado' },
-  { value: 'Tesis', label: 'Tesis' },
-  { value: 'Extracurricular', label: 'Extracurricular' },
-  { value: 'Tecnico', label: 'Técnico' }];
-
-  tagsDisponibles: { id: number; name: string }[] = [
-    { id: 1, name: 'Ciencias Naturales' },
-    { id: 2, name: 'Idiomas' },
-    {id:3,name:'Artes'}
+    {value: 'AGS', label: 'Aguascalientes'},
+    {value: 'BC', label: 'Baja California'},
+    {value: 'BCS', label: 'Baja California Sur'},
+    {value: 'CAMP', label: 'Campeche'},
+    {value: 'CHIS', label: 'Chiapas'},
+    {value: 'CHIH', label: 'Chihuahua'},
+    {value: 'CDMX', label: 'Ciudad de México'},
+    {value: 'COAH', label: 'Coahuila'},
+    {value: 'COL', label: 'Colima'},
+    {value: 'DGO', label: 'Durango'},
+    {value: 'GTO', label: 'Guanajuato'},
+    {value: 'GRO', label: 'Guerrero'},
+    {value: 'HGO', label: 'Hidalgo'},
+    {value: 'JAL', label: 'Jalisco'},
+    {value: 'MEX', label: 'Estado de México'},
+    {value: 'MICH', label: 'Michoacán'},
+    {value: 'MOR', label: 'Morelos'},
+    {value: 'NAY', label: 'Nayarit'},
+    {value: 'NL', label: 'Nuevo León'},
+    {value: 'OAX', label: 'Oaxaca'},
+    {value: 'PUE', label: 'Puebla'},
+    {value: 'QRO', label: 'Querétaro'},
+    {value: 'QROO', label: 'Quintana Roo'},
+    {value: 'SLP', label: 'San Luis Potosí'},
+    {value: 'SIN', label: 'Sinaloa'},
+    {value: 'SON', label: 'Sonora'},
+    {value: 'TAB', label: 'Tabasco'},
+    {value: 'TAM', label: 'Tamaulipas'},
+    {value: 'TLAX', label: 'Tlaxcala'},
+    {value: 'VER', label: 'Veracruz'},
+    {value: 'YUC', label: 'Yucatán'},
+    {value: 'ZAC', label: 'Zacatecas'},
   ];
 
-  /** ====== Iconos de chips ====== */
+  // Niveles
+  niveles: Opcion[] = [
+    {value: 'Universidad', label: 'Universidad'},
+    {value: 'Primaria', label: 'Primaria'},
+    {value: 'Secundaria', label: 'Secundaria'},
+    {value: 'Preparatoria', label: 'Preparatoria'},
+    {value: 'Licenciatura', label: 'Licenciatura'},
+    {value: 'Posgrado', label: 'Posgrado'},
+    {value: 'Tesis', label: 'Tesis'},
+    {value: 'Extracurricular', label: 'Extracurricular'},
+    {value: 'Tecnico', label: 'Técnico'},
+  ];
+
+  // Especialidades (alineadas con la DB vía AdviserService)
+  tagsDisponibles: Specialty[] = [];
+
+  /** ====== Iconos de chips (si los usas en el template) ====== */
   private tagIcons: Record<string, string> = {
-    'Ciencias Naturales': '🌿',
-    'Idiomas': '🗣️',
-    'Artes': '🎨',
+    'Ciencias exactas': '•',
+    'Ciencias Naturales': '•',
+    'Ciencias Sociales': '•',
+    'Idiomas': '•',
+    'Artes': '•',
+    'Humanidades': '•',
+    'Comunicación': '•',
+    'Artes y Creatividad': '•',
+    'Negocios': '•',
+    'Economía': '•',
+    'Soft Skills': '•',
+    'Salud': '•',
+    'Bienestar': '•',
   };
+
   iconFor(tag: { id: number; name: string }): string {
     return this.tagIcons[tag.name] ?? '•';
   }
@@ -134,7 +147,8 @@ export class CompleteProfile implements OnInit {
     description: new FormControl<string | null>(null),
   });
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+  }
 
   /** ====== Helpers ====== */
   private parseApiError(err: any): ApiError | null {
@@ -142,7 +156,7 @@ export class CompleteProfile implements OnInit {
       return err.error as ApiError;
     }
     if (typeof err?.error === 'string') {
-      return { code: 'UNKNOWN', message: err.error };
+      return {code: 'UNKNOWN', message: err.error};
     }
     return null;
   }
@@ -159,15 +173,33 @@ export class CompleteProfile implements OnInit {
     return this.selectedTags().has(tag.id);
   }
 
+  /** ====== Carga de catálogo de especialidades ====== */
+  private loadSpecialties() {
+    this.adviserService.getSpecialties().subscribe({
+      next: (data) => {
+        // Opcional: orden alfabético
+        this.tagsDisponibles = data.sort((a, b) => a.name.localeCompare(b.name));
+      },
+      error: (err) => {
+        console.error('Error cargando specialties para el perfil', err);
+        this.tagsDisponibles = [];
+      },
+    });
+  }
+
   /** ====== Ciclo de vida ====== */
   ngOnInit() {
+    // 1) Cargar catálogo de especialidades (alineado a DB)
+    this.loadSpecialties();
+
+    // 2) Cargar perfil del usuario
     this.http
       .get<ProfileResponse>(this.profileApiUrl)
       .pipe(
         catchError((error) => {
           if (error.status === 404) {
-            const apiErr = this.parseApiError(error);
             // Estado esperado: usuario aún no tiene perfil
+            const apiErr = this.parseApiError(error);
             this.infoBanner.set(
               'Aún no has creado tu perfil. Completa los campos y guarda para iniciarlo.'
             );
@@ -196,7 +228,7 @@ export class CompleteProfile implements OnInit {
           this.uploadedPhotoUrl.set(profile.photoUrl);
         }
 
-        // Tags
+        // Tags seleccionados
         const tagIds = new Set(profile.specialties.map((s) => s.id));
         this.selectedTags.set(tagIds);
       });
@@ -241,7 +273,6 @@ export class CompleteProfile implements OnInit {
     if (!file) {
       return of(this.uploadedPhotoUrl());
     }
-    // Si quisieras subir aquí, lo harías y devolverías la URL.
     // En este flujo ya se subió en onAvatarChange, así que devolvemos la URL actual.
     return of(this.uploadedPhotoUrl());
   }
@@ -263,7 +294,7 @@ export class CompleteProfile implements OnInit {
           const payload: UpdateProfileRequest = {
             description: formValue.description ?? null, // null, no ""
             photoUrl: uploadedPhotoUrl ?? null,         // null si no hay
-            city: null,                                  // aún no lo capturamos
+            city: null,                                 // aún no lo capturamos
             stateCode: formValue.stateCode ?? '',
             level: formValue.level ?? '',
             specialtyIds: Array.from(this.selectedTags()),
@@ -274,7 +305,6 @@ export class CompleteProfile implements OnInit {
       )
       .subscribe({
         next: () => {
-          // Limpia banners y navega
           this.errorBanner.set(null);
           this.infoBanner.set(null);
           alert('¡Perfil guardado con éxito!');
@@ -294,7 +324,6 @@ export class CompleteProfile implements OnInit {
               apiErr?.message ?? 'Conflicto al guardar. Revisa la información.'
             );
           } else if (err.status === 404) {
-            // No debería suceder con PUT upsert, pero por si acaso:
             this.errorBanner.set(
               apiErr?.message ?? 'El perfil no existe y no pudo crearse.'
             );

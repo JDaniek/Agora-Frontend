@@ -65,32 +65,6 @@ export const routes: Routes = [
       ),
   },
 
-  /* NUEVA RUTA: Sesiones agendadas */
-  {
-    path: 'sesiones-agendadas',
-    loadComponent: () =>
-      import('./pages/sesiones-agendadas/sesiones-agendadas').then(
-        m => m.SesionesAgendadasComponent
-      ),
-  },
-
-  /* NUEVA RUTA: Perfil del alumno */
-  {
-    path: 'perfil-alumno',
-    loadComponent: () =>
-      import('./pages/perfil-alumno/perfil-alumno').then(
-        m => m.PerfilAlumnoComponent
-      ),
-  },
-
-  /* NUEVA RUTA: Notificaciones */
-  {
-    path: 'notificaciones',
-    loadComponent: () =>
-      import('./pages/notificaciones/notificaciones').then(
-        m => m.NotificacionesComponent
-      ),
-  },
 
   /* NUEVA RUTA: Detalle de asesor */
   {

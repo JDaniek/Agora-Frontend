@@ -2,7 +2,10 @@
 
   <aside class="sidebar" [class.is-collapsed]="isSidebarCollapsed" [class.is-mobile-open]="isMobileSidebarOpen">
     <div class="sidebar-header">
-      <button type="button" class="sidebar-toggle" (click)="toggleSidebarCollapse()">☰</button>
+      <button type="button" class="sidebar-toggle" (click)="toggleSidebarCollapse()">
+        <lucide-icon name="menu"></lucide-icon>
+      </button>
+
       <div class="sidebar-brand" *ngIf="!isSidebarCollapsed">
         <div class="sidebar-text">
           <span class="sidebar-title">Agora</span>
@@ -13,15 +16,25 @@
 
     <nav class="sidebar-nav">
       <button class="nav-item" [class.active]="currentView === 'home'" (click)="setView('home'); onNavigate('inicio')">
-        <span class="nav-icon">IN</span> <span class="nav-label" *ngIf="!isSidebarCollapsed">Inicio</span>
+      <span class="nav-icon">
+        <lucide-icon name="home"></lucide-icon>
+      </span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">Inicio</span>
       </button>
 
       <button class="nav-item" [class.active]="currentView === 'chats'" (click)="setView('chats'); onNavigate('chats')">
-        <span class="nav-icon">CH</span> <span class="nav-label" *ngIf="!isSidebarCollapsed">Chats</span>
+      <span class="nav-icon">
+        <lucide-icon name="messages-square"></lucide-icon>
+      </span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">Chats</span>
       </button>
 
-      <button class="nav-item" [class.active]="currentView === 'favoritos'" (click)="setView('favoritos'); onNavigate('favoritos')">
-        <span class="nav-icon">FV</span> <span class="nav-label" *ngIf="!isSidebarCollapsed">Favoritos</span>
+      <button class="nav-item" [class.active]="currentView === 'favoritos'"
+              (click)="setView('favoritos'); onNavigate('favoritos')">
+      <span class="nav-icon">
+        <lucide-icon name="star"></lucide-icon>
+      </span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">Favoritos</span>
       </button>
     </nav>
 
@@ -36,24 +49,30 @@
 
     <header class="main-header">
       <div class="header-left">
-        <button class="hamburger-btn" (click)="toggleMobileSidebar()">☰</button>
+        <button class="hamburger-btn" (click)="toggleMobileSidebar()">
+          <lucide-icon name="menu"></lucide-icon>
+        </button>
         <div class="header-greeting">Hola, {{ userName }}</div>
       </div>
 
       <div class="header-right">
         <div class="header-actions">
           <button type="button" class="icon-button" (click)="toggleNotificationsPanel()">
-            <span class="icon-bell"></span>
-            <span *ngIf="unreadCount > 0" style="position: absolute; top: 0; right: 0; background: red; width: 8px; height: 8px; border-radius: 50%;"></span>
+            <lucide-icon name="bell"></lucide-icon>
+            <span
+              *ngIf="unreadCount > 0"
+              class="notif-dot">
+        </span>
           </button>
 
           <button type="button" class="avatar-button" (click)="onEditProfile()">
-            <img *ngIf="topAvatarUrl" [src]="topAvatarUrl" alt="Perfil" />
+            <img *ngIf="topAvatarUrl" [src]="topAvatarUrl" alt="Perfil"/>
             <span *ngIf="!topAvatarUrl" class="avatar-placeholder"></span>
           </button>
         </div>
       </div>
     </header>
+
 
     <main class="main-content">
 
@@ -117,8 +136,8 @@
             </div>
             <ul class="notice-list">
               <li *ngFor="let n of notices" style="margin-bottom: 8px;">
-                <div style="font-weight: 600; font-size: 13px;">{{n.title}}</div>
-                <div style="font-size: 12px; color: #666;">{{n.text}}</div>
+                <div style="font-weight: 600; font-size: 13px;">{{ n.title }}</div>
+                <div style="font-size: 12px; color: #666;">{{ n.text }}</div>
               </li>
             </ul>
           </section>

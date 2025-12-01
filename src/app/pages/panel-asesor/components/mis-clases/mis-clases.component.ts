@@ -1,11 +1,15 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { AdviserService, ClassResponse, Specialty } from '../../../../core/services/adviser.service';
+import {Component, OnInit, inject, ChangeDetectorRef} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {AdviserService, ClassResponse, Specialty} from '../../../../core/services/adviser.service';
 
-// Modal
-import { ClassEnrollmentsModalComponent } from './components/class-enrollments-modal/class-enrollments-modal';
-import { LucideAngularModule } from 'lucide-angular';
+// Modales
+import {ClassEnrollmentsModalComponent} from './components/class-enrollments-modal/class-enrollments-modal';
+import {
+  ClassEnrollmentManageModalComponent
+} from './components/class-enrollment-manage-modal/class-enrollment-manage-modal';
+
+import {LucideAngularModule} from 'lucide-angular';
 
 @Component({
   selector: 'app-mis-clases',
@@ -13,7 +17,8 @@ import { LucideAngularModule } from 'lucide-angular';
   imports: [
     CommonModule,
     FormsModule,
-    ClassEnrollmentsModalComponent,
+    ClassEnrollmentsModalComponent,        // modal original (ver + calificar alumnos)
+    ClassEnrollmentManageModalComponent,   // nuevo modal (gestionar inscripciones)
     LucideAngularModule,
   ],
   templateUrl: './mis-clases.component.html',
@@ -28,12 +33,19 @@ export class MisClasesComponent implements OnInit {
 
   specialtiesList: Specialty[] = [];
 
+  // Modal crear/editar clase
   isEditModalOpen = false;
   editingClass: Partial<ClassResponse> = {};
 
+  // Modal original: ver / calificar alumnos
   isEnrollmentsModalOpen = false;
   selectedClassIdForEnrollment: number | null = null;
   selectedClassTitle: string = '';
+
+  // Nuevo modal: gestionar inscripciones (listar + agregar alumnos)
+  isManageEnrollmentsModalOpen = false;
+  selectedClassIdForManage: number | null = null;
+  selectedClassTitleForManage: string = '';
 
   ngOnInit() {
     this.loadClases();
@@ -96,6 +108,7 @@ export class MisClasesComponent implements OnInit {
     this.loading = true;
 
     if (this.editingClass.id) {
+      // Actualizar clase existente
       this.adviserService.updateClass(this.editingClass.id, this.editingClass).subscribe({
         next: () => {
           alert('Clase actualizada');
@@ -108,6 +121,7 @@ export class MisClasesComponent implements OnInit {
         }
       });
     } else {
+      // Crear nueva clase
       this.adviserService.createClass(this.editingClass).subscribe({
         next: () => {
           alert('Clase creada');
@@ -137,6 +151,7 @@ export class MisClasesComponent implements OnInit {
     });
   }
 
+  // ===== Modal original: ver / calificar alumnos =====
   openEnrollments(clase: ClassResponse) {
     this.selectedClassIdForEnrollment = clase.id;
     this.selectedClassTitle = clase.title;
@@ -147,5 +162,18 @@ export class MisClasesComponent implements OnInit {
     this.isEnrollmentsModalOpen = false;
     this.selectedClassIdForEnrollment = null;
     this.selectedClassTitle = '';
+  }
+
+  // ===== Nuevo modal: gestionar inscripciones =====
+  openManageEnrollments(clase: ClassResponse) {
+    this.selectedClassIdForManage = clase.id;
+    this.selectedClassTitleForManage = clase.title;
+    this.isManageEnrollmentsModalOpen = true;
+  }
+
+  closeManageEnrollments() {
+    this.isManageEnrollmentsModalOpen = false;
+    this.selectedClassIdForManage = null;
+    this.selectedClassTitleForManage = '';
   }
 }

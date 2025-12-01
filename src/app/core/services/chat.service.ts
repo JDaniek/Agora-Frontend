@@ -20,6 +20,7 @@ export interface ChatConversation {
   studentAvatar?: string | null;    // Avatar del otro participante
   lastMessage?: string;
   unreadCount?: number;
+  otherParticipantId: number;
 }
 
 @Injectable({
@@ -46,6 +47,8 @@ export class ChatService {
       map(response =>
         response.map(chat => ({
           id: chat.chatId,
+          //NUEVO: guardamos el ID real del alumno
+          otherParticipantId: chat.otherParticipantId,
           // Mapeamos lo que viene del backend a lo que espera tu vista
           studentName: chat.otherParticipantName || 'Usuario',
           studentAvatar: chat.otherParticipantPhoto ?? null,

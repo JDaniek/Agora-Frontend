@@ -41,10 +41,16 @@
       </div>
 
       <div class="card-actions">
-        <!-- Ver alumnos -->
+        <!-- Ver / calificar alumnos (modal antiguo) -->
         <button class="btn-action primary" (click)="openEnrollments(clase)">
           <lucide-icon name="users" class="btn-icon"></lucide-icon>
           <span>Ver alumnos</span>
+        </button>
+
+        <!-- NUEVO: Gestionar alumnos (agregar / listar desde nuevo modal) -->
+        <button class="btn-action primary-outline" (click)="openManageEnrollments(clase)">
+          <lucide-icon name="user-plus" class="btn-icon"></lucide-icon>
+          <span>Gestionar alumnos</span>
         </button>
 
         <!-- Editar -->
@@ -65,6 +71,7 @@
       <p>No tienes clases registradas.</p>
     </div>
   </div>
+
   <!-- MODAL: Crear / Editar clase -->
   <div class="modal-overlay" *ngIf="isEditModalOpen">
     <div class="modal-box">
@@ -164,12 +171,20 @@
     </div>
   </div>
 
-  <!-- MODAL: Alumnos inscritos -->
+  <!-- MODAL: Alumnos inscritos + calificación (modal original) -->
   <app-class-enrollments-modal
     *ngIf="isEnrollmentsModalOpen"
     [classId]="selectedClassIdForEnrollment!"
     [classTitle]="selectedClassTitle"
     (close)="closeEnrollments()">
   </app-class-enrollments-modal>
+
+  <!-- NUEVO MODAL: Gestionar inscripciones (listar + agregar alumnos) -->
+  <app-class-enrollment-manage-modal
+    *ngIf="isManageEnrollmentsModalOpen"
+    [classId]="selectedClassIdForManage!"
+    [classTitle]="selectedClassTitleForManage"
+    (close)="closeManageEnrollments()">
+  </app-class-enrollment-manage-modal>
 
 </div>

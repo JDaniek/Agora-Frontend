@@ -31,9 +31,9 @@
         [class.active]="currentView === 'home'"
         (click)="setView('home'); onNavigate('inicio')"
       >
-        <span class="nav-icon">
-          <lucide-icon name="home"></lucide-icon>
-        </span>
+    <span class="nav-icon">
+      <lucide-icon name="home"></lucide-icon>
+    </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Inicio</span>
       </button>
 
@@ -42,9 +42,9 @@
         [class.active]="currentView === 'chats'"
         (click)="setView('chats'); onNavigate('chats')"
       >
-        <span class="nav-icon">
-          <lucide-icon name="messages-square"></lucide-icon>
-        </span>
+    <span class="nav-icon">
+      <lucide-icon name="messages-square"></lucide-icon>
+    </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Chats</span>
       </button>
 
@@ -53,9 +53,9 @@
         [class.active]="currentView === 'favoritos'"
         (click)="setView('favoritos'); onNavigate('favoritos')"
       >
-        <span class="nav-icon">
-          <lucide-icon name="star"></lucide-icon>
-        </span>
+    <span class="nav-icon">
+      <lucide-icon name="star"></lucide-icon>
+    </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Favoritos</span>
       </button>
 
@@ -64,9 +64,9 @@
         [class.active]="currentView === 'reviews'"
         (click)="setView('reviews'); onNavigate('reviews')"
       >
-        <span class="nav-icon">
-          <lucide-icon name="graduation-cap"></lucide-icon>
-        </span>
+    <span class="nav-icon">
+      <lucide-icon name="graduation-cap"></lucide-icon>
+    </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Evaluaciones</span>
       </button>
     </nav>
@@ -96,25 +96,19 @@
       </div>
 
       <div class="header-center">
-        <!-- 🔍 BARRA DE BÚSQUEDA -->
         <div class="search-bar">
           <lucide-icon name="search" class="search-icon"></lucide-icon>
           <input
             type="text"
             placeholder="Buscar asesor por nombre o materia"
             [(ngModel)]="searchTerm"
-            (ngModelChange)="onFiltersChange()"
           />
         </div>
 
-        <!-- 🎛 FILTROS -->
         <div class="filters-row">
           <div class="filter-group">
             <label>Lugar</label>
-            <select
-              [(ngModel)]="filterLugar"
-              (ngModelChange)="onFiltersChange()"
-            >
+            <select [(ngModel)]="filterLugar">
               <option value="">Todos</option>
               <option *ngFor="let estado of estadosMx" [value]="estado.value">
                 {{ estado.label }}
@@ -124,10 +118,7 @@
 
           <div class="filter-group">
             <label>Nivel</label>
-            <select
-              [(ngModel)]="filterNivel"
-              (ngModelChange)="onFiltersChange()"
-            >
+            <select [(ngModel)]="filterNivel">
               <option value="">Todos</option>
               <option *ngFor="let nivel of niveles" [value]="nivel.value">
                 {{ nivel.label }}
@@ -137,10 +128,7 @@
 
           <div class="filter-group">
             <label>Materia</label>
-            <select
-              [(ngModel)]="filterMateria"
-              (ngModelChange)="onFiltersChange()"
-            >
+            <select [(ngModel)]="filterMateria">
               <option value="">Todas</option>
               <option *ngFor="let tag of tagsDisponibles" [value]="tag.name">
                 {{ tag.name }}
@@ -182,10 +170,12 @@
       <!-- HOME -->
       <div class="content-grid" *ngIf="currentView === 'home'">
         <div class="content-main">
-          <!-- ✅ Ahora AdvisorList SOLO recibe la lista ya filtrada -->
+          <!-- Advisor list recibe filtros -->
           <app-advisor-list
-            [advisers]="advisers"
-            [isLoadingAdvisers]="isLoadingAdvisers"
+            [searchTerm]="searchTerm"
+            [filterLugar]="filterLugar"
+            [filterNivel]="filterNivel"
+            [filterMateria]="filterMateria"
           ></app-advisor-list>
         </div>
 
@@ -272,8 +262,6 @@
         <h2>Mis Favoritos</h2>
         <p>Próximamente...</p>
       </div>
-
-      <!-- REVIEWS -->
       <div *ngIf="currentView === 'reviews'" class="content-grid">
         <div class="content-main" style="grid-column: 1 / -1;">
           <app-student-reviews></app-student-reviews>

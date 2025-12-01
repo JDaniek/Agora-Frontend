@@ -16,7 +16,7 @@ import {LucideAngularModule} from 'lucide-angular';
 import {AdvisorListComponent, AdviserCardView} from './components/advisor-list/advisor-list.component';
 import {StudentChatsComponent} from './components/student-chats/student-chats.component';
 import {StudentReviewsComponent} from './components/student-reviews/student-reviews.component';
-
+import { StudentFavoritesComponent } from './components/student-favorites/student-favorites.component';
 // Modales y servicios
 import {
   NotificationsModal,
@@ -67,7 +67,8 @@ interface CalendarDay {
     AdvisorListComponent,
     StudentChatsComponent,
     LucideAngularModule,
-    StudentReviewsComponent
+    StudentReviewsComponent,
+    StudentFavoritesComponent,
   ],
   templateUrl: './student-home.html',
   styleUrls: ['./student-home.css']

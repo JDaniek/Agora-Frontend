@@ -1,23 +1,163 @@
-.favorites-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+/* Contenedor Principal */
+.favorites-container {
+  padding: 0 0 40px 0;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.favorites-header h2 {
-  font-size: 1.4rem;
-  font-weight: 600;
+/* Header de la sección */
+.section-header {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 1rem;
+}
+
+.section-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111827;
   margin: 0;
 }
 
-.favorites-header .subtitle {
-  margin: 0.25rem 0 0;
-  font-size: 0.9rem;
+.section-header p {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
   color: #6b7280;
 }
 
-.empty-text {
-  margin-top: 1rem;
-  font-size: 0.95rem;
+/* --- GRID DE TARJETAS --- */
+.cards-grid {
+  display: grid;
+  /* Esto crea columnas automáticas que miden mínimo 300px */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* --- TARJETA INDIVIDUAL --- */
+.adviser-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* IMPORTANTE: Esto evita que el contenido se salga de la tarjeta */
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+
+.adviser-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+}
+
+/* Botón Favorito (Estrella) */
+.card-bookmark {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #d1d5db;
+  z-index: 10;
+}
+
+.card-bookmark.active {
+  color: #f59e0b; /* Amarillo */
+}
+
+/* Header de la Tarjeta */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* --- AQUÍ ESTÁ LA SOLUCIÓN DEL DESBORDE --- */
+.card-avatar {
+  /* Forzamos un tamaño fijo pequeño */
+  width: 56px;
+  height: 56px;
+  /* Hacemos que sea un círculo */
+  border-radius: 50%;
+  /* Ocultamos cualquier parte de la imagen que se salga del círculo */
+  overflow: hidden;
+  flex-shrink: 0; /* Evita que el avatar se aplaste */
+  background-color: #e0f2fe;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Controlamos la imagen dentro del avatar */
+.card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Recorta la imagen para llenar el círculo sin deformarse */
+  display: block;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  /* Evita que el texto empuje demasiado si es muy largo */
+  min-width: 0;
+}
+
+.card-name {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Pone "..." si el nombre es muy largo */
+}
+
+.card-level {
+  font-size: 0.85rem;
   color: #6b7280;
+  margin-top: 2px;
+}
+
+.card-location {
+  font-size: 0.8rem;
+  color: #4b5563;
+  margin-top: 2px;
+}
+
+/* Tags */
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #f3f4f6;
+  color: #374151;
+  padding: 4px 10px;
+  border-radius: 99px;
+  border: 1px solid #e5e7eb;
+}
+
+/* Estados vacíos */
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 4rem;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 12px;
 }

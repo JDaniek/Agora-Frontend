@@ -1,18 +1,20 @@
 <div class="list-wrapper">
 
-  <!-- Estado de carga -->
   <div *ngIf="isLoadingAdvisers" class="loading-state">
     <p>Cargando asesores...</p>
   </div>
 
-  <!-- GRID DE ADVISERS -->
   <div class="advisers-grid" *ngIf="!isLoadingAdvisers && advisers.length > 0">
     <article class="adviser-card" *ngFor="let t of advisers">
 
-      <!-- Botón de favorito -->
-      <button type="button" class="card-bookmark" [class.is-on]="t.bookmarked">★</button>
+      <button
+        type="button"
+        class="card-bookmark"
+        [class.is-on]="t.bookmarked"
+        (click)="toggleFavorite(t, $event)">
+        ★
+      </button>
 
-      <!-- Header de la card -->
       <div class="card-header">
         <div class="card-avatar">
           <img *ngIf="t.avatarUrl" [src]="t.avatarUrl" [alt]="t.name"/>
@@ -26,17 +28,14 @@
         </div>
       </div>
 
-      <!-- Descripción -->
       <p class="card-description">
         {{ t.description || 'Este asesor aún no ha añadido una descripción.' }}
       </p>
 
-      <!-- Etiquetas -->
       <div class="card-tags" *ngIf="t.tags && t.tags.length">
         <span class="card-tag" *ngFor="let tag of t.tags">{{ tag }}</span>
       </div>
 
-      <!-- Footer -->
       <div class="card-footer">
         <button type="button" class="card-button" (click)="openAdviserDetail(t)">
           Ver más
@@ -46,13 +45,11 @@
     </article>
   </div>
 
-  <!-- Sin resultados -->
   <div class="no-results-box" *ngIf="!isLoadingAdvisers && advisers.length === 0">
     <p class="no-results-title">No se encontraron asesores.</p>
     <p class="no-results-text">Intenta cambiar los filtros de búsqueda.</p>
   </div>
 
-  <!-- MODAL -->
   <app-adviser-detail-modal
     *ngIf="isModalOpen"
     [adviser]="selectedAdviser"

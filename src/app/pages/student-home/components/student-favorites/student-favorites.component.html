@@ -1,0 +1,46 @@
+<div class="favorites-container">
+  <header class="section-header">
+    <h1>Mis Profesores Favoritos</h1>
+    <p>Accede rápidamente a los perfiles que guardaste</p>
+  </header>
+
+  <div *ngIf="loading" class="loading-state">
+    <p>Cargando favoritos...</p>
+  </div>
+
+  <div *ngIf="!loading && favorites.length === 0" class="empty-state">
+    <p>Aún no tienes profesores favoritos.</p>
+    <small>Marca la estrella en los perfiles para guardarlos aquí.</small>
+  </div>
+
+  <div class="cards-grid" *ngIf="!loading && favorites.length > 0">
+    <article class="adviser-card" *ngFor="let t of favorites" (click)="openDetail(t)">
+
+      <button type="button" class="card-bookmark active" (click)="removeFavorite(t.id, $event)">
+        ★
+      </button>
+
+      <div class="card-header">
+        <div class="card-avatar">
+          <img *ngIf="t.avatarUrl" [src]="t.avatarUrl" [alt]="t.name">
+          <span *ngIf="!t.avatarUrl">🎓</span>
+        </div>
+        <div class="card-info">
+          <h3 class="card-name">{{ t.name }}</h3>
+          <span class="card-level">{{ t.nivel || 'Nivel General' }}</span>
+          <span class="card-location" *ngIf="t.location">📍 {{ t.location }}</span>
+        </div>
+      </div>
+
+      <div class="card-tags">
+        <span *ngFor="let tag of t.tags | slice:0:3" class="tag">{{ tag }}</span>
+      </div>
+    </article>
+  </div>
+
+  <app-adviser-detail-modal
+    *ngIf="isModalOpen"
+    [adviser]="selectedAdviser"
+    (close)="closeModal()">
+  </app-adviser-detail-modal>
+</div>

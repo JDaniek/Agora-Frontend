@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.mi-agora.com/api/v1', // ajústalo a tu dominio/host
+  apiUrl: 'http://52.86.252.187:8080/api/v1',
+
   endpoints: {
     auth: {
       login: '/auth/login',
@@ -23,19 +24,27 @@ export const environment = {
     },
     classes: {
       root: '/classes',
-      mine: '/classes/mine',
-      enrolledMine: '/classes/enrolled/mine',
+      mine: '/classes/mine',                  // Mis clases (Profesor)
+      enrolledMine: '/classes/enrolled/mine', // Mis clases (Alumno)
       byId: '/classes/:id',
-      enrollmentsByClass: '/classes/:id/enrollments'
+      enrollmentsByClass: '/classes/:id/enrollments',
+
+      //NUEVO: Clases de un profesor específico
+      byTutor: '/classes/teachers/:tutorId'
     },
     chat: {
       messagesByConversation: '/chat/:id/messages',
-      websocket: '/ws/chat/:id'
+      websocket: '/ws/chat/:id',
+
+      //NUEVO: Lista de mis chats
+      mine: '/chats/mine'
     },
     reviews: {
       teacher: {
         list: '/reviews/teachers/:teacherId',
-        summary: '/reviews/teachers/:teacherId/summary'
+        summary: '/reviews/teachers/:teacherId/summary',
+        //NUEVO: Crear reseña profesor
+        create: '/reviews/teachers/:teacherId'
       },
       student: {
         list: '/reviews/students/:studentId',
@@ -45,6 +54,14 @@ export const environment = {
         mineLatest: '/reviews/students/mine/latest'
       },
       mine: '/reviews/mine'
+    },
+
+    //NUEVO BLOQUE COMPLETO: Favoritos
+    favorites: {
+      teachers: {
+        mine: '/favorites/teachers',
+        byTeacherId: '/favorites/teachers/:teacherId'
+      }
     }
   }
 };

@@ -1,15 +1,11 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {environment} from '@env/environment';
-import {Observable, map} from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '@env/environment'; // Asegúrate que el alias @env funcione, si no usa la ruta relativa
+import { Observable, map } from 'rxjs';
 
-// 👇 Importamos la card que ya usas en todo el módulo
-import {AdviserCardResponse} from './adviser.service';
+// Importamos la interfaz común del otro servicio para no duplicar tipos
+import { AdviserCardResponse } from './adviser.service';
 
-/**
- * Lo que devuelve el backend en /favorites/teachers
- * (coincide con AdviserCardResponse del backend, pero le ponemos nombre propio)
- */
 interface FavoriteTeacherResponse {
   userId: number;
   firstName: string;
@@ -18,43 +14,35 @@ interface FavoriteTeacherResponse {
   level: string | null;
   description: string | null;
   specialties: string[];
-  stateCode?: string | null;
+  stateCode?: string | null; // El backend podría no mandarlo
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class FavoritesService {
+  // Inyección moderna (opcional, pero consistente con tus otros componentes)
+  private http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
-
-  constructor(private http: HttpClient) {
-  }
 
   /**
    * GET /api/v1/favorites/teachers
-   * Devuelve datos ya adaptados a AdviserCardResponse
    */
   getMyFavoriteTeachers(): Observable<AdviserCardResponse[]> {
     const url = `${this.apiUrl}/favorites/teachers`;
 
     return this.http.get<FavoriteTeacherResponse[]>(url).pipe(
       map(response =>
-        response.map(dto => {
-          const fullName = `${dto.firstName} ${dto.lastName}`.trim();
-
-          const card: AdviserCardResponse = {
-            userId: dto.userId,
-            firstName: dto.firstName,
-            lastName: dto.lastName,
-            photoUrl: dto.photoUrl,
-            level: dto.level,
-            description: dto.description,
-            specialties: dto.specialties ?? [],
-            stateCode: dto.stateCode ?? null
-          };
-
-          return card;
-        })
+        response.map(dto => ({
+          userId: dto.userId,
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          photoUrl: dto.photoUrl,
+          level: dto.level,
+          description: dto.description,
+          specialties: dto.specialties ?? [],
+          stateCode: dto.stateCode || null // Protección contra undefined
+        }))
       )
     );
   }

@@ -1,11 +1,14 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, inject} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
-// Ya no necesitamos ReactiveForms, ni AdviserService aquí
+// Importamos el modal
 import {
   AdviserDetailModalComponent,
   AdviserDetail
 } from '../../../../shared/components/adviser-detail-modal/adviser-detail-modal';
+
+// Importamos el servicio de favoritos para la estrella
+import {FavoritesService} from '../../../../core/services/favorites.service';
 
 // Interfaz para la vista
 export interface AdviserCardView {
@@ -28,13 +31,35 @@ export interface AdviserCardView {
   styleUrls: ['./advisor-list.component.css']
 })
 export class AdvisorListComponent {
-  // 🔹 Ahora solo recibimos la lista ya armada desde el padre
+  // Inyección del servicio
+  private favoritesService = inject(FavoritesService);
+
+  // 🔹 Entradas desde el padre
   @Input() advisers: AdviserCardView[] = [];
   @Input() isLoadingAdvisers: boolean = false;
 
   // Modal
   isModalOpen = false;
   selectedAdviser: AdviserDetail | null = null;
+
+  // --- LÓGICA DE FAVORITOS (ESTRELLA) ---
+  toggleFavorite(adviser: AdviserCardView, event: Event) {
+    event.stopPropagation(); // Evita que se abra el modal al dar clic en la estrella
+
+    if (adviser.bookmarked) {
+      // Quitar de favoritos
+      this.favoritesService.removeFavorite(adviser.id).subscribe({
+        next: () => (adviser.bookmarked = false),
+        error: (err) => console.error('Error al quitar favorito', err)
+      });
+    } else {
+      // Agregar a favoritos
+      this.favoritesService.addFavorite(adviser.id).subscribe({
+        next: () => (adviser.bookmarked = true),
+        error: (err) => console.error('Error al agregar favorito', err)
+      });
+    }
+  }
 
   // --- LÓGICA DEL MODAL ---
   openAdviserDetail(adviser: AdviserCardView): void {

@@ -267,10 +267,10 @@
         <app-student-chats></app-student-chats>
       </div>
 
-      <!-- FAVORITOS -->
       <div *ngIf="currentView === 'favoritos'" class="content-grid">
-        <h2>Mis Favoritos</h2>
-        <p>Próximamente...</p>
+        <div class="content-main" style="grid-column: 1 / -1;">
+          <app-student-favorites></app-student-favorites>
+        </div>
       </div>
 
       <!-- REVIEWS -->

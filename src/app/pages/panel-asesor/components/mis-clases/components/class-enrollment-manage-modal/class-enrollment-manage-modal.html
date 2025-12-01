@@ -1,0 +1,76 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Gestionar alumnos – {{ classTitle }}</h2>
+      <button class="close-btn" (click)="onClose()">
+        <lucide-icon name="x"></lucide-icon>
+      </button>
+    </header>
+
+    <div class="modal-body" *ngIf="!loading; else loadingTpl">
+      <!-- LISTA DE INSCRITOS -->
+      <section class="section-block">
+        <h3>Alumnos inscritos</h3>
+
+        <p *ngIf="enrolled.length === 0" class="empty-text">
+          Aún no hay alumnos inscritos en esta clase.
+        </p>
+
+        <ul *ngIf="enrolled.length > 0" class="students-list">
+          <li *ngFor="let e of enrolled" class="student-row">
+            <div class="avatar">
+              <img *ngIf="e.photoUrl" [src]="e.photoUrl" alt="Foto del alumno" />
+              <div *ngIf="!e.photoUrl" class="avatar-placeholder">
+                {{ e.fullName.charAt(0) }}
+              </div>
+            </div>
+
+            <div class="student-info">
+              <div class="name">{{ e.fullName }}</div>
+              <div class="email">{{ e.email }}</div>
+              <div class="status">Estado: {{ e.status }}</div>
+            </div>
+
+            <div class="enrolled-at">
+              {{ e.enrolledAt | date:'short' }}
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- AGREGAR ALUMNO POR ID -->
+      <section class="section-block">
+        <h3>Agregar alumno por ID</h3>
+
+        <div class="add-row">
+          <input
+            type="number"
+            min="1"
+            [(ngModel)]="newStudentId"
+            placeholder="ID del alumno (userId)"
+          />
+          <button
+            class="btn-add"
+            type="button"
+            [disabled]="enrolling"
+            (click)="onEnrollById()"
+          >
+            <lucide-icon name="user-plus" class="btn-icon"></lucide-icon>
+            <span>Agregar</span>
+          </button>
+        </div>
+
+        <p *ngIf="errorMessage" class="error-text">
+          {{ errorMessage }}
+        </p>
+      </section>
+    </div>
+
+    <ng-template #loadingTpl>
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Cargando alumnos...</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

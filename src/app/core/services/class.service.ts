@@ -33,6 +33,16 @@ export interface CreateClassRequest {
   specialtyId: number;
 }
 
+/** 👇 NUEVO: modelo para alumnos inscritos en una clase */
+export interface ClassEnrollmentResponse {
+  studentId: number;
+  fullName: string;
+  email: string;
+  photoUrl?: string | null;
+  status: string;
+  enrolledAt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -66,16 +76,24 @@ export class ClassService {
   }
 
   /**
-   * Inscribe un alumno en una clase específica.
+   * 🔹 Obtiene los alumnos inscritos en una clase específica.
+   * GET /api/v1/classes/{id}/enrollments
+   */
+  getClassEnrollments(classId: number): Observable<ClassEnrollmentResponse[]> {
+    const path = environment.endpoints.classes.enrollmentsByClass.replace(':id', classId.toString());
+    const url = `${this.apiUrl}${path}`;
+    return this.http.get<ClassEnrollmentResponse[]>(url);
+  }
+
+  /**
+   * 🔹 Inscribe un alumno en una clase específica.
    * POST /api/v1/classes/{id}/enrollments
    */
   enrollStudent(classId: number, studentId: number): Observable<any> {
-    // Aquí hacemos el reemplazo manual ya que environment usa strings estáticos
-    // '/classes/:id/enrollments' -> '/classes/15/enrollments'
     const path = environment.endpoints.classes.enrollmentsByClass.replace(':id', classId.toString());
     const url = `${this.apiUrl}${path}`;
-    
-    // El backend espera un body con el studentId (según tu EnrollStudentRequest)
-    return this.http.post(url, { studentId });
+
+    // El backend espera un body con el studentId (EnrollStudentRequest)
+    return this.http.post(url, {studentId});
   }
 }

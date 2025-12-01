@@ -23,19 +23,19 @@ export const environment = {
     },
     classes: {
       root: '/classes',
-      mine: '/classes/mine',                  // Mis clases (como Profesor)
-      enrolledMine: '/classes/enrolled/mine', // Mis clases (como Alumno)
+      mine: '/classes/mine',                  // Mis clases (Profesor)
+      enrolledMine: '/classes/enrolled/mine', // Mis clases (Alumno)
       byId: '/classes/:id',
       enrollmentsByClass: '/classes/:id/enrollments',
 
-      //NUEVO: Clases de un profesor específico (Público)
+      // Clases de un profesor específico (Público)
       byTutor: '/classes/teachers/:tutorId'
     },
     chat: {
       messagesByConversation: '/chat/:id/messages',
       websocket: '/ws/chat/:id',
 
-      // NUEVO: Lista de mis chats (Para el sidebar de mensajería)
+      // Lista de mis chats
       mine: '/chats/mine'
     },
     reviews: {
@@ -52,6 +52,17 @@ export const environment = {
         mineLatest: '/reviews/students/mine/latest'
       },
       mine: '/reviews/mine'
+    },
+
+    // NUEVO: Favoritos de profesores (TeacherFavorites)
+    favorites: {
+      teachers: {
+        // GET -> mis profesores favoritos
+        mine: '/favorites/teachers',
+
+        // POST/DELETE -> agregar / quitar un profe favorito
+        byTeacherId: '/favorites/teachers/:teacherId'
+      }
     }
   }
 };

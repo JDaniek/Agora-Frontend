@@ -25,13 +25,6 @@ export const routes: Routes = [
       import('./pages/register/register').then(m => m.Register),
   },
   {
-    path: 'dashboard-asesor',
-    loadComponent: () =>
-      import('./pages/dashboard-asesor/dashboard-asesor').then(
-        m => m.DashboardAsesor
-      ),
-  },
-  {
     path: 'student-home',
     loadComponent: () =>
       import('./pages/student-home/student-home').then(
@@ -65,15 +58,6 @@ export const routes: Routes = [
       ),
   },
 
-
-  /* NUEVA RUTA: Detalle de asesor */
-  {
-    path: 'detail-asesor/:id',
-    loadComponent: () =>
-      import('./pages/detail-asesor/detail-asesor').then(
-        m => m.AsesorDetalleComponent
-      ),
-  },
 
   // fallback
   {path: '**', component: Signup},

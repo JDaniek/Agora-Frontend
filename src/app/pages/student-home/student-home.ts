@@ -1,16 +1,23 @@
-import {Component, OnInit, OnDestroy, ChangeDetectorRef, inject} from '@angular/core'; // inject añadido
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  inject
+} from '@angular/core';
 import {Router} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {Subject, of} from 'rxjs';
 import {takeUntil, switchMap, tap, catchError} from 'rxjs/operators';
 import {LucideAngularModule} from 'lucide-angular';
-import {StudentReviewsComponent} from './components/student-reviews/student-reviews.component'; // Importar
-// Componentes Hijos
-import {AdvisorListComponent} from './components/advisor-list/advisor-list.component';
-import {StudentChatsComponent} from './components/student-chats/student-chats.component';
 
-// Modales y Servicios
+// Componentes hijos
+import {AdvisorListComponent, AdviserCardView} from './components/advisor-list/advisor-list.component';
+import {StudentChatsComponent} from './components/student-chats/student-chats.component';
+import {StudentReviewsComponent} from './components/student-reviews/student-reviews.component';
+
+// Modales y servicios
 import {
   NotificationsModal,
   Notification,
@@ -19,8 +26,12 @@ import {
 } from '../../shared/components/notifications-modal/notifications-modal';
 import {ProfileService} from '../../core/services/profile.service';
 import {ClassService} from '../../core/services/class.service';
-import {NotificationService, NotificationDto} from '../../core/services/notification.service';
-import {AdviserCardResponse, AdviserService, Specialty} from '../../core/services/adviser.service'; // Importar AdviserService y Specialty
+import {NotificationService} from '../../core/services/notification.service';
+import {
+  AdviserService,
+  Specialty,
+  AdviserCardResponse
+} from '../../core/services/adviser.service';
 
 // Interfaces auxiliares para catálogos
 interface Opcion {
@@ -28,7 +39,7 @@ interface Opcion {
   label: string;
 }
 
-// Interfaces Locales (Calendario)
+// Interfaces locales (Calendario)
 interface Session {
   id: number;
   date: string;
@@ -68,7 +79,7 @@ export class StudentHome implements OnInit, OnDestroy {
   private profileService = inject(ProfileService);
   private classService = inject(ClassService);
   private notificationService = inject(NotificationService);
-  private adviserService = inject(AdviserService); // Inyectamos AdviserService para las materias
+  private adviserService = inject(AdviserService);
 
   /* --- 1. VARIABLES PARA FILTROS (Vinculadas al HTML) --- */
   searchTerm: string = '';
@@ -112,7 +123,11 @@ export class StudentHome implements OnInit, OnDestroy {
     {value: 'Otro', label: 'Otro'},
   ];
 
-  tagsDisponibles: Specialty[] = []; // Se llenará desde la DB
+  tagsDisponibles: Specialty[] = []; // Materias desde la DB
+
+  /* --- ASESORADORES / BÚSQUEDA --- */
+  isLoadingAdvisers = false;
+  advisers: AdviserCardView[] = [];
 
   /* Estado general */
   topAvatarUrl: string | null = null;
@@ -142,7 +157,7 @@ export class StudentHome implements OnInit, OnDestroy {
   selectedDateKey: string = '';
   selectedDaySessions: Session[] = [];
   weekDays: string[] = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-  advisers: AdviserCardResponse[] = [];
+
   constructor() {
     this.selectedDateKey = this.buildDateKey(this.currentDate);
   }
@@ -153,10 +168,12 @@ export class StudentHome implements OnInit, OnDestroy {
 
     this.loadMyProfile();
     this.loadSessionsFromBackend();
-    this.loadSpecialties(); // <--- CARGAMOS LAS MATERIAS REALES
+    this.loadSpecialties();
     this.setupNotificationsStream();
     this.onNotificationFilterChange('all');
-    this.loadAdvisers();
+
+    // 🔹 Cargar asesores iniciales (sin filtros o filtros por defecto)
+    this.loadAdvisersFromBackend();
   }
 
   ngOnDestroy(): void {
@@ -216,22 +233,6 @@ export class StudentHome implements OnInit, OnDestroy {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
-  }
-
-  loadAdvisers() {
-    this.adviserService.getAdvisers({
-      search: this.searchTerm,
-      lugar: this.filterLugar,
-      nivel: this.filterNivel,
-      materia: this.filterMateria
-    }).subscribe({
-      next: (data) => this.advisers = data,
-      error: (err) => console.error('Error cargando asesores', err)
-    });
-  }
-
-  onSearchChange() {
-    this.loadAdvisers();
   }
 
   // --- Calendario ---
@@ -362,4 +363,61 @@ export class StudentHome implements OnInit, OnDestroy {
     this.notificationService.declineRequest(id).subscribe(() => this.onNotificationFilterChange('all'));
   }
 
+  // ==========================================
+  //   ASESORADORES: BÚSQUEDA + FILTROS
+  // ==========================================
+
+  /**
+   * Se ejecuta cada vez que cambia:
+   * - searchTerm
+   * - filterLugar
+   * - filterNivel
+   * - filterMateria
+   */
+  onFiltersChange(): void {
+    this.loadAdvisersFromBackend();
+  }
+
+  /**
+   * Llama al backend con los filtros actuales
+   */
+  private loadAdvisersFromBackend(): void {
+    this.isLoadingAdvisers = true;
+
+    this.adviserService.getAdvisers({
+      search: this.searchTerm,
+      lugar: this.filterLugar,
+      nivel: this.filterNivel,
+      materia: this.filterMateria
+    }).subscribe({
+      next: (response: AdviserCardResponse[]) => {
+        this.advisers = response.map(a => this.mapApiToView(a));
+        this.isLoadingAdvisers = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error cargando asesores', err);
+        this.advisers = [];
+        this.isLoadingAdvisers = false;
+      }
+    });
+  }
+
+  /**
+   * Mapeo de respuesta API → Vista (cards de asesores)
+   */
+  private mapApiToView(adviser: AdviserCardResponse): AdviserCardView {
+    const subject = adviser.specialties && adviser.specialties.length ? adviser.specialties[0] : null;
+    return {
+      id: adviser.userId,
+      name: `${adviser.firstName} ${adviser.lastName}`,
+      avatarUrl: adviser.photoUrl,
+      nivel: adviser.level,
+      tags: adviser.specialties,
+      description: adviser.description,
+      bookmarked: false,
+      subject,
+      location: adviser.stateCode ?? null
+    };
+  }
 }

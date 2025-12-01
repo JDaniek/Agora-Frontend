@@ -329,4 +329,26 @@ export class AdviserService {
       )
     );
   }
+
+  /**
+   * Obtener mis reseñas como ALUMNO (Lo que los profes dicen de mí)
+   * GET /api/v1/reviews/students/mine
+   */
+  getMyStudentReviews(): Observable<ReviewResponse[]> {
+    const url = `${this.apiUrl}/reviews/students/mine`;
+    return this.http.get<any[]>(url).pipe(
+      map(data =>
+        data.map(r => ({
+          reviewId: r.id || r.reviewId,
+          // IMPORTANTE: El backend seguramente manda "teacherName" o "authorName".
+          // Lo mapeamos a 'studentName' para reutilizar la interfaz y el HTML sin crear DTOs nuevos.
+          studentName: r.teacherFullName || r.teacherName || r.reviewerName || 'Profesor',
+          rating: r.rating,
+          comment: r.comment,
+          createdAt: r.createdAt,
+          studentPhoto: r.teacherPhotoUrl || r.reviewerPhotoUrl // Foto del profe
+        }) as ReviewResponse)
+      )
+    );
+  }
 }

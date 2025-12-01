@@ -1,0 +1,65 @@
+<div class="reviews-container">
+
+  <header class="section-header">
+    <h1>Mis Evaluaciones</h1>
+    <p>Retroalimentación recibida de tus profesores</p>
+  </header>
+
+  <div *ngIf="loading" class="loading-state">Cargando evaluaciones...</div>
+
+  <div *ngIf="!loading" class="reviews-layout">
+
+    <aside class="stats-card">
+      <div class="overall-rating">
+        <span class="big-number">{{ stats.average | number:'1.1-1' }}</span>
+        <div class="stars-visual">
+          <lucide-icon name="star" class="star-icon"></lucide-icon>
+        </div>
+        <span class="total-count">{{ stats.total }} evaluaciones</span>
+      </div>
+
+      <div class="rating-bars">
+        <div class="bar-row" *ngFor="let count of stats.starsDistribution; let i = index">
+          <span class="star-label">{{ 5 - i }} ★</span>
+          <div class="progress-bg">
+            <div class="progress-fill" [style.width.%]="(count / (stats.total || 1)) * 100"></div>
+          </div>
+          <span class="count-label">{{ count }}</span>
+        </div>
+      </div>
+    </aside>
+
+    <div class="reviews-list">
+
+      <div *ngIf="reviews.length === 0" class="empty-state">
+        <p>Aún no tienes evaluaciones. Completa clases para recibir feedback.</p>
+      </div>
+
+      <article *ngFor="let r of reviews" class="review-card">
+        <div class="review-header">
+          <div class="student-info">
+            <div class="student-avatar">
+              <img *ngIf="r.studentPhoto" [src]="r.studentPhoto" alt="Profe">
+              <span *ngIf="!r.studentPhoto">🎓</span>
+            </div>
+            <div>
+              <h4 class="student-name">{{ r.studentName }}</h4> <span class="review-date">{{ r.createdAt | date:'mediumDate' }}</span>
+            </div>
+          </div>
+
+          <div class="review-rating">
+            <ng-container *ngFor="let _ of [].constructor(r.rating)">
+              <lucide-icon name="star" class="star-icon"></lucide-icon>
+            </ng-container>
+          </div>
+        </div>
+
+        <p class="review-body">
+          {{ r.comment }}
+        </p>
+      </article>
+
+    </div>
+
+  </div>
+</div>

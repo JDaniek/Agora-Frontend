@@ -31,9 +31,9 @@
         [class.active]="currentView === 'home'"
         (click)="setView('home'); onNavigate('inicio')"
       >
-        <span class="nav-icon">
-          <lucide-icon name="home"></lucide-icon>
-        </span>
+    <span class="nav-icon">
+      <lucide-icon name="home"></lucide-icon>
+    </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Inicio</span>
       </button>
 
@@ -42,9 +42,9 @@
         [class.active]="currentView === 'chats'"
         (click)="setView('chats'); onNavigate('chats')"
       >
-        <span class="nav-icon">
-          <lucide-icon name="messages-square"></lucide-icon>
-        </span>
+    <span class="nav-icon">
+      <lucide-icon name="messages-square"></lucide-icon>
+    </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Chats</span>
       </button>
 
@@ -53,10 +53,21 @@
         [class.active]="currentView === 'favoritos'"
         (click)="setView('favoritos'); onNavigate('favoritos')"
       >
-        <span class="nav-icon">
-          <lucide-icon name="star"></lucide-icon>
-        </span>
+    <span class="nav-icon">
+      <lucide-icon name="star"></lucide-icon>
+    </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Favoritos</span>
+      </button>
+
+      <button
+        class="nav-item"
+        [class.active]="currentView === 'reviews'"
+        (click)="setView('reviews'); onNavigate('reviews')"
+      >
+    <span class="nav-icon">
+      <lucide-icon name="graduation-cap"></lucide-icon>
+    </span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">Evaluaciones</span>
       </button>
     </nav>
 
@@ -250,6 +261,11 @@
       <div *ngIf="currentView === 'favoritos'" class="content-grid">
         <h2>Mis Favoritos</h2>
         <p>Próximamente...</p>
+      </div>
+      <div *ngIf="currentView === 'reviews'" class="content-grid">
+        <div class="content-main" style="grid-column: 1 / -1;">
+          <app-student-reviews></app-student-reviews>
+        </div>
       </div>
     </main>
   </div>

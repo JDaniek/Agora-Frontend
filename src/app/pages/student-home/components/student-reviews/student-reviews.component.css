@@ -1,0 +1,204 @@
+.reviews-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-header {
+  margin-bottom: 30px;
+}
+
+.section-header h1 {
+  margin: 0;
+  font-size: 24px;
+  color: var(--text-main);
+}
+
+.section-header p {
+  margin: 5px 0 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* Layout Grid */
+.reviews-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+/* --- STATS CARD (Resumen) --- */
+.stats-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  position: sticky;
+  top: 20px;
+}
+
+.overall-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.big-number {
+  font-size: 48px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1;
+}
+
+.stars-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stars-visual .star-icon {
+  width: 20px;
+  height: 20px;
+  color: #fbbf24; /* Amarillo estrella */
+}
+
+.total-count {
+  display: block;
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.rating-bars {
+  margin-top: 20px;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 20px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.star-label {
+  width: 30px;
+  text-align: right;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.count-label {
+  width: 20px;
+  text-align: left;
+  color: #9ca3af;
+}
+
+.progress-bg {
+  flex: 1;
+  height: 6px;
+  background: #f3f4f6;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #fbbf24; /* Amarillo estrella */
+  border-radius: 99px;
+}
+
+/* --- REVIEWS LIST --- */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.student-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.student-avatar {
+  width: 40px;
+  height: 40px;
+  background: #e0f2fe;
+  color: #0369a1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.student-name {
+  margin: 0;
+  font-size: 15px;
+  color: #1f2937;
+}
+
+.review-date {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.review-rating {
+  display: flex;
+  gap: 2px;
+}
+
+.review-rating .star-icon {
+  width: 14px;
+  height: 14px;
+  color: #fbbf24;
+}
+
+.review-body {
+  margin: 0;
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  background: #f9fafb;
+  border-radius: 16px;
+  color: #6b7280;
+  border: 1px dashed #d1d5db;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reviews-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-card {
+    position: static;
+    margin-bottom: 20px;
+  }
+}

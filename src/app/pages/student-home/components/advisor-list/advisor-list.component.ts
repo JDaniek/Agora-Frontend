@@ -6,8 +6,6 @@ import {of} from 'rxjs';
 
 // Servicios
 import {AdviserService, AdviserCardResponse} from '../../../../core/services/adviser.service';
-
-// Importar el Modal (Corregido)
 import {
   AdviserDetailModalComponent,
   AdviserDetail,

@@ -5,7 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {Subject, of} from 'rxjs';
 import {takeUntil, switchMap, tap, catchError} from 'rxjs/operators';
 import {LucideAngularModule} from 'lucide-angular';
-
+import {StudentReviewsComponent} from './components/student-reviews/student-reviews.component'; // Importar
 // Componentes Hijos
 import {AdvisorListComponent} from './components/advisor-list/advisor-list.component';
 import {StudentChatsComponent} from './components/student-chats/student-chats.component';
@@ -20,7 +20,7 @@ import {
 import {ProfileService} from '../../core/services/profile.service';
 import {ClassService} from '../../core/services/class.service';
 import {NotificationService, NotificationDto} from '../../core/services/notification.service';
-import {AdviserService, Specialty} from '../../core/services/adviser.service'; // Importar AdviserService y Specialty
+import {AdviserCardResponse, AdviserService, Specialty} from '../../core/services/adviser.service'; // Importar AdviserService y Specialty
 
 // Interfaces auxiliares para catálogos
 interface Opcion {
@@ -55,7 +55,8 @@ interface CalendarDay {
     NotificationsModal,
     AdvisorListComponent,
     StudentChatsComponent,
-    LucideAngularModule
+    LucideAngularModule,
+    StudentReviewsComponent
   ],
   templateUrl: './student-home.html',
   styleUrls: ['./student-home.css']
@@ -120,7 +121,7 @@ export class StudentHome implements OnInit, OnDestroy {
   isMobileSidebarOpen = false;
 
   /* Navegación */
-  currentView: 'home' | 'chats' | 'favoritos' = 'home';
+  currentView: 'home' | 'chats' | 'favoritos' | 'reviews' = 'home';
   userName = 'Estudiante';
 
   /* Notificaciones */
@@ -141,7 +142,7 @@ export class StudentHome implements OnInit, OnDestroy {
   selectedDateKey: string = '';
   selectedDaySessions: Session[] = [];
   weekDays: string[] = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-
+  advisers: AdviserCardResponse[] = [];
   constructor() {
     this.selectedDateKey = this.buildDateKey(this.currentDate);
   }
@@ -155,6 +156,7 @@ export class StudentHome implements OnInit, OnDestroy {
     this.loadSpecialties(); // <--- CARGAMOS LAS MATERIAS REALES
     this.setupNotificationsStream();
     this.onNotificationFilterChange('all');
+    this.loadAdvisers();
   }
 
   ngOnDestroy(): void {
@@ -183,7 +185,7 @@ export class StudentHome implements OnInit, OnDestroy {
   }
 
   // --- Navegación ---
-  setView(view: 'home' | 'chats' | 'favoritos'): void {
+  setView(view: 'home' | 'chats' | 'favoritos' | 'reviews' = 'home'): void {
     this.currentView = view;
   }
 
@@ -214,6 +216,22 @@ export class StudentHome implements OnInit, OnDestroy {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
+  }
+
+  loadAdvisers() {
+    this.adviserService.getAdvisers({
+      search: this.searchTerm,
+      lugar: this.filterLugar,
+      nivel: this.filterNivel,
+      materia: this.filterMateria
+    }).subscribe({
+      next: (data) => this.advisers = data,
+      error: (err) => console.error('Error cargando asesores', err)
+    });
+  }
+
+  onSearchChange() {
+    this.loadAdvisers();
   }
 
   // --- Calendario ---
@@ -343,4 +361,5 @@ export class StudentHome implements OnInit, OnDestroy {
   onRejectRequest(id: number) {
     this.notificationService.declineRequest(id).subscribe(() => this.onNotificationFilterChange('all'));
   }
+
 }

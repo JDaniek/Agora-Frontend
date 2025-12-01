@@ -1,7 +1,6 @@
 import {Component, Input, Output, EventEmitter, OnInit, inject, ChangeDetectorRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-
 import {AdviserService} from '../../../../../../core/services/adviser.service';
 
 @Component({
@@ -46,24 +45,25 @@ export class ClassEnrollmentsModalComponent implements OnInit {
 
     this.adviserService.getClassEnrollments(this.classId).subscribe({
       next: (data: any[]) => {
+        console.log('✅ Alumnos recibidos (con foto/nombre):', data);
         this.students = data;
         this.loading = false;
-        this.cd.detectChanges();   // Forzamos que la vista se actualice
+        this.cd.detectChanges(); // Forzamos actualización visual
       },
       error: (err: any) => {
-        console.error(err);
+        console.error('Error cargando alumnos:', err);
         this.loading = false;
-        this.cd.detectChanges();   // También en error
+        this.cd.detectChanges();
       }
     });
   }
 
   toggleRateForm(studentId: number) {
     if (this.expandedStudentId === studentId) {
-      this.expandedStudentId = null;
+      this.expandedStudentId = null; // Cerrar si ya está abierto
     } else {
       this.expandedStudentId = studentId;
-      this.reviewForm = {rating: 5, comment: ''};
+      this.reviewForm = {rating: 5, comment: ''}; // Resetear form
     }
   }
 
@@ -83,14 +83,16 @@ export class ClassEnrollmentsModalComponent implements OnInit {
       next: () => {
         alert('Reseña enviada correctamente.');
         this.isSubmitting = false;
-        this.expandedStudentId = null;
+        this.expandedStudentId = null; // Cerrar form tras éxito
         this.cd.detectChanges();
       },
       error: (err: any) => {
         this.isSubmitting = false;
         console.error(err);
+
+        const errorMsg = err.error?.error;
         if (err.status === 409) {
-          alert('Ya has calificado a este alumno o hubo un conflicto.');
+          alert(errorMsg || 'Ya has calificado a este alumno o hubo un conflicto.');
         } else {
           alert('Error al enviar la calificación.');
         }

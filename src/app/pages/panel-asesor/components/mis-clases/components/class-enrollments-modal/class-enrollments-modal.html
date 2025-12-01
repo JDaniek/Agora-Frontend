@@ -8,10 +8,12 @@
 
     <div class="modal-body">
 
-      <div *ngIf="loading" class="loading-state">Cargando alumnos...</div>
+      <div *ngIf="loading" class="loading-state">
+        <p>Cargando alumnos...</p>
+      </div>
 
       <div *ngIf="!loading && students.length === 0" class="empty-state">
-        No hay alumnos inscritos en esta clase aún.
+        <p>No hay alumnos inscritos en esta clase aún.</p>
       </div>
 
       <div *ngIf="!loading" class="students-list">
@@ -21,21 +23,22 @@
           <div class="student-row">
             <div class="student-info">
               <div class="avatar-circle">
-                <img *ngIf="student.photoUrl" [src]="student.photoUrl">
+                <img *ngIf="student.photoUrl" [src]="student.photoUrl" alt="Foto">
                 <span *ngIf="!student.photoUrl">👤</span>
               </div>
+
               <div>
-                <div class="student-name">{{ student.studentName || student.firstName + ' ' + student.lastName }}</div>
-                <div class="student-status">{{ student.status || 'Inscrito' }}</div>
+                <div class="student-name">{{ student.fullName }}</div>
+                <div class="student-status">{{ student.status }}</div>
               </div>
             </div>
 
-            <button class="btn-rate" (click)="toggleRateForm(student.studentId || student.id)">
-              {{ expandedStudentId === (student.studentId || student.id) ? 'Cancelar' : '⭐ Calificar' }}
+            <button class="btn-rate" (click)="toggleRateForm(student.studentId)">
+              {{ expandedStudentId === student.studentId ? 'Cancelar' : '⭐ Calificar' }}
             </button>
           </div>
 
-          <div class="rate-form" *ngIf="expandedStudentId === (student.studentId || student.id)">
+          <div class="rate-form" *ngIf="expandedStudentId === student.studentId">
             <div class="rating-select">
               <label>Puntaje:</label>
               <select [(ngModel)]="reviewForm.rating">
@@ -47,9 +50,13 @@
               </select>
             </div>
 
-            <textarea [(ngModel)]="reviewForm.comment" placeholder="Comentario sobre el desempeño..."></textarea>
+            <textarea
+              [(ngModel)]="reviewForm.comment"
+              placeholder="Comentario sobre el desempeño..."
+              rows="3">
+            </textarea>
 
-            <button class="btn-submit" [disabled]="isSubmitting" (click)="submitReview(student.studentId || student.id)">
+            <button class="btn-submit" [disabled]="isSubmitting" (click)="submitReview(student.studentId)">
               {{ isSubmitting ? 'Enviando...' : 'Enviar Reseña' }}
             </button>
           </div>

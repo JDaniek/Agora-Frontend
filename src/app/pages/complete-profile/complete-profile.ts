@@ -7,10 +7,11 @@ import {
   FormGroup,
 } from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
-import {Router} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 import {finalize, switchMap, catchError} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {AdviserService, Specialty} from '../../core/services/adviser.service';
+import {AuthService} from '../../core/services/auth.service';
 
 type Opcion = { value: string; label: string };
 
@@ -147,7 +148,7 @@ export class CompleteProfile implements OnInit {
     description: new FormControl<string | null>(null),
   });
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) {
   }
 
   /** ====== Helpers ====== */
@@ -171,6 +172,21 @@ export class CompleteProfile implements OnInit {
 
   isSelected(tag: { id: number; name: string }) {
     return this.selectedTags().has(tag.id);
+  }
+
+  /** ====== Redireccion segun usuario====== */
+  private navigateAfterSave() {
+    // Leemos un query param opcional: ?redirectTo=student o ?redirectTo=advisor
+    const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo');
+
+    if (redirectTo === 'advisor') {
+      this.router.navigate(['/panel-asesor']);
+    } else if (redirectTo === 'student') {
+      this.router.navigate(['/student-home']);
+    } else {
+      // Fallback por defecto (por si alguien entra directo a /complete-profile)
+      this.router.navigate(['/student-home']);
+    }
   }
 
   /** ====== Carga de catálogo de especialidades ====== */
@@ -292,9 +308,9 @@ export class CompleteProfile implements OnInit {
       .pipe(
         switchMap((uploadedPhotoUrl: string | null) => {
           const payload: UpdateProfileRequest = {
-            description: formValue.description ?? null, // null, no ""
-            photoUrl: uploadedPhotoUrl ?? null,         // null si no hay
-            city: null,                                 // aún no lo capturamos
+            description: formValue.description ?? null,
+            photoUrl: uploadedPhotoUrl ?? null,
+            city: null,
             stateCode: formValue.stateCode ?? '',
             level: formValue.level ?? '',
             specialtyIds: Array.from(this.selectedTags()),
@@ -308,7 +324,7 @@ export class CompleteProfile implements OnInit {
           this.errorBanner.set(null);
           this.infoBanner.set(null);
           alert('¡Perfil guardado con éxito!');
-          this.router.navigate(['/student-home']);
+          this.navigateAfterSave();   // 👈 AQUÍ en lugar de router.navigate fijo
         },
         error: (err: any) => {
           const apiErr = this.parseApiError(err);

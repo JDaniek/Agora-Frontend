@@ -4,17 +4,17 @@ import {
   inject,
   ChangeDetectorRef
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {Router} from '@angular/router';
 
-import { AdviserService } from '../../core/services/adviser.service';
-import { NotificationRequest } from '../../core/models/advisor.models';
+import {AdviserService} from '../../core/services/adviser.service';
+import {NotificationRequest} from '../../core/models/advisor.models';
 
 // hijos
-import { MisClasesComponent } from './components/mis-clases/mis-clases.component';
-import { MisChatsComponent } from './components/mis-chats/mis-chats.component';
-import { MisResenasComponent } from './components/mis-resenas/mis-resenas.component';
-import { ProfileService } from '../../core/services/profile.service';
+import {MisClasesComponent} from './components/mis-clases/mis-clases.component';
+import {MisChatsComponent} from './components/mis-chats/mis-chats.component';
+import {MisResenasComponent} from './components/mis-resenas/mis-resenas.component';
+import {ProfileService} from '../../core/services/profile.service';
 import {LucideAngularModule} from 'lucide-angular';
 
 @Component({
@@ -148,7 +148,9 @@ export class PanelAsesor implements OnInit {
 
   // Igual que student-home
   onEditProfile() {
-    this.router.navigate(['/complete-profile']);
+    this.router.navigate(['/complete-profile'], {
+      queryParams: {redirectTo: 'advisor'}
+    });
   }
 
   logout() {

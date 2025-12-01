@@ -193,7 +193,9 @@ export class StudentHome implements OnInit, OnDestroy {
   }
 
   onEditProfile(): void {
-    this.router.navigate(['/complete-profile']);
+    this.router.navigate(['/complete-profile'], {
+      queryParams: {redirectTo: 'student'}
+    });
   }
 
   toggleSidebarCollapse(): void {

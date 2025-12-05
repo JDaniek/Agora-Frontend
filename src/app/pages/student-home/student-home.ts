@@ -5,18 +5,33 @@ import {
   ChangeDetectorRef,
   inject
 } from '@angular/core';
-import {Router} from '@angular/router';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {Subject, of} from 'rxjs';
-import {takeUntil, switchMap, tap, catchError} from 'rxjs/operators';
-import {LucideAngularModule} from 'lucide-angular';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Subject, of } from 'rxjs';
+import { takeUntil, switchMap, tap, catchError } from 'rxjs/operators';
+
+// Lucide Icons
+import {
+  LucideAngularModule,
+  Menu,
+  Home,
+  MessagesSquare,
+  Star,
+  GraduationCap,
+  Bell,
+  Search
+} from 'lucide-angular';
 
 // Componentes hijos
-import {AdvisorListComponent, AdviserCardView} from './components/advisor-list/advisor-list.component';
-import {StudentChatsComponent} from './components/student-chats/student-chats.component';
-import {StudentReviewsComponent} from './components/student-reviews/student-reviews.component';
+import {
+  AdvisorListComponent,
+  AdviserCardView
+} from './components/advisor-list/advisor-list.component';
+import { StudentChatsComponent } from './components/student-chats/student-chats.component';
+import { StudentReviewsComponent } from './components/student-reviews/student-reviews.component';
 import { StudentFavoritesComponent } from './components/student-favorites/student-favorites.component';
+
 // Modales y servicios
 import {
   NotificationsModal,
@@ -24,22 +39,21 @@ import {
   NotificationType,
   NotificationStatusFilter
 } from '../../shared/components/notifications-modal/notifications-modal';
-import {ProfileService} from '../../core/services/profile.service';
-import {ClassService} from '../../core/services/class.service';
-import {NotificationService} from '../../core/services/notification.service';
+import { ProfileService } from '../../core/services/profile.service';
+import { ClassService } from '../../core/services/class.service';
+import { NotificationService } from '../../core/services/notification.service';
 import {
   AdviserService,
   Specialty,
   AdviserCardResponse
 } from '../../core/services/adviser.service';
 
-// Interfaces auxiliares para catálogos
+// Interfaces auxiliares
 interface Opcion {
   value: string;
   label: string;
 }
 
-// Interfaces locales (Calendario)
 interface Session {
   id: number;
   date: string;
@@ -68,13 +82,13 @@ interface CalendarDay {
     StudentChatsComponent,
     LucideAngularModule,
     StudentReviewsComponent,
-    StudentFavoritesComponent,
+    StudentFavoritesComponent
   ],
   templateUrl: './student-home.html',
   styleUrls: ['./student-home.css']
 })
 export class StudentHome implements OnInit, OnDestroy {
-  // Servicios inyectados
+  // Servicios
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private profileService = inject(ProfileService);
@@ -82,82 +96,107 @@ export class StudentHome implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private adviserService = inject(AdviserService);
 
-  /* --- 1. VARIABLES PARA FILTROS (Vinculadas al HTML) --- */
-  searchTerm: string = '';
-  filterLugar: string = '';
-  filterNivel: string = '';
-  filterMateria: string = '';
+  // Íconos Lucide expuestos al HTML
+  
+  public MenuIcon = Menu;
+  public HomeIcon = Home;
+  public MessagesSquareIcon = MessagesSquare;
+  public StarIcon = Star;
+  public GraduationCapIcon = GraduationCap;
+  public BellIcon = Bell;
+  public SearchIcon = Search;
 
-  /* --- 2. CATÁLOGOS REALES --- */
+  // Filtros
+  searchTerm = '';
+  filterLugar = '';
+  filterNivel = '';
+  filterMateria = '';
+
   estadosMx: Opcion[] = [
-    {value: 'AGS', label: 'Aguascalientes'}, {value: 'BC', label: 'Baja California'},
-    {value: 'BCS', label: 'Baja California Sur'}, {value: 'CAMP', label: 'Campeche'},
-    {value: 'CHIS', label: 'Chiapas'}, {value: 'CHIH', label: 'Chihuahua'},
-    {value: 'CDMX', label: 'Ciudad de México'}, {value: 'COAH', label: 'Coahuila'},
-    {value: 'COL', label: 'Colima'}, {value: 'DGO', label: 'Durango'},
-    {value: 'GTO', label: 'Guanajuato'}, {value: 'GRO', label: 'Guerrero'},
-    {value: 'HGO', label: 'Hidalgo'}, {value: 'JAL', label: 'Jalisco'},
-    {value: 'MEX', label: 'Estado de México'}, {value: 'MICH', label: 'Michoacán'},
-    {value: 'MOR', label: 'Morelos'}, {value: 'NAY', label: 'Nayarit'},
-    {value: 'NL', label: 'Nuevo León'}, {value: 'OAX', label: 'Oaxaca'},
-    {value: 'PUE', label: 'Puebla'}, {value: 'QRO', label: 'Querétaro'},
-    {value: 'QROO', label: 'Quintana Roo'}, {value: 'SLP', label: 'San Luis Potosí'},
-    {value: 'SIN', label: 'Sinaloa'}, {value: 'SON', label: 'Sonora'},
-    {value: 'TAB', label: 'Tabasco'}, {value: 'TAM', label: 'Tamaulipas'},
-    {value: 'TLAX', label: 'Tlaxcala'}, {value: 'VER', label: 'Veracruz'},
-    {value: 'YUC', label: 'Yucatán'}, {value: 'ZAC', label: 'Zacatecas'},
+    { value: 'AGS', label: 'Aguascalientes' },
+    { value: 'BC', label: 'Baja California' },
+    { value: 'BCS', label: 'Baja California Sur' },
+    { value: 'CAMP', label: 'Campeche' },
+    { value: 'CHIS', label: 'Chiapas' },
+    { value: 'CHIH', label: 'Chihuahua' },
+    { value: 'CDMX', label: 'Ciudad de México' },
+    { value: 'COAH', label: 'Coahuila' },
+    { value: 'COL', label: 'Colima' },
+    { value: 'DGO', label: 'Durango' },
+    { value: 'GTO', label: 'Guanajuato' },
+    { value: 'GRO', label: 'Guerrero' },
+    { value: 'HGO', label: 'Hidalgo' },
+    { value: 'JAL', label: 'Jalisco' },
+    { value: 'MEX', label: 'Estado de México' },
+    { value: 'MICH', label: 'Michoacán' },
+    { value: 'MOR', label: 'Morelos' },
+    { value: 'NAY', label: 'Nayarit' },
+    { value: 'NL', label: 'Nuevo León' },
+    { value: 'OAX', label: 'Oaxaca' },
+    { value: 'PUE', label: 'Puebla' },
+    { value: 'QRO', label: 'Querétaro' },
+    { value: 'QROO', label: 'Quintana Roo' },
+    { value: 'SLP', label: 'San Luis Potosí' },
+    { value: 'SIN', label: 'Sinaloa' },
+    { value: 'SON', label: 'Sonora' },
+    { value: 'TAB', label: 'Tabasco' },
+    { value: 'TAM', label: 'Tamaulipas' },
+    { value: 'TLAX', label: 'Tlaxcala' },
+    { value: 'VER', label: 'Veracruz' },
+    { value: 'YUC', label: 'Yucatán' },
+    { value: 'ZAC', label: 'Zacatecas' }
   ];
 
   niveles: Opcion[] = [
-    {value: 'Primaria', label: 'Primaria'},
-    {value: 'Secundaria', label: 'Secundaria'},
-    {value: 'Preparatoria', label: 'Preparatoria'},
-    {value: 'Universidad', label: 'Universidad'},
-    {value: 'Licenciatura', label: 'Licenciatura'},
-    {value: 'Maestría', label: 'Maestría'},
-    {value: 'Doctorado', label: 'Doctorado'},
-    {value: 'Técnico', label: 'Técnico'},
-    {value: 'Diplomado', label: 'Diplomado'},
-    {value: 'Curso', label: 'Curso'},
-    {value: 'Taller', label: 'Taller'},
-    {value: 'Seminario', label: 'Seminario'},
-    {value: 'Otro', label: 'Otro'},
+    { value: 'Primaria', label: 'Primaria' },
+    { value: 'Secundaria', label: 'Secundaria' },
+    { value: 'Preparatoria', label: 'Preparatoria' },
+    { value: 'Universidad', label: 'Universidad' },
+    { value: 'Licenciatura', label: 'Licenciatura' },
+    { value: 'Maestría', label: 'Maestría' },
+    { value: 'Doctorado', label: 'Doctorado' },
+    { value: 'Técnico', label: 'Técnico' },
+    { value: 'Diplomado', label: 'Diplomado' },
+    { value: 'Curso', label: 'Curso' },
+    { value: 'Taller', label: 'Taller' },
+    { value: 'Seminario', label: 'Seminario' },
+    { value: 'Otro', label: 'Otro' }
   ];
 
-  tagsDisponibles: Specialty[] = []; // Materias desde la DB
+  tagsDisponibles: Specialty[] = [];
 
-  /* --- ASESORADORES / BÚSQUEDA --- */
+  // Asesores
   isLoadingAdvisers = false;
   advisers: AdviserCardView[] = [];
 
-  /* Estado general */
+  // UI general
   topAvatarUrl: string | null = null;
   isLoadingProfile = false;
   isSidebarCollapsed = false;
   isMobileSidebarOpen = false;
 
-  /* Navegación */
   currentView: 'home' | 'chats' | 'favoritos' | 'reviews' = 'home';
   userName = 'Estudiante';
 
-  /* Notificaciones */
+  // Notificaciones
   isNotificationsModalOpen = false;
   notifications: Notification[] = [];
   unreadCount = 0;
   isLoadingNotifications = false;
+
   currentNotificationFilter: NotificationStatusFilter = 'all';
   private notificationFilter$ = new Subject<NotificationStatusFilter>();
   private destroy$ = new Subject<void>();
 
-  /* Calendario / Agenda */
+  // Calendario
   upcomingSessions: Session[] = [];
   calendarDays: CalendarDay[] = [];
-  currentDate: Date = new Date();
+  currentDate = new Date();
   currentYear = this.currentDate.getFullYear();
   currentMonth = this.currentDate.getMonth();
-  selectedDateKey: string = '';
+  selectedDateKey = '';
   selectedDaySessions: Session[] = [];
-  weekDays: string[] = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+  weekDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
   constructor() {
     this.selectedDateKey = this.buildDateKey(this.currentDate);
@@ -172,8 +211,6 @@ export class StudentHome implements OnInit, OnDestroy {
     this.loadSpecialties();
     this.setupNotificationsStream();
     this.onNotificationFilterChange('all');
-
-    // 🔹 Cargar asesores iniciales (sin filtros o filtros por defecto)
     this.loadAdvisersFromBackend();
   }
 
@@ -182,61 +219,58 @@ export class StudentHome implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // --- Carga de Especialidades (Materias) ---
-  private loadSpecialties() {
-    this.adviserService.getSpecialties().subscribe({
-      next: (data) => this.tagsDisponibles = data,
-      error: (err) => console.error('Error cargando materias', err)
-    });
-  }
-
-  // --- Perfil ---
+  // ---------- Perfil ----------
   private loadMyProfile(): void {
     this.isLoadingProfile = true;
     this.profileService.getMyProfile().subscribe({
       next: (p) => {
         this.topAvatarUrl = p?.photoUrl ?? null;
         this.isLoadingProfile = false;
+        this.cdr.detectChanges();
       },
-      error: () => this.isLoadingProfile = false
+      error: () => {
+        this.isLoadingProfile = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
-  // --- Navegación ---
-  setView(view: 'home' | 'chats' | 'favoritos' | 'reviews' = 'home'): void {
+  // ---------- Navegación ----------
+  setView(view: 'home' | 'chats' | 'favoritos' | 'reviews') {
     this.currentView = view;
   }
 
   onNavigate(section: string): void {
-    console.log('Nav:', section);
+    // Por ahora solo cerramos sidebar móvil y dejamos rastro en consola
+    console.log('Navigate to =>', section);
     this.isMobileSidebarOpen = false;
   }
 
-  onEditProfile(): void {
-    this.router.navigate(['/complete-profile'], {
-      queryParams: {redirectTo: 'student'}
-    });
-  }
-
-  toggleSidebarCollapse(): void {
+  toggleSidebarCollapse() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
 
-  toggleMobileSidebar(): void {
+  toggleMobileSidebar() {
     this.isMobileSidebarOpen = !this.isMobileSidebarOpen;
   }
 
-  closeMobileSidebar(): void {
+  closeMobileSidebar() {
     this.isMobileSidebarOpen = false;
   }
 
-  logout(): void {
+  onEditProfile() {
+    this.router.navigate(['/complete-profile'], {
+      queryParams: { redirectTo: 'student' }
+    });
+  }
+
+  logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
   }
 
-  // --- Calendario ---
+  // ---------- Calendario ----------
   private buildDateKey(date: Date): string {
     return date.toISOString().split('T')[0];
   }
@@ -244,54 +278,55 @@ export class StudentHome implements OnInit, OnDestroy {
   private loadSessionsFromBackend(): void {
     this.classService.getMyEnrolledClasses().subscribe({
       next: (classes) => {
-        this.upcomingSessions = classes.map(c => ({
+        this.upcomingSessions = classes.map((c) => ({
           id: c.classId,
           date: c.classDate,
           time: 'Sin horario',
           subject: c.title,
           advisor: `Tutor #${c.tutorId}`
         }));
+
         this.buildCalendar();
         this.updateSelectedDaySessions();
+        this.cdr.detectChanges();
       }
     });
   }
 
   private buildCalendar(): void {
-    const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+    const daysInMonth = new Date(
+      this.currentYear,
+      this.currentMonth + 1,
+      0
+    ).getDate();
     const todayKey = this.buildDateKey(new Date());
     const days: CalendarDay[] = [];
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(this.currentYear, this.currentMonth, day);
       const dateKey = this.buildDateKey(date);
+
       days.push({
-        date, dateKey, dayNumber: day,
+        date,
+        dateKey,
+        dayNumber: day,
         isToday: dateKey === todayKey,
-        hasSessions: this.upcomingSessions.some(s => s.date === dateKey)
+        hasSessions: this.upcomingSessions.some((s) => s.date === dateKey)
       });
     }
+
     this.calendarDays = days;
   }
 
   private updateSelectedDaySessions(): void {
-    this.selectedDaySessions = this.upcomingSessions.filter(s => s.date === this.selectedDateKey);
+    this.selectedDaySessions = this.upcomingSessions.filter(
+      (s) => s.date === this.selectedDateKey
+    );
   }
 
   onSelectDate(day: CalendarDay): void {
     this.selectedDateKey = day.dateKey;
     this.updateSelectedDaySessions();
-  }
-
-  get currentMonthLabel(): string {
-    const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-    return `${months[this.currentMonth]} ${this.currentYear}`;
-  }
-
-  get selectedDateLabel(): string {
-    const [year, month, day] = this.selectedDateKey.split('-').map(Number);
-    const date = new Date(year, month - 1, day);
-    return date.toLocaleDateString('es-MX', {day: '2-digit', month: 'short'});
   }
 
   goToPreviousMonth(): void {
@@ -314,7 +349,35 @@ export class StudentHome implements OnInit, OnDestroy {
     this.buildCalendar();
   }
 
-  // --- Notificaciones ---
+  get currentMonthLabel(): string {
+    const months = [
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre'
+    ];
+    return `${months[this.currentMonth]} ${this.currentYear}`;
+  }
+
+  get selectedDateLabel(): string {
+    if (!this.selectedDateKey) return '';
+    const [year, month, day] = this.selectedDateKey.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('es-MX', {
+      day: '2-digit',
+      month: 'short'
+    });
+  }
+
+  // ---------- Notificaciones ----------
   toggleNotificationsPanel(): void {
     this.isNotificationsModalOpen = !this.isNotificationsModalOpen;
   }
@@ -329,20 +392,24 @@ export class StudentHome implements OnInit, OnDestroy {
   }
 
   private setupNotificationsStream(): void {
-    this.notificationFilter$.pipe(
-      tap(() => setTimeout(() => {
-        this.isLoadingNotifications = true;
-        this.notifications = [];
-        this.unreadCount = 0;
-      })),
-      switchMap(filter => {
-        const status = filter === 'all' ? undefined : filter;
-        return this.notificationService.getMyNotifications(status).pipe(catchError(() => of([])));
-      }),
-      takeUntil(this.destroy$)
-    ).subscribe(dtos => {
-      setTimeout(() => {
-        this.notifications = dtos.map(d => ({
+    this.notificationFilter$
+      .pipe(
+        tap(() => {
+          this.isLoadingNotifications = true;
+          this.notifications = [];
+          this.unreadCount = 0;
+          this.cdr.detectChanges();
+        }),
+        switchMap((filter) => {
+          const status = filter === 'all' ? undefined : filter;
+          return this.notificationService
+            .getMyNotifications(status)
+            .pipe(catchError(() => of([])));
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((dtos) => {
+        this.notifications = dtos.map((d) => ({
           id: d.notificationId,
           type: NotificationType.CLASS,
           userPhoto: d.senderPhotoUrl || null,
@@ -350,65 +417,71 @@ export class StudentHome implements OnInit, OnDestroy {
           timestamp: new Date(d.createdAt),
           status: d.status
         }));
+
         this.unreadCount = this.notifications.length;
         this.isLoadingNotifications = false;
+        this.cdr.detectChanges();
       });
-    });
   }
 
-  onAcceptRequest(id: number) {
-    this.notificationService.acceptRequest(id).subscribe(() => this.onNotificationFilterChange('all'));
+  onAcceptRequest(id: number): void {
+    this.notificationService
+      .acceptRequest(id)
+      .subscribe(() => this.onNotificationFilterChange('all'));
   }
 
-  onRejectRequest(id: number) {
-    this.notificationService.declineRequest(id).subscribe(() => this.onNotificationFilterChange('all'));
+  onRejectRequest(id: number): void {
+    this.notificationService
+      .declineRequest(id)
+      .subscribe(() => this.onNotificationFilterChange('all'));
   }
 
-  // ==========================================
-  //   ASESORADORES: BÚSQUEDA + FILTROS
-  // ==========================================
-
-  /**
-   * Se ejecuta cada vez que cambia:
-   * - searchTerm
-   * - filterLugar
-   * - filterNivel
-   * - filterMateria
-   */
+  // ---------- Asesores ----------
   onFiltersChange(): void {
     this.loadAdvisersFromBackend();
   }
 
-  /**
-   * Llama al backend con los filtros actuales
-   */
   private loadAdvisersFromBackend(): void {
     this.isLoadingAdvisers = true;
 
-    this.adviserService.getAdvisers({
-      search: this.searchTerm,
-      lugar: this.filterLugar,
-      nivel: this.filterNivel,
-      materia: this.filterMateria
-    }).subscribe({
-      next: (response: AdviserCardResponse[]) => {
-        this.advisers = response.map(a => this.mapApiToView(a));
-        this.isLoadingAdvisers = false;
+    this.adviserService
+      .getAdvisers({
+        search: this.searchTerm,
+        lugar: this.filterLugar,
+        nivel: this.filterNivel,
+        materia: this.filterMateria
+      })
+      .subscribe({
+        next: (response: AdviserCardResponse[]) => {
+          this.advisers = response.map((a) => this.mapApiToView(a));
+          this.isLoadingAdvisers = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error cargando asesores', err);
+          this.advisers = [];
+          this.isLoadingAdvisers = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  private loadSpecialties(): void {
+    this.adviserService.getSpecialties().subscribe({
+      next: (data) => {
+        this.tagsDisponibles = data;
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Error cargando asesores', err);
-        this.advisers = [];
-        this.isLoadingAdvisers = false;
-      }
+      error: () => console.error('Error cargando materias')
     });
   }
 
-  /**
-   * Mapeo de respuesta API → Vista (cards de asesores)
-   */
   private mapApiToView(adviser: AdviserCardResponse): AdviserCardView {
-    const subject = adviser.specialties && adviser.specialties.length ? adviser.specialties[0] : null;
+    const subject =
+      adviser.specialties && adviser.specialties.length
+        ? adviser.specialties[0]
+        : null;
+
     return {
       id: adviser.userId,
       name: `${adviser.firstName} ${adviser.lastName}`,

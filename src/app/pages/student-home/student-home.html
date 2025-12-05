@@ -14,7 +14,7 @@
         class="sidebar-toggle"
         (click)="toggleSidebarCollapse()"
       >
-        <lucide-icon name="menu"></lucide-icon>
+        <lucide-icon [img]="MenuIcon"></lucide-icon>
       </button>
 
       <div class="sidebar-brand" *ngIf="!isSidebarCollapsed">
@@ -32,7 +32,7 @@
         (click)="setView('home'); onNavigate('inicio')"
       >
         <span class="nav-icon">
-          <lucide-icon name="home"></lucide-icon>
+          <lucide-icon [img]="HomeIcon"></lucide-icon>
         </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Inicio</span>
       </button>
@@ -43,7 +43,7 @@
         (click)="setView('chats'); onNavigate('chats')"
       >
         <span class="nav-icon">
-          <lucide-icon name="messages-square"></lucide-icon>
+          <lucide-icon [img]="MessagesSquareIcon"></lucide-icon>
         </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Chats</span>
       </button>
@@ -54,7 +54,7 @@
         (click)="setView('favoritos'); onNavigate('favoritos')"
       >
         <span class="nav-icon">
-          <lucide-icon name="star"></lucide-icon>
+          <lucide-icon [img]="StarIcon"></lucide-icon>
         </span>
         <span class="nav-label" *ngIf="!isSidebarCollapsed">Favoritos</span>
       </button>
@@ -65,9 +65,11 @@
         (click)="setView('reviews'); onNavigate('reviews')"
       >
         <span class="nav-icon">
-          <lucide-icon name="graduation-cap"></lucide-icon>
+          <lucide-icon [img]="GraduationCapIcon"></lucide-icon>
         </span>
-        <span class="nav-label" *ngIf="!isSidebarCollapsed">Evaluaciones</span>
+        <span class="nav-label" *ngIf="!isSidebarCollapsed">
+          Evaluaciones
+        </span>
       </button>
     </nav>
 
@@ -90,7 +92,7 @@
     <header class="main-header">
       <div class="header-left">
         <button class="hamburger-btn" (click)="toggleMobileSidebar()">
-          <lucide-icon name="menu"></lucide-icon>
+          <lucide-icon [img]="MenuIcon"></lucide-icon>
         </button>
         <div class="header-greeting">Hola, {{ userName }}</div>
       </div>
@@ -98,7 +100,10 @@
       <div class="header-center">
         <!-- 🔍 BARRA DE BÚSQUEDA -->
         <div class="search-bar">
-          <lucide-icon name="search" class="search-icon"></lucide-icon>
+          <lucide-icon
+            [img]="SearchIcon"
+            class="search-icon"
+          ></lucide-icon>
           <input
             type="text"
             placeholder="Buscar asesor por nombre o materia"
@@ -156,7 +161,7 @@
               class="icon-button"
               (click)="toggleNotificationsPanel()"
             >
-              <lucide-icon name="bell"></lucide-icon>
+              <lucide-icon [img]="BellIcon"></lucide-icon>
               <span *ngIf="unreadCount > 0" class="notif-dot"></span>
             </button>
 
@@ -182,7 +187,6 @@
       <!-- HOME -->
       <div class="content-grid" *ngIf="currentView === 'home'">
         <div class="content-main">
-          <!-- ✅ Ahora AdvisorList SOLO recibe la lista ya filtrada -->
           <app-advisor-list
             [advisers]="advisers"
             [isLoadingAdvisers]="isLoadingAdvisers"
@@ -204,10 +208,7 @@
             </header>
 
             <div class="calendar-grid">
-              <div
-                class="calendar-weekday"
-                *ngFor="let w of weekDays"
-              >
+              <div class="calendar-weekday" *ngFor="let w of weekDays">
                 {{ w }}
               </div>
               <button
@@ -241,7 +242,7 @@
               >
                 <li
                   class="calendar-session-item"
-                  *ngFor="let s of selectedDaySessions | slice:0:5"
+                  *ngFor="let s of selectedDaySessions | slice: 0:5"
                 >
                   <div class="session-time">{{ s.time }}</div>
                   <div class="session-main">
@@ -267,6 +268,7 @@
         <app-student-chats></app-student-chats>
       </div>
 
+      <!-- FAVORITOS -->
       <div *ngIf="currentView === 'favoritos'" class="content-grid">
         <div class="content-main" style="grid-column: 1 / -1;">
           <app-student-favorites></app-student-favorites>

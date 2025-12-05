@@ -86,9 +86,9 @@
     (click)="closeMobileSidebar()"
   ></div>
 
-  <!-- ZONA PRINCIPAL -->
+  <!-- MAIN AREA -->
   <div class="main-area">
-    <!-- HEADER / NAV COMPLETO -->
+    <!-- HEADER -->
     <header class="main-header">
       <div class="header-left">
         <button class="hamburger-btn" (click)="toggleMobileSidebar()">
@@ -98,12 +98,9 @@
       </div>
 
       <div class="header-center">
-        <!-- 🔍 BARRA DE BÚSQUEDA -->
+        <!-- SEARCH BAR -->
         <div class="search-bar">
-          <lucide-icon
-            [img]="SearchIcon"
-            class="search-icon"
-          ></lucide-icon>
+          <lucide-icon [img]="SearchIcon" class="search-icon"></lucide-icon>
           <input
             type="text"
             placeholder="Buscar asesor por nombre o materia"
@@ -112,7 +109,7 @@
           />
         </div>
 
-        <!-- 🎛 FILTROS -->
+        <!-- FILTERS -->
         <div class="filters-row">
           <div class="filter-group">
             <label>Lugar</label>
@@ -156,6 +153,7 @@
 
         <div class="header-right">
           <div class="header-actions">
+            <!-- NOTIFICATIONS BTN -->
             <button
               type="button"
               class="icon-button"
@@ -165,6 +163,7 @@
               <span *ngIf="unreadCount > 0" class="notif-dot"></span>
             </button>
 
+            <!-- PROFILE -->
             <button
               type="button"
               class="avatar-button"
@@ -182,7 +181,7 @@
       </div>
     </header>
 
-    <!-- CONTENIDO -->
+    <!-- MAIN CONTENT -->
     <main class="main-content">
       <!-- HOME -->
       <div class="content-grid" *ngIf="currentView === 'home'">
@@ -200,6 +199,7 @@
                 <h2 class="calendar-title">Agenda</h2>
                 <p class="calendar-subtitle">Próximas asesorías</p>
               </div>
+
               <div class="calendar-month-nav">
                 <button (click)="goToPreviousMonth()">‹</button>
                 <span>{{ currentMonthLabel }}</span>
@@ -211,6 +211,7 @@
               <div class="calendar-weekday" *ngFor="let w of weekDays">
                 {{ w }}
               </div>
+
               <button
                 type="button"
                 class="calendar-day"
@@ -229,10 +230,7 @@
                 Sesiones para {{ selectedDateLabel }}
               </h3>
 
-              <p
-                class="calendar-empty"
-                *ngIf="selectedDaySessions.length === 0"
-              >
+              <p class="calendar-empty" *ngIf="selectedDaySessions.length === 0">
                 No tienes sesiones para este día.
               </p>
 
@@ -246,12 +244,8 @@
                 >
                   <div class="session-time">{{ s.time }}</div>
                   <div class="session-main">
-                    <div class="session-subject">
-                      {{ s.subject }}
-                    </div>
-                    <div class="session-advisor">
-                      con {{ s.advisor }}
-                    </div>
+                    <div class="session-subject">{{ s.subject }}</div>
+                    <div class="session-advisor">con {{ s.advisor }}</div>
                   </div>
                 </li>
               </ul>

@@ -4,7 +4,8 @@
   <header class="mobile-header">
     <!-- Botón hamburguesa -->
     <button class="hamburger-btn" type="button" (click)="toggleMobileSidebar()">
-      <lucide-icon name="menu"></lucide-icon>
+      <!-- ANTES daba error por usar name="menu" -->
+      <lucide-icon [img]="MenuIcon"></lucide-icon>
     </button>
     <span class="mobile-title">Agora Asesor</span>
   </header>
@@ -22,9 +23,9 @@
           class="sidebar-toggle"
           (click)="toggleSidebarCollapse()"
           title="Colapsar barra lateral">
-  <span class="material-icons">
-    {{ isSidebarCollapsed ? 'chevron_right' : 'chevron_left' }}
-  </span>
+          <span class="material-icons">
+            {{ isSidebarCollapsed ? 'chevron_right' : 'chevron_left' }}
+          </span>
         </button>
       </div>
       <p class="role-badge">Panel Asesor</p>
@@ -37,9 +38,9 @@
         class="menu-item"
         [class.active]="currentView === 'inicio'"
         (click)="setView('inicio'); closeMobileSidebar()">
-  <span class="icon">
-    <lucide-icon name="inbox"></lucide-icon>
-  </span>
+        <span class="icon">
+          <lucide-icon [img]="InboxIcon"></lucide-icon>
+        </span>
         <span class="menu-label">Solicitudes</span>
       </button>
 
@@ -49,12 +50,11 @@
         class="menu-item"
         [class.active]="currentView === 'clases'"
         (click)="setView('clases'); closeMobileSidebar()">
-  <span class="icon">
-    <lucide-icon name="graduation-cap"></lucide-icon>
-  </span>
+        <span class="icon">
+          <lucide-icon [img]="GraduationCapIcon"></lucide-icon>
+        </span>
         <span class="menu-label">Mis Clases</span>
       </button>
-
 
       <!-- Item: Chats -->
       <button
@@ -62,9 +62,9 @@
         class="menu-item"
         [class.active]="currentView === 'chats'"
         (click)="setView('chats'); closeMobileSidebar()">
-  <span class="icon">
-    <lucide-icon name="messages-square"></lucide-icon>
-  </span>
+        <span class="icon">
+          <lucide-icon [img]="MessagesSquareIcon"></lucide-icon>
+        </span>
         <span class="menu-label">Chats</span>
       </button>
 
@@ -74,9 +74,9 @@
         class="menu-item"
         [class.active]="currentView === 'resenas'"
         (click)="setView('resenas'); closeMobileSidebar()">
-  <span class="icon">
-    <lucide-icon name="star"></lucide-icon>
-  </span>
+        <span class="icon">
+          <lucide-icon [img]="StarIcon"></lucide-icon>
+        </span>
         <span class="menu-label">Reseñas</span>
       </button>
     </div>
@@ -84,9 +84,9 @@
     <div class="sidebar-footer">
       <!-- Logout -->
       <button type="button" class="logout-btn" (click)="logout()">
-  <span class="icon">
-    <lucide-icon name="log-out"></lucide-icon>
-  </span>
+        <span class="icon">
+          <lucide-icon [img]="LogOutIcon"></lucide-icon>
+        </span>
         <span class="menu-label">Cerrar sesión</span>
       </button>
     </div>
@@ -199,3 +199,4 @@
     </div>
   </main>
 </div>
+

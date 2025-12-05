@@ -4,23 +4,39 @@ import {
   inject,
   ChangeDetectorRef
 } from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {Router} from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
-import {AdviserService} from '../../core/services/adviser.service';
-import {NotificationRequest} from '../../core/models/advisor.models';
+import { AdviserService } from '../../core/services/adviser.service';
+import { NotificationRequest } from '../../core/models/advisor.models';
 
-// hijos
-import {MisClasesComponent} from './components/mis-clases/mis-clases.component';
-import {MisChatsComponent} from './components/mis-chats/mis-chats.component';
-import {MisResenasComponent} from './components/mis-resenas/mis-resenas.component';
-import {ProfileService} from '../../core/services/profile.service';
-import {LucideAngularModule} from 'lucide-angular';
+// Hijos
+import { MisClasesComponent } from './components/mis-clases/mis-clases.component';
+import { MisChatsComponent } from './components/mis-chats/mis-chats.component';
+import { MisResenasComponent } from './components/mis-resenas/mis-resenas.component';
+import { ProfileService } from '../../core/services/profile.service';
+
+// Lucide
+import {
+  LucideAngularModule,
+  Menu,
+  Inbox,
+  GraduationCap,
+  MessagesSquare,
+  Star,
+  LogOut
+} from 'lucide-angular';
 
 @Component({
   selector: 'app-panel-asesor',
   standalone: true,
-  imports: [CommonModule, MisClasesComponent, MisChatsComponent, MisResenasComponent, LucideAngularModule],
+  imports: [
+    CommonModule,
+    MisClasesComponent,
+    MisChatsComponent,
+    MisResenasComponent,
+    LucideAngularModule
+  ],
   templateUrl: './panel-asesor.html',
   styleUrl: './panel-asesor.css'
 })
@@ -29,6 +45,14 @@ export class PanelAsesor implements OnInit {
   private router = inject(Router);
   private cd = inject(ChangeDetectorRef);
   private profileService = inject(ProfileService);
+
+  // Iconos Lucide expuestos a la plantilla
+  readonly MenuIcon = Menu;
+  readonly InboxIcon = Inbox;
+  readonly GraduationCapIcon = GraduationCap;
+  readonly MessagesSquareIcon = MessagesSquare;
+  readonly StarIcon = Star;
+  readonly LogOutIcon = LogOut;
 
   currentView: 'inicio' | 'clases' | 'chats' | 'resenas' = 'inicio';
 
@@ -146,10 +170,9 @@ export class PanelAsesor implements OnInit {
     this.isMobileSidebarOpen = false;
   }
 
-  // Igual que student-home
   onEditProfile() {
     this.router.navigate(['/complete-profile'], {
-      queryParams: {redirectTo: 'advisor'}
+      queryParams: { redirectTo: 'advisor' }
     });
   }
 
@@ -158,3 +181,4 @@ export class PanelAsesor implements OnInit {
     this.router.navigate(['/login']);
   }
 }
+

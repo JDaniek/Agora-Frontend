@@ -216,8 +216,14 @@
 .header-left {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   min-width: max-content;
+}
+
+/* Ocultar acciones duplicadas en desktop */
+.header-left .header-actions {
+  display: none;
 }
 
 .hamburger-btn {
@@ -609,6 +615,7 @@
     inset: 0 auto 0 0;
     width: 260px;
     box-shadow: 4px 0 16px rgba(15, 23, 42, 0.5);
+    z-index: 40;
   }
 
   .sidebar.is-mobile-open {
@@ -633,50 +640,227 @@
   }
 
   .main-header {
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px 16px;
   }
 
   .header-left {
-    order: 0;
-  }
-
-  .header-center {
-    order: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
   }
 
+  .header-center {
+    width: 100%;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .search-bar {
+    width: 100%;
+  }
+
+  .filters-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .filter-group {
+    min-width: 0;
+  }
+
   .header-right {
-    order: 1;
-    margin-left: auto;
+    display: none; /* Ocultamos las acciones de desktop */
+  }
+
+  /* Mostrar acciones en header-left para móvil */
+  .header-left {
+    width: 100%;
+  }
+
+  .header-left .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Ajustar grid de contenido */
+  .content-grid {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 12px;
+  }
+
+  .calendar-card {
+    padding: 14px;
+  }
+
+  .calendar-grid {
+    gap: 2px;
+  }
+
+  .calendar-day {
+    font-size: 12px;
+  }
+
+  .calendar-session-item {
+    padding: 6px 8px;
+  }
+
+  .session-time {
+    min-width: 60px;
+    font-size: 11px;
   }
 }
 
 @media (max-width: 640px) {
   .main-header {
-    padding: 10px 16px;
+    padding: 10px 12px;
   }
 
   .main-content {
-    padding: 16px;
+    padding: 10px;
   }
 
   .header-greeting {
     font-size: 14px;
+    font-weight: 600;
   }
 
   .filters-row {
-    flex-wrap: wrap;
-    justify-content: flex-start;
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .filter-group {
-    min-width: 48%;
+    width: 100%;
+  }
+
+  .filter-group select {
+    width: 100%;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .search-bar {
+    padding: 0 12px;
+  }
+
+  .search-bar input {
+    font-size: 13px;
+    padding: 6px 0 6px 6px;
   }
 
   .header-actions {
-    gap: 10px;
+    gap: 8px;
+  }
+
+  .icon-button,
+  .avatar-button img,
+  .avatar-placeholder {
+    width: 36px;
+    height: 36px;
+  }
+
+  .icon-button lucide-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .calendar-card {
+    padding: 12px;
+  }
+
+  .calendar-title {
+    font-size: 15px;
+  }
+
+  .calendar-subtitle {
+    font-size: 11px;
+  }
+
+  .calendar-month-nav {
+    font-size: 12px;
+  }
+
+  .calendar-month-nav button {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
+
+  .calendar-weekday {
+    font-size: 10px;
+  }
+
+  .calendar-day {
+    font-size: 11px;
+    border-radius: 8px;
+  }
+
+  .calendar-sessions-title {
+    font-size: 12px;
+  }
+
+  .calendar-session-item {
+    padding: 6px 8px;
+    font-size: 11px;
+    gap: 8px;
+  }
+
+  .session-time {
+    min-width: 50px;
+    font-size: 10px;
+  }
+
+  .session-subject {
+    font-size: 11px;
+  }
+
+  .session-advisor {
+    font-size: 10px;
+  }
+
+  /* Ajustes para vista de chats en móvil */
+  .main-content > div[style*="height"] {
+    height: calc(100vh - 140px) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-greeting {
+    font-size: 13px;
+  }
+
+  .search-bar {
+    padding: 0 10px;
+  }
+
+  .search-bar input {
+    font-size: 12px;
+  }
+
+  .calendar-grid {
+    gap: 1px;
+  }
+
+  .hamburger-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .hamburger-btn lucide-icon {
+    width: 16px;
+    height: 16px;
   }
 }
 

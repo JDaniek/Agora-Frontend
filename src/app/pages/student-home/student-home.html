@@ -91,10 +91,37 @@
     <!-- HEADER -->
     <header class="main-header">
       <div class="header-left">
-        <button class="hamburger-btn" (click)="toggleMobileSidebar()">
-          <lucide-icon [img]="MenuIcon"></lucide-icon>
-        </button>
-        <div class="header-greeting">Hola, {{ userName }}</div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="hamburger-btn" (click)="toggleMobileSidebar()">
+            <lucide-icon [img]="MenuIcon"></lucide-icon>
+          </button>
+          <div class="header-greeting">Hola, {{ userName }}</div>
+        </div>
+
+        <!-- Acciones visibles en móvil -->
+        <div class="header-actions">
+          <button
+            type="button"
+            class="icon-button"
+            (click)="toggleNotificationsPanel()"
+          >
+            <lucide-icon [img]="BellIcon"></lucide-icon>
+            <span *ngIf="unreadCount > 0" class="notif-dot"></span>
+          </button>
+
+          <button
+            type="button"
+            class="avatar-button"
+            (click)="onEditProfile()"
+          >
+            <img
+              *ngIf="topAvatarUrl"
+              [src]="topAvatarUrl"
+              alt="Perfil"
+            />
+            <span *ngIf="!topAvatarUrl" class="avatar-placeholder"></span>
+          </button>
+        </div>
       </div>
 
       <div class="header-center">

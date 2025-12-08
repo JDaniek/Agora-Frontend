@@ -1,4 +1,4 @@
-<div class="chat-layout">
+<div class="chat-layout" [class.show-chat-area]="selectedChatId">
 
   <aside class="chat-sidebar">
     <div class="sidebar-header">
@@ -29,6 +29,9 @@
   <section class="chat-area">
 
     <div *ngIf="selectedChatId" class="chat-header">
+      <button class="back-btn" (click)="goBackToList()">
+        ‹
+      </button>
       <div class="header-avatar student-theme">{{ selectedChatName.charAt(0) }}</div>
       <h3>{{ selectedChatName }}</h3>
     </div>

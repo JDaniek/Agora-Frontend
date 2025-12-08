@@ -444,12 +444,17 @@ export class StudentHome implements OnInit, OnDestroy {
   private loadAdvisersFromBackend(): void {
     this.isLoadingAdvisers = true;
 
+    // CORRECCIÓN DE TIPOS:
+    // 1. Usamos String() para convertir el ID (5) a texto ("5") porque el servicio espera string.
+    // 2. Usamos 'undefined' en lugar de 'null' porque Angular HttpClient prefiere undefined para ignorar params.
+    const materiaParam = this.filterMateria ? String(this.filterMateria) : undefined;
+
     this.adviserService
       .getAdvisers({
         search: this.searchTerm,
         lugar: this.filterLugar,
         nivel: this.filterNivel,
-        materia: this.filterMateria
+        materia: materiaParam // <--- Ahora enviamos "5" (string) o undefined
       })
       .subscribe({
         next: (response: AdviserCardResponse[]) => {
@@ -477,17 +482,23 @@ export class StudentHome implements OnInit, OnDestroy {
   }
 
   private mapApiToView(adviser: AdviserCardResponse): AdviserCardView {
-    // 1. Obtenemos todas las especialidades
     const specs = adviser.specialties || [];
-
-    // 2. Lógica corregida para decidir qué materia mostrar como principal
     let subject = null;
 
-    if (this.filterMateria && specs.includes(this.filterMateria)) {
-      // SI hay un filtro activo Y el asesor tiene esa materia, mostramos esa.
-      subject = this.filterMateria;
-    } else if (specs.length > 0) {
-      // SI NO, mostramos la primera por defecto.
+    // 1. TRADUCCIÓN INVERSA (ID -> Nombre)
+    // Si hay un filtro activo, averiguamos su nombre (ej: ID 10 -> "Economía")
+    if (this.filterMateria) {
+      const filterId = Number(this.filterMateria);
+      const tagMatch = this.tagsDisponibles.find((t) => t.id === filterId);
+
+      // Si encontramos el nombre Y el asesor tiene esa materia, la priorizamos
+      if (tagMatch && specs.includes(tagMatch.name)) {
+        subject = tagMatch.name;
+      }
+    }
+
+    // 2. Fallback: Si no hay match con el filtro, mostramos la primera materia
+    if (!subject && specs.length > 0) {
       subject = specs[0];
     }
 
@@ -499,7 +510,7 @@ export class StudentHome implements OnInit, OnDestroy {
       tags: specs,
       description: adviser.description,
       bookmarked: false,
-      subject, // Ahora 'subject' coincidirá con lo que el usuario buscó
+      subject, // Aquí irá el nombre correcto ("Economía")
       location: adviser.stateCode ?? null
     };
   }

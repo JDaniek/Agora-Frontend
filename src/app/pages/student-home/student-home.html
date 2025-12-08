@@ -163,12 +163,9 @@
 
           <div class="filter-group">
             <label>Materia</label>
-            <select
-              [(ngModel)]="filterMateria"
-              (ngModelChange)="onFiltersChange()"
-            >
+            <select [(ngModel)]="filterMateria" (ngModelChange)="onFiltersChange()">
               <option value="">Todas</option>
-              <option *ngFor="let tag of tagsDisponibles" [value]="tag.name">
+              <option *ngFor="let tag of tagsDisponibles" [value]="tag.id">
                 {{ tag.name }}
               </option>
             </select>

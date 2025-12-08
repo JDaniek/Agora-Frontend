@@ -12,6 +12,7 @@ import {finalize, switchMap, catchError} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {AdviserService, Specialty} from '../../core/services/adviser.service';
 import {AuthService} from '../../core/services/auth.service';
+import {environment} from '@env/environment';
 
 type Opcion = { value: string; label: string };
 
@@ -49,9 +50,9 @@ interface ApiError {
 })
 export class CompleteProfile implements OnInit {
   /** ====== URLs ====== */
-  private profileApiUrl = 'http://localhost:8080/api/v1/profile';
+  private readonly profileApiUrl = `${environment.apiUrl}${environment.endpoints.profile.me}`;
   // Endpoint para subir imagen y a la vez adjuntar
-  private uploadApiUrl = 'http://localhost:8080/api/v1/media/upload-and-attach';
+  private readonly uploadApiUrl = `${environment.apiUrl}${environment.endpoints.media.uploadAndAttach}`;
 
   private adviserService = inject(AdviserService);
 

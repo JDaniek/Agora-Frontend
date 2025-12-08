@@ -176,7 +176,7 @@ export class CompleteProfile implements OnInit {
   }
 
   /** ====== Redireccion segun usuario====== */
-  private navigateAfterSave() {
+  navigateAfterSave() {
     // Leemos un query param opcional: ?redirectTo=student o ?redirectTo=advisor
     const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo');
 
@@ -353,4 +353,10 @@ export class CompleteProfile implements OnInit {
         },
       });
   }
+
+
+  onCancel() {
+    this.navigateAfterSave();
+  }
+
 }

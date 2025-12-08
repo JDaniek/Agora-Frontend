@@ -12,7 +12,7 @@
   <!-- Avatar -->
   <div class="avatar-block">
     <div class="avatar" [class.has-img]="avatarPreview()">
-      <img *ngIf="avatarPreview()" [src]="avatarPreview()" alt="Avatar" />
+      <img *ngIf="avatarPreview()" [src]="avatarPreview()" alt="Avatar"/>
       <span *ngIf="!avatarPreview()" aria-hidden="true">👤</span>
     </div>
 
@@ -82,7 +82,16 @@
   </div>
 
   <!-- Acciones -->
-  <div class="actions">
+  <div class="actions" style="display: flex; gap: 12px; align-items: center;">
+
+    <button
+      type="button"
+      class="btn-cancel"
+      (click)="navigateAfterSave()"
+    >
+      Cancelar
+    </button>
+
     <button
       class="btn"
       [disabled]="isSaving() || isUploadingAvatar() || form.invalid"
@@ -92,4 +101,6 @@
       {{ isSaving() ? 'Guardando...' : (isUploadingAvatar() ? 'Subiendo foto...' : 'Guardar') }}
     </button>
   </div>
+
+
 </section>

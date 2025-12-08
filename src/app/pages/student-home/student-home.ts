@@ -5,11 +5,11 @@ import {
   ChangeDetectorRef,
   inject
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Subject, of } from 'rxjs';
-import { takeUntil, switchMap, tap, catchError } from 'rxjs/operators';
+import {Router} from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {Subject, of} from 'rxjs';
+import {takeUntil, switchMap, tap, catchError} from 'rxjs/operators';
 
 // Lucide Icons
 import {
@@ -28,9 +28,9 @@ import {
   AdvisorListComponent,
   AdviserCardView
 } from './components/advisor-list/advisor-list.component';
-import { StudentChatsComponent } from './components/student-chats/student-chats.component';
-import { StudentReviewsComponent } from './components/student-reviews/student-reviews.component';
-import { StudentFavoritesComponent } from './components/student-favorites/student-favorites.component';
+import {StudentChatsComponent} from './components/student-chats/student-chats.component';
+import {StudentReviewsComponent} from './components/student-reviews/student-reviews.component';
+import {StudentFavoritesComponent} from './components/student-favorites/student-favorites.component';
 
 // Modales y servicios
 import {
@@ -39,9 +39,9 @@ import {
   NotificationType,
   NotificationStatusFilter
 } from '../../shared/components/notifications-modal/notifications-modal';
-import { ProfileService } from '../../core/services/profile.service';
-import { ClassService } from '../../core/services/class.service';
-import { NotificationService } from '../../core/services/notification.service';
+import {ProfileService} from '../../core/services/profile.service';
+import {ClassService} from '../../core/services/class.service';
+import {NotificationService} from '../../core/services/notification.service';
 import {
   AdviserService,
   Specialty,
@@ -97,7 +97,7 @@ export class StudentHome implements OnInit, OnDestroy {
   private adviserService = inject(AdviserService);
 
   // Íconos Lucide expuestos al HTML
-  
+
   public MenuIcon = Menu;
   public HomeIcon = Home;
   public MessagesSquareIcon = MessagesSquare;
@@ -113,54 +113,54 @@ export class StudentHome implements OnInit, OnDestroy {
   filterMateria = '';
 
   estadosMx: Opcion[] = [
-    { value: 'AGS', label: 'Aguascalientes' },
-    { value: 'BC', label: 'Baja California' },
-    { value: 'BCS', label: 'Baja California Sur' },
-    { value: 'CAMP', label: 'Campeche' },
-    { value: 'CHIS', label: 'Chiapas' },
-    { value: 'CHIH', label: 'Chihuahua' },
-    { value: 'CDMX', label: 'Ciudad de México' },
-    { value: 'COAH', label: 'Coahuila' },
-    { value: 'COL', label: 'Colima' },
-    { value: 'DGO', label: 'Durango' },
-    { value: 'GTO', label: 'Guanajuato' },
-    { value: 'GRO', label: 'Guerrero' },
-    { value: 'HGO', label: 'Hidalgo' },
-    { value: 'JAL', label: 'Jalisco' },
-    { value: 'MEX', label: 'Estado de México' },
-    { value: 'MICH', label: 'Michoacán' },
-    { value: 'MOR', label: 'Morelos' },
-    { value: 'NAY', label: 'Nayarit' },
-    { value: 'NL', label: 'Nuevo León' },
-    { value: 'OAX', label: 'Oaxaca' },
-    { value: 'PUE', label: 'Puebla' },
-    { value: 'QRO', label: 'Querétaro' },
-    { value: 'QROO', label: 'Quintana Roo' },
-    { value: 'SLP', label: 'San Luis Potosí' },
-    { value: 'SIN', label: 'Sinaloa' },
-    { value: 'SON', label: 'Sonora' },
-    { value: 'TAB', label: 'Tabasco' },
-    { value: 'TAM', label: 'Tamaulipas' },
-    { value: 'TLAX', label: 'Tlaxcala' },
-    { value: 'VER', label: 'Veracruz' },
-    { value: 'YUC', label: 'Yucatán' },
-    { value: 'ZAC', label: 'Zacatecas' }
+    {value: 'AGS', label: 'Aguascalientes'},
+    {value: 'BC', label: 'Baja California'},
+    {value: 'BCS', label: 'Baja California Sur'},
+    {value: 'CAMP', label: 'Campeche'},
+    {value: 'CHIS', label: 'Chiapas'},
+    {value: 'CHIH', label: 'Chihuahua'},
+    {value: 'CDMX', label: 'Ciudad de México'},
+    {value: 'COAH', label: 'Coahuila'},
+    {value: 'COL', label: 'Colima'},
+    {value: 'DGO', label: 'Durango'},
+    {value: 'GTO', label: 'Guanajuato'},
+    {value: 'GRO', label: 'Guerrero'},
+    {value: 'HGO', label: 'Hidalgo'},
+    {value: 'JAL', label: 'Jalisco'},
+    {value: 'MEX', label: 'Estado de México'},
+    {value: 'MICH', label: 'Michoacán'},
+    {value: 'MOR', label: 'Morelos'},
+    {value: 'NAY', label: 'Nayarit'},
+    {value: 'NL', label: 'Nuevo León'},
+    {value: 'OAX', label: 'Oaxaca'},
+    {value: 'PUE', label: 'Puebla'},
+    {value: 'QRO', label: 'Querétaro'},
+    {value: 'QROO', label: 'Quintana Roo'},
+    {value: 'SLP', label: 'San Luis Potosí'},
+    {value: 'SIN', label: 'Sinaloa'},
+    {value: 'SON', label: 'Sonora'},
+    {value: 'TAB', label: 'Tabasco'},
+    {value: 'TAM', label: 'Tamaulipas'},
+    {value: 'TLAX', label: 'Tlaxcala'},
+    {value: 'VER', label: 'Veracruz'},
+    {value: 'YUC', label: 'Yucatán'},
+    {value: 'ZAC', label: 'Zacatecas'}
   ];
 
   niveles: Opcion[] = [
-    { value: 'Primaria', label: 'Primaria' },
-    { value: 'Secundaria', label: 'Secundaria' },
-    { value: 'Preparatoria', label: 'Preparatoria' },
-    { value: 'Universidad', label: 'Universidad' },
-    { value: 'Licenciatura', label: 'Licenciatura' },
-    { value: 'Maestría', label: 'Maestría' },
-    { value: 'Doctorado', label: 'Doctorado' },
-    { value: 'Técnico', label: 'Técnico' },
-    { value: 'Diplomado', label: 'Diplomado' },
-    { value: 'Curso', label: 'Curso' },
-    { value: 'Taller', label: 'Taller' },
-    { value: 'Seminario', label: 'Seminario' },
-    { value: 'Otro', label: 'Otro' }
+    {value: 'Primaria', label: 'Primaria'},
+    {value: 'Secundaria', label: 'Secundaria'},
+    {value: 'Preparatoria', label: 'Preparatoria'},
+    {value: 'Universidad', label: 'Universidad'},
+    {value: 'Licenciatura', label: 'Licenciatura'},
+    {value: 'Maestría', label: 'Maestría'},
+    {value: 'Doctorado', label: 'Doctorado'},
+    {value: 'Técnico', label: 'Técnico'},
+    {value: 'Diplomado', label: 'Diplomado'},
+    {value: 'Curso', label: 'Curso'},
+    {value: 'Taller', label: 'Taller'},
+    {value: 'Seminario', label: 'Seminario'},
+    {value: 'Otro', label: 'Otro'}
   ];
 
   tagsDisponibles: Specialty[] = [];
@@ -260,7 +260,7 @@ export class StudentHome implements OnInit, OnDestroy {
 
   onEditProfile() {
     this.router.navigate(['/complete-profile'], {
-      queryParams: { redirectTo: 'student' }
+      queryParams: {redirectTo: 'student'}
     });
   }
 
@@ -477,20 +477,29 @@ export class StudentHome implements OnInit, OnDestroy {
   }
 
   private mapApiToView(adviser: AdviserCardResponse): AdviserCardView {
-    const subject =
-      adviser.specialties && adviser.specialties.length
-        ? adviser.specialties[0]
-        : null;
+    // 1. Obtenemos todas las especialidades
+    const specs = adviser.specialties || [];
+
+    // 2. Lógica corregida para decidir qué materia mostrar como principal
+    let subject = null;
+
+    if (this.filterMateria && specs.includes(this.filterMateria)) {
+      // SI hay un filtro activo Y el asesor tiene esa materia, mostramos esa.
+      subject = this.filterMateria;
+    } else if (specs.length > 0) {
+      // SI NO, mostramos la primera por defecto.
+      subject = specs[0];
+    }
 
     return {
       id: adviser.userId,
       name: `${adviser.firstName} ${adviser.lastName}`,
       avatarUrl: adviser.photoUrl,
       nivel: adviser.level,
-      tags: adviser.specialties,
+      tags: specs,
       description: adviser.description,
       bookmarked: false,
-      subject,
+      subject, // Ahora 'subject' coincidirá con lo que el usuario buscó
       location: adviser.stateCode ?? null
     };
   }

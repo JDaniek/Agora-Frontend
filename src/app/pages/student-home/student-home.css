@@ -206,11 +206,13 @@
   padding: 12px 24px;
   border-bottom: 1px solid var(--panel-border);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between; /* Asegura distribución correcta */
   gap: 24px;
   position: sticky;
   top: 0;
   z-index: 20;
+  height: 72px; /* Altura fija recomendada para evitar saltos */
 }
 
 .header-left {
@@ -253,21 +255,29 @@
 
 /* Centro: búsqueda + filtros */
 
+
 .header-center {
   flex: 1;
   display: flex;
   flex-direction: row;
-  gap: 128px;
+  justify-content: center;
+  align-items: center;
+  gap: 16px; /* Gap más pequeño para que se vean como un grupo unido */
+  max-width: 900px; /* Evita que se estire infinito en pantallas gigantes */
 }
 
 .search-bar {
-  width: 70%;
+  /* CAMBIO: Quitamos el width: 70%. Usamos flex-grow. */
+  flex: 2; /* El buscador intenta ocupar el doble de espacio que los filtros */
+  min-width: 250px; /* No dejes que se haga muy pequeño */
   display: flex;
   align-items: center;
   background: #f3f4f6;
   border-radius: 999px;
   padding: 0 14px;
-  border: 2px solid #e5e7eb;
+  border: 1px solid transparent; /* Borde sutil */
+  height: 40px; /* Altura igualada a los botones de la derecha */
+  transition: all 0.2s;
 }
 
 .search-bar input {
@@ -284,6 +294,12 @@
   color: #9ca3af;
 }
 
+.search-bar:focus-within {
+  background: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
 .search-icon {
   width: 16px;
   height: 16px;
@@ -292,12 +308,10 @@
 
 .filters-row {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: #d1d5db transparent;
+  align-items: center;
+  gap: 10px;
+  /* Quitamos scrollbars en desktop, se ve mal */
+  overflow: visible;
 }
 
 .filters-row::-webkit-scrollbar {
@@ -316,25 +330,42 @@
 .filter-group {
   display: flex;
   flex-direction: column;
-  min-width: 120px;
-  flex-shrink: 0;
+  /* Quitamos min-width fijo grande para que no ocupe tanto espacio */
+  min-width: auto;
 }
 
 .filter-group label {
-  font-size: 11px;
-  color: #6b7280;
-  margin-bottom: 2px;
-  white-space: nowrap;
+  display: none;
 }
 
 .filter-group select {
+  appearance: none; /* Limpia estilos nativos del navegador */
+  -webkit-appearance: none;
   border-radius: 999px;
-  border: 1px solid #d1d5db;
-  padding: 4px 12px;
-  font-size: 12px;
-  background: #ffffff;
-  color: #111827;
-  white-space: nowrap;
+  border: 1px solid #e5e7eb;
+  padding: 0 32px 0 16px; /* Espacio extra a la derecha para la flechita */
+  height: 40px; /* Misma altura que el buscador */
+  font-size: 13px;
+  background-color: #f9fafb;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+}
+
+.filter-group select:hover {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
 }
 
 /* Header right */
@@ -660,10 +691,8 @@
   }
 
   .main-header {
-    flex-direction: column;
+    height: auto; /* En móvil dejamos que crezca */
     align-items: stretch;
-    gap: 12px;
-    padding: 12px 16px;
   }
 
   .header-left {
@@ -696,6 +725,17 @@
   .filter-group {
     min-width: 110px;
     flex-shrink: 0;
+  }
+
+  .filter-group label {
+    display: block;
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+
+  .filter-group select {
+    height: 36px;
+    background-color: #fff;
   }
 
   .header-right {
@@ -780,7 +820,8 @@
   }
 
   .search-bar {
-    padding: 0 12px;
+    width: 100%; /* En móvil ocupa todo el ancho */
+    flex: none;
   }
 
   .search-bar input {

@@ -312,6 +312,11 @@ body {
   padding: 0;
   background: transparent;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.avatar-button:hover {
+  transform: scale(1.05);
 }
 
 .avatar-img {
@@ -319,7 +324,7 @@ body {
   height: 40px;
   border-radius: 999px;
   object-fit: cover;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
 }
 
 .avatar-mini {
@@ -332,6 +337,7 @@ body {
   align-items: center;
   justify-content: center;
   font-weight: 600;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
 }
 
 /* ===========================
@@ -531,11 +537,16 @@ body {
   }
 
   .sidebar-menu {
-    transform: translateX(-100%);
-    width: 260px;
+    display: none;
   }
 
   .sidebar-menu.is-mobile-open {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
     transform: translateX(0);
   }
 

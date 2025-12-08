@@ -294,18 +294,37 @@
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.filters-row::-webkit-scrollbar {
+  height: 4px;
+}
+
+.filters-row::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.filters-row::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
   min-width: 120px;
+  flex-shrink: 0;
 }
 
 .filter-group label {
   font-size: 11px;
   color: #6b7280;
   margin-bottom: 2px;
+  white-space: nowrap;
 }
 
 .filter-group select {
@@ -315,6 +334,7 @@
   font-size: 12px;
   background: #ffffff;
   color: #111827;
+  white-space: nowrap;
 }
 
 /* Header right */
@@ -657,6 +677,7 @@
     width: 100%;
     flex-direction: column;
     gap: 12px;
+    overflow-x: visible;
   }
 
   .search-bar {
@@ -665,13 +686,16 @@
 
   .filters-row {
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    justify-content: flex-start;
     gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
   }
 
   .filter-group {
-    min-width: 0;
+    min-width: 110px;
+    flex-shrink: 0;
   }
 
   .header-right {
@@ -737,12 +761,16 @@
   }
 
   .filters-row {
-    grid-template-columns: 1fr;
+    display: flex;
     gap: 8px;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-bottom: 4px;
   }
 
   .filter-group {
-    width: 100%;
+    min-width: 100px;
+    flex-shrink: 0;
   }
 
   .filter-group select {

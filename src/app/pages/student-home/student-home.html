@@ -125,8 +125,8 @@
       </div>
 
       <div class="header-center">
-        <!-- SEARCH BAR -->
-        <div class="search-bar">
+        <!-- SEARCH BAR - Solo visible en home -->
+        <div class="search-bar" *ngIf="currentView === 'home'">
           <lucide-icon [img]="SearchIcon" class="search-icon"></lucide-icon>
           <input
             type="text"
@@ -136,8 +136,8 @@
           />
         </div>
 
-        <!-- FILTERS -->
-        <div class="filters-row">
+        <!-- FILTERS - Solo visibles en home -->
+        <div class="filters-row" *ngIf="currentView === 'home'">
           <div class="filter-group">
             <label>Lugar</label>
             <select

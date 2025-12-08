@@ -104,6 +104,12 @@ export class StudentChatsComponent implements OnInit, OnDestroy, AfterViewChecke
     this.newMessageText = '';
   }
 
+  goBackToList() {
+    this.selectedChatId = null;
+    this.selectedChatName = '';
+    this.messages = [];
+  }
+
   private scrollToBottom(): void {
     try {
       this.scrollContainer.nativeElement.scrollTop =
